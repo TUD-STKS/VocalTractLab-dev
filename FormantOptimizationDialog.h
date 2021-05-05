@@ -25,7 +25,7 @@
 #include <wx/wx.h>
 #include <wx/dialog.h>
 
-#include "VocalTractLabApi/src/VocalTract.h"
+#include "Backend/VocalTract.h"
 
 
 // ****************************************************************************

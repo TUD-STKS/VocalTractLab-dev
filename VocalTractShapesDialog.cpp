@@ -24,8 +24,8 @@
 #include "VocalTractShapesDialog.h"
 #include "Data.h"
 #include "SilentMessageBox.h"
-#include "SoundLib.h"
-#include "VocalTractLabApi/src/Synthesizer.h"
+#include "Backend/SoundLib.h"
+#include "Backend/Synthesizer.h"
 
 // ****************************************************************************
 // IDs.

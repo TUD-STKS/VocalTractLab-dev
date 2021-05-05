@@ -1,3 +1,4 @@
-[submodule "VocalTractLabApi"]
-	path = VocalTractLabApi
-	url = https://github.com/TUD-STKS/VocalTractLabApi
+
+[submodule "Backend"]
+	path = Backend
+	url = https://github.com/TUD-STKS/VocalTractLabBackend-dev

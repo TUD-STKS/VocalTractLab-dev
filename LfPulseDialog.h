@@ -27,7 +27,7 @@
 
 #include "Data.h"
 #include "LfPulsePicture.h"
-#include "VocalTractLabApi/src/LfPulse.h"
+#include "Backend/LfPulse.h"
 
 // ****************************************************************************
 /// This dialog lets the user adjust the LF-pulse parameters and shows a

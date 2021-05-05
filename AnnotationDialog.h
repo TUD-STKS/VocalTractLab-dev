@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "Data.h"
-#include "VocalTractLabApi/src/SegmentSequence.h"
+#include "Backend/SegmentSequence.h"
 
 using namespace std;
 

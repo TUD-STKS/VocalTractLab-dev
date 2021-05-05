@@ -24,8 +24,8 @@
 
 #include <wx/thread.h>
 #include <wx/wx.h>
-#include "VocalTractLabApi/src/TubeSequence.h"
-#include "VocalTractLabApi/src/TdsModel.h"
+#include "Backend/TubeSequence.h"
+#include "Backend/TdsModel.h"
 #include "Data.h"
 
 // Define the IDs for events that are sent to the GUI treat.

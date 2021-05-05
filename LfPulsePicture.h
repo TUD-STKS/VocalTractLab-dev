@@ -24,7 +24,7 @@
 
 #include "Data.h"
 #include "BasicPicture.h"
-#include "VocalTractLabApi/src/LfPulse.h"
+#include "Backend/LfPulse.h"
 
 // ****************************************************************************
 /// This class represents a picture showing an LF glottal flow pulse.

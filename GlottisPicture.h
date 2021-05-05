@@ -24,11 +24,11 @@
 
 #include "BasicPicture.h"
 #include "Graph.h"
-#include "VocalTractLabApi/src/Glottis.h"
-#include "VocalTractLabApi/src/GeometricGlottis.h"
-#include "VocalTractLabApi/src/TwoMassModel.h"
-#include "VocalTractLabApi/src/TriangularGlottis.h"
-         
+#include "Backend/Glottis.h"
+#include "Backend/GeometricGlottis.h"
+#include "Backend/TwoMassModel.h"
+#include "Backend/TriangularGlottis.h"
+
 // ****************************************************************************
 // ****************************************************************************
 

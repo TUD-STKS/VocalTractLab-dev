@@ -25,7 +25,7 @@
 #include "BasicPicture.h"
 #include "VocalTractPicture.h"
 #include "Graph.h"
-#include "VocalTractLabApi/src/Tube.h"
+#include "Backend/Tube.h"
 
 // ****************************************************************************
 // ****************************************************************************

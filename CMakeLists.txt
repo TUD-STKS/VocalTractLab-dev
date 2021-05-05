@@ -15,40 +15,41 @@ find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 
 # Add source to this project's executable.
-add_executable (VocalTractLabGui WIN32
-VocalTractLabApi/src/AnatomyParams.cpp VocalTractLabApi/src/AnatomyParams.h
-VocalTractLabApi/src/AudioFile.h
-VocalTractLabApi/src/Constants.h
-VocalTractLabApi/src/Dsp.cpp VocalTractLabApi/src/Dsp.h
-VocalTractLabApi/src/F0EstimatorYin.cpp VocalTractLabApi/src/F0EstimatorYin.h
-VocalTractLabApi/src/GeometricGlottis.cpp VocalTractLabApi/src/Geometricglottis.h
-VocalTractLabApi/src/Geometry.cpp VocalTractLabApi/src/Geometry.h
-VocalTractLabApi/src/GesturalScore.cpp VocalTractLabApi/src/GesturalScore.h
-VocalTractLabApi/src/Glottis.cpp VocalTractLabApi/src/Glottis.h
-VocalTractLabApi/src/IirFilter.cpp VocalTractLabApi/src/IirFilter.h
-VocalTractLabApi/src/ImpulseExcitation.cpp VocalTractLabApi/src/ImpulseExcitation.h
-VocalTractLabApi/src/LfPulse.cpp VocalTractLabApi/src/LfPulse.h
-VocalTractLabApi/src/Matrix2x2.cpp VocalTractLabApi/src/Matrix2x2.h
-VocalTractLabApi/src/PoleZeroPlan.cpp VocalTractLabApi/src/PoleZeroPlan.h
-VocalTractLabApi/src/Sampa.cpp VocalTractLabApi/src/Sampa.h
-VocalTractLabApi/src/SegmentSequence.cpp VocalTractLabApi/src/SegmentSequence.h
-VocalTractLabApi/src/Signal.cpp VocalTractLabApi/src/Signal.h
-VocalTractLabApi/src/Splines.cpp VocalTractLabApi/src/Splines.h
-VocalTractLabApi/src/StaticPhone.cpp VocalTractLabApi/src/StaticPhone.h
-VocalTractLabApi/src/Surface.cpp VocalTractLabApi/src/Surface.h
-VocalTractLabApi/src/Synthesizer.cpp VocalTractLabApi/src/Synthesizer.h
-VocalTractLabApi/src/TdsModel.cpp VocalTractLabApi/src/TdsModel.h
-VocalTractLabApi/src/TimeFunction.cpp VocalTractLabApi/src/TimeFunction.h
-VocalTractLabApi/src/TlModel.cpp VocalTractLabApi/src/TlModel.h
-VocalTractLabApi/src/TriangularGlottis.cpp VocalTractLabApi/src/TriangularGlottis.h
-VocalTractLabApi/src/Tube.cpp VocalTractLabApi/src/Tube.h
-VocalTractLabApi/src/TubeSequence.h
-VocalTractLabApi/src/TwoMassModel.cpp VocalTractLabApi/src/TwoMassModel.h
-VocalTractLabApi/src/VocalTract.cpp VocalTractLabApi/src/VocalTract.h
-VocalTractLabApi/src/VoiceQualityEstimator.cpp VocalTractLabApi/src/VoiceQualityEstimator.h
-VocalTractLabApi/src/VowelLf.cpp VocalTractLabApi/src/VowelLf.h
-VocalTractLabApi/src/XmlHelper.cpp VocalTractLabApi/src/XmlHelper.h
-VocalTractLabApi/src/XmlNode.cpp VocalTractLabApi/src/XmlNode.h
+add_executable (VocalTractLab WIN32
+Backend/AnatomyParams.cpp Backend/AnatomyParams.h
+Backend/AudioFile.h
+Backend/Constants.h
+Backend/Dsp.cpp Backend/Dsp.h
+Backend/F0EstimatorYin.cpp Backend/F0EstimatorYin.h
+Backend/GeometricGlottis.cpp Backend/Geometricglottis.h
+Backend/Geometry.cpp Backend/Geometry.h
+Backend/GesturalScore.cpp Backend/GesturalScore.h
+Backend/Glottis.cpp Backend/Glottis.h
+Backend/IirFilter.cpp Backend/IirFilter.h
+Backend/ImpulseExcitation.cpp Backend/ImpulseExcitation.h
+Backend/LfPulse.cpp Backend/LfPulse.h
+Backend/Matrix2x2.cpp Backend/Matrix2x2.h
+Backend/PoleZeroPlan.cpp Backend/PoleZeroPlan.h
+Backend/Sampa.cpp Backend/Sampa.h
+Backend/SegmentSequence.cpp Backend/SegmentSequence.h
+Backend/Signal.cpp Backend/Signal.h
+Backend/SoundLib.cpp Backend/SoundLib.h
+Backend/Splines.cpp Backend/Splines.h
+Backend/StaticPhone.cpp Backend/StaticPhone.h
+Backend/Surface.cpp Backend/Surface.h
+Backend/Synthesizer.cpp Backend/Synthesizer.h
+Backend/TdsModel.cpp Backend/TdsModel.h
+Backend/TimeFunction.cpp Backend/TimeFunction.h
+Backend/TlModel.cpp Backend/TlModel.h
+Backend/TriangularGlottis.cpp Backend/TriangularGlottis.h
+Backend/Tube.cpp Backend/Tube.h
+Backend/TubeSequence.h
+Backend/TwoMassModel.cpp Backend/TwoMassModel.h
+Backend/VocalTract.cpp Backend/VocalTract.h
+Backend/VoiceQualityEstimator.cpp Backend/VoiceQualityEstimator.h
+Backend/VowelLf.cpp Backend/VowelLf.h
+Backend/XmlHelper.cpp Backend/XmlHelper.h
+Backend/XmlNode.cpp Backend/XmlNode.h
 AnalysisResultsDialog.cpp AnalysisResultsDialog.h
 AnalysisSettingsDialog.cpp AnalysisSettingsDialog.h
 AnatomyParamsDialog.cpp AnatomyParamsDialog.h
@@ -80,7 +81,6 @@ SignalPage.cpp SignalPage.h
 SignalPicture.cpp SignalPicture.h
 SilentMessageBox.cpp SilentMessageBox.h
 SimpleSpectrumPicture.cpp SimpleSpectrumPicture.h
-SoundLib.cpp SoundLib.h
 SpectrogramPicture.cpp SpectrogramPicture.h
 SpectrogramPlot.cpp SpectrogramPlot.h
 SpectrumOptionsDialog.cpp SpectrumOptionsDialog.h
@@ -99,5 +99,5 @@ VocalTractPicture.cpp VocalTractPicture.h
 VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
 
-target_link_libraries(VocalTractLabGui ${wxWidgets_LIBRARIES})
+target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES})
 

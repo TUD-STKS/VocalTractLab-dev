@@ -22,7 +22,7 @@
 #include "AnalysisResultsDialog.h"
 #include "SignalPicture.h"
 #include "Data.h"
-#include "VocalTractLabApi/src/Dsp.h"
+#include "Backend/Dsp.h"
 
 
 static const wxPen trackPen[Data::NUM_TRACKS] = 

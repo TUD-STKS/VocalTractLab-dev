@@ -23,7 +23,7 @@
 #define __SPECTROGRAM_PLOT_H__
 
 #include <wx/wx.h>
-#include "VocalTractLabApi/src/Dsp.h"
+#include "Backend/Dsp.h"
 #include <vector>
 
 using namespace std;

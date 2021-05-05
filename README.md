@@ -7,3 +7,10 @@ You can find the bleeding edge builds here including new and experimental featur
 Please feel free to fork this repo and make your own contributions, though! 
 
 The main branch of this repo is reviewed on a semi-regular basis for inclusion into the official release.
+
+
+## Build instructions
+- Use [vcpkg to install wxWidgets](https://www.wxwidgets.org/blog/2019/01/wxwidgets-and-vcpkg/)
+- Build using CMake
+
+Currently only Debug and Release configurations for Windows x64 are provided. If you are willing to contribute a Linux configuration, please do!

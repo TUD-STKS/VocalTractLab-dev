@@ -1,0 +1,3 @@
+[submodule "VocalTractLabApi"]
+	path = VocalTractLabApi
+	url = https://github.com/TUD-STKS/VocalTractLabApi

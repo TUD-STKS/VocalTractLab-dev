@@ -1,0 +1,2 @@
+# Code owners are maintainers of a repository. This repo will only allow pull requests to be merged after a code owner has approved the request.
+*       @nullpunktTUD @Peter-Birkholz

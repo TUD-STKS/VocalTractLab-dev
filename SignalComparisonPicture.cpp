@@ -239,7 +239,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   // ****************************************************************
   // ****************************************************************
 
-  const int LEFT_MARGIN = Data::LEFT_SCORE_MARGIN;
+  const int LEFT_MARGIN = this->FromDIP(Data::LEFT_SCORE_MARGIN);
   double startTime_s = data->gsTimeAxisGraph->abscissa.reference;
   double duration_s  = data->gsTimeAxisGraph->abscissa.positiveLimit;
   
@@ -280,8 +280,8 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
       data->track[Data::MAIN_TRACK], firstSample, numSamples);
     dc.DrawText("Main oscillo.", 5, rowY[index]);
 
-    playButtonX[0] = (LEFT_MARGIN - PLAY_BUTTON_WIDTH) / 2;
-    playButtonY[0] = rowY[index] + 20;
+    playButtonX[0] = (LEFT_MARGIN - this->FromDIP(PLAY_BUTTON_WIDTH)) / 2;
+    playButtonY[0] = rowY[index] + this->FromDIP(20);
     paintPlayButton(dc, playButtonX[0], playButtonY[0]);
   }
   else
@@ -347,8 +347,8 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
       data->track[Data::EXTRA_TRACK], firstSample, numSamples);
     dc.DrawText("Extra oscillo.", 5, rowY[index]);
 
-    playButtonX[1] = (LEFT_MARGIN - PLAY_BUTTON_WIDTH) / 2;
-    playButtonY[1] = rowY[index] + 20;
+    playButtonX[1] = (LEFT_MARGIN - this->FromDIP(PLAY_BUTTON_WIDTH)) / 2;
+    playButtonY[1] = rowY[index] + this->FromDIP(20);
     paintPlayButton(dc, playButtonX[1], playButtonY[1]);
   }
   else
@@ -888,13 +888,15 @@ void SignalComparisonPicture::paintPlayButton(wxDC &dc, int x, int y)
 {
   dc.SetBrush( wxColor(250, 250, 250) );
   dc.SetPen(*wxBLACK_PEN);
-  dc.DrawRectangle(x, y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+  const auto buttonWidth = this->FromDIP(PLAY_BUTTON_WIDTH);
+  const auto buttonHeight = this->FromDIP(PLAY_BUTTON_HEIGHT);
+  dc.DrawRectangle(x, y, buttonWidth, buttonHeight);
 
   wxPoint points[3] =
   {
-    wxPoint(0.15*PLAY_BUTTON_WIDTH, 0.15*PLAY_BUTTON_HEIGHT),
-    wxPoint(0.15*PLAY_BUTTON_WIDTH, 0.85*PLAY_BUTTON_HEIGHT),
-    wxPoint(0.85*PLAY_BUTTON_WIDTH, 0.5*PLAY_BUTTON_HEIGHT)
+    wxPoint(0.15*buttonWidth, 0.15*buttonHeight),
+    wxPoint(0.15*buttonWidth, 0.85*buttonHeight),
+    wxPoint(0.85*buttonWidth, 0.5*buttonHeight)
   };
 
   dc.SetBrush( wxColor(210, 210, 210) );

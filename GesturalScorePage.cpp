@@ -368,7 +368,7 @@ void GesturalScorePage::initWidgets()
   wxPanel *upperPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   wxPanel *lowerPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   splitter->SplitHorizontally(upperPanel, lowerPanel);
-  splitter->SetSashPosition(300);
+  splitter->SetSashPosition(this->FromDIP(300));
 
   // ****************************************************************
   // Panel above the splitter.
@@ -385,7 +385,7 @@ void GesturalScorePage::initWidgets()
   timeAxisPicture->SetMinSize(this->FromDIP(wxSize(-1, 25) ));
   sizer->Add(timeAxisPicture, 1, wxGROW);
 
-  sizer->AddSpacer(20);
+  sizer->AddSpacer(this->FromDIP(20));
 
   upperSizer->Add(sizer, 0, wxBOTTOM | wxGROW, 5);
 

@@ -44,6 +44,7 @@ public:
 
 private:
   VocalTractPicture *picVocalTract;
+  int lineWidth{ this->FromDIP(1) };
 };
 
 #endif

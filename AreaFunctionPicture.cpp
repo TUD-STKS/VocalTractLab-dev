@@ -58,7 +58,7 @@ AreaFunctionPicture::AreaFunctionPicture(wxWindow *parent, VocalTractPicture *pi
 
   // Graph for the circumference function 
 
-  circGraph.init(this, 35, 5, 0, 25);
+  circGraph.init(this, this->FromDIP(35), this->FromDIP(5), 0, this->FromDIP(25));
   circGraph.initAbscissa(PQ_LENGTH, 0.0, 1.0, 
     0.0, 0.0, 0.0, 
     20.0, 20.0, 20.0,
@@ -73,7 +73,7 @@ AreaFunctionPicture::AreaFunctionPicture(wxWindow *parent, VocalTractPicture *pi
 
   // Graph for the area function
 
-  areaGraph.init(this, 40, 5, 0, 25);
+  areaGraph.init(this, this->FromDIP(40), this->FromDIP(5), 0, this->FromDIP(25));
   areaGraph.initAbscissa(PQ_LENGTH, 0.0, 1.0, 
     0.0, 0.0, 0.0, 
     20.0, 20.0, 20.0,
@@ -353,34 +353,34 @@ void AreaFunctionPicture::draw(wxDC &dc)
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
     st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
-    dc.DrawText(st, 50, 4);
+    dc.DrawText(st, this->FromDIP(50), this->FromDIP(4));
 
     st = wxString::Format("Velum area: %2.3f cm^2", tract->nasalPortArea_cm2);
-    dc.DrawText(st, 50, 24);
+    dc.DrawText(st, this->FromDIP(50), this->FromDIP(24));
 
     st = wxString::Format("Curr. area: %2.3f cm^2", currentArea);
-    dc.DrawText(st, 50, 44);
+    dc.DrawText(st, this->FromDIP(50), this->FromDIP(44));
 
     st = wxString::Format("Min. area: %2.3f cm^2 at %2.1f cm", absMinArea_cm2, absMinAreaPos_cm);
-    dc.DrawText(st, 50, 64);
+    dc.DrawText(st, this->FromDIP(50), this->FromDIP(64));
 
     if (showArticulators)
     {
       st = wxString::Format("Tongue tip sides: %2.2f", tract->param[VocalTract::TS3].x);
-      dc.DrawText(st, 50, 84);
+      dc.DrawText(st, this->FromDIP(50), this->FromDIP(84));
     }
 
     if (picVocalTract->showCenterLine)
     {
       st = wxString::Format("Slice pos.: %2.2f cm", picVocalTract->cutPlanePos_cm);
-      dc.DrawText(st, 220, 4);
+      dc.DrawText(st, this->FromDIP(220), this->FromDIP(4));
     }
 
     st = wxString::Format("Velum pos.: %2.2f cm", tract->nasalPortPos_cm);
-    dc.DrawText(st, 220, 24);
+    dc.DrawText(st, this->FromDIP(220), this->FromDIP(24));
 
     st = wxString::Format("Teeth pos.: %2.2f cm", tract->incisorPos_cm);
-    dc.DrawText(st, 220, 44);
+    dc.DrawText(st, this->FromDIP(220), this->FromDIP(44));
 
     // Draw the teeth position
     x[0] = graph->getXPos(tract->incisorPos_cm);
@@ -390,7 +390,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
       dc.DrawLine(x[0]+1, graphY+graphH-10, x[0]+1, graphY+graphH-1);
     }
 
-    // Draw the reccommended minimum area for vowels as a horizontal dashed line.
+    // Draw the recommended minimum area for vowels as a horizontal dashed line.
     if (showAreas)
     {
       y = graph->getYPos(Data::MIN_ADVISED_VOWEL_AREA_CM2);

@@ -189,7 +189,10 @@ private:
   // Margins of the graph to the edge of the picture
   int leftMargin, rightMargin, bottomMargin, topMargin;
   wxWindow *control;
-
+  // Width of the pen used for drawing
+  int lineWidth{ 1 };
+  // A grey that is lighter than wxLIGHT_GREY for drawing more subtle background lines
+  wxColor veryLightGrey{ 220, 220, 220 };
   // **************************************************************************
   // Private functions.
   // **************************************************************************

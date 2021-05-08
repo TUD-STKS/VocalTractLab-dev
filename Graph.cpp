@@ -232,8 +232,8 @@ void Graph::paintAbscissa(wxDC &dc)
   // ****************************************************************
   // Paint the coordinate axis.
   // ****************************************************************
-
-  dc.SetPen(*wxBLACK_PEN);
+  
+  dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
   if (abscissaAtBottom)
   { 
     dc.DrawLine(graphX, graphY+graphH, graphX+graphW-1, graphY+graphH);
@@ -266,7 +266,7 @@ void Graph::paintAbscissa(wxDC &dc)
     unitString = wxString(physicalQuantity[abscissa.quantity].mksUnit); 
   }
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
   dc.SetBackgroundMode(wxTRANSPARENT);
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -396,7 +396,7 @@ void Graph::paintAbscissa(wxDC &dc)
 
     if ((xPos >= graphX) && (xPos < graphX + graphW))
     {
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
 
       if (abscissaAtBottom)
       { 
@@ -408,8 +408,9 @@ void Graph::paintAbscissa(wxDC &dc)
       }
 
       if (abscissa.showGrayLines) 
-      { 
-        dc.SetPen( wxPen(wxColor(220, 220, 220)) );
+      {
+          
+        dc.SetPen(wxPen(veryLightGrey, dc.LogicalToDeviceXRel(lineWidth)));
         dc.DrawLine(xPos, graphY, xPos, graphY + graphH - 1); 
       }
 
@@ -439,7 +440,7 @@ void Graph::paintAbscissa(wxDC &dc)
             yPos = graphY-8-charHeight; 
           }
 
-          dc.SetPen(*wxBLACK_PEN);
+          dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
           dc.DrawText(st, xPos, yPos);
         }
 
@@ -471,7 +472,7 @@ void Graph::paintOrdinate(wxDC &dc)
 
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
   if (ordinateAtLeftSide)
@@ -510,7 +511,7 @@ void Graph::paintOrdinate(wxDC &dc)
       st = wxString(physicalQuantity[linearOrdinate.quantity].mksUnit); 
     }
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
     if (ordinateAtLeftSide)
@@ -598,7 +599,7 @@ void Graph::paintOrdinate(wxDC &dc)
 
       if ((yPos >= graphY) && (yPos < graphY + graphH))
       {
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
         if (ordinateAtLeftSide)
         { 
           dc.DrawLine(graphX-5, yPos, graphX-1, yPos); 
@@ -610,7 +611,7 @@ void Graph::paintOrdinate(wxDC &dc)
             
         if (linearOrdinate.showGrayLines) 
         { 
-          dc.SetPen( wxPen(wxColor(220, 220, 220)) );
+          dc.SetPen(wxPen(veryLightGrey, dc.LogicalToDeviceXRel(lineWidth)));
           dc.DrawLine(graphX, yPos, graphX+graphW-1, yPos); 
         }
 
@@ -630,7 +631,7 @@ void Graph::paintOrdinate(wxDC &dc)
           if (yPos < graphY + charHeight) { yPos = graphY + charHeight; }
           if (yPos + charHeight > graphY + graphH - 1) { yPos = graphY + graphH - 1 - charHeight; }
 
-          dc.SetPen(*wxBLACK_PEN);
+          dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
 
           if (ordinateAtLeftSide)
           { 
@@ -657,7 +658,7 @@ void Graph::paintOrdinate(wxDC &dc)
     // Output the physical quantity on top.
     // **************************************************************
     
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
 
     if (ordinateAtLeftSide)
     { 
@@ -724,7 +725,7 @@ void Graph::paintOrdinate(wxDC &dc)
 
       if ((yPos >= graphY) && (yPos < graphY + graphH))
       {
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
 
         if (ordinateAtLeftSide)
         { 
@@ -737,7 +738,7 @@ void Graph::paintOrdinate(wxDC &dc)
 
         if (logOrdinate.showGrayLines) 
         {
-          dc.SetPen( wxPen(wxColor(220, 220, 220)) );
+          dc.SetPen(wxPen(veryLightGrey, dc.LogicalToDeviceXRel(lineWidth)));
           dc.DrawLine(graphX, yPos, graphX+graphW-1, yPos);
         }
 

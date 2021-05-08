@@ -197,11 +197,11 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos( TlModel::getCircumference(ts->area_cm2) ); 
       }
 
-      dc.SetPen(*wxLIGHT_GREY_PEN);
+      dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
       dc.SetBrush(*wxLIGHT_GREY_BRUSH);
       dc.DrawRectangle(x[0], y, x[1]-x[0]+1, graphY+graphH-y);
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -225,11 +225,11 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos(TlModel::getCircumference(ts->area_cm2)); 
       }
       
-      dc.SetPen(*wxLIGHT_GREY_PEN);
+      dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
       dc.SetBrush(*wxLIGHT_GREY_BRUSH);
       dc.DrawRectangle(x[0], y, x[1]-x[0]+1, graphY+graphH-y);
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -260,7 +260,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos(TlModel::getCircumference(ts->area_cm2));
       }
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -300,7 +300,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y[1] = graph->getYPos(tract->crossSection[i + 1].circ);
       }
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       dc.DrawLine(x[0], y[0], x[1], y[1]);
 
       // Determine the area at the cutting position
@@ -320,9 +320,9 @@ void AreaFunctionPicture::draw(wxDC &dc)
   x[0] = graph->getXPos(picVocalTract->cutPlanePos_cm);
   if ((x[0] >= graphX) && (x[0] < graphX + graphW))
   {
-    wxPen pen(wxColor(0, 0, 0), 1, wxPENSTYLE_DOT);
+    wxPen pen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH);
     dc.SetPen(pen);
-    dc.DrawLine(x[0], graphY+58, x[0], graphY+graphH-1);
+    dc.DrawLine(x[0], graphY+this->FromDIP(58), x[0], graphY+graphH-1);
   }
 
   // ****************************************************************
@@ -349,7 +349,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
   {
     wxString st;
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
     st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
@@ -386,15 +386,15 @@ void AreaFunctionPicture::draw(wxDC &dc)
     x[0] = graph->getXPos(tract->incisorPos_cm);
     if ((x[0] >= graphX) && (x[0]+1 < graphX + graphW))
     {
-      dc.DrawLine(x[0], graphY+graphH-10, x[0], graphY+graphH-1);
-      dc.DrawLine(x[0]+1, graphY+graphH-10, x[0]+1, graphY+graphH-1);
+      dc.DrawLine(x[0], graphY+graphH-this->FromDIP(10), x[0], graphY+graphH-1);
+      dc.DrawLine(x[0]+1, graphY+graphH-this->FromDIP(10), x[0]+1, graphY+graphH-1);
     }
 
     // Draw the recommended minimum area for vowels as a horizontal dashed line.
     if (showAreas)
     {
       y = graph->getYPos(Data::MIN_ADVISED_VOWEL_AREA_CM2);
-      dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+      dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
       dc.DrawLine(graphX, y, graphX + graphW - 1, y);
     }
 

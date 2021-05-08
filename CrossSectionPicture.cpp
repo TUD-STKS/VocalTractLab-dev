@@ -55,7 +55,7 @@ void CrossSectionPicture::draw(wxDC &dc)
 
   if ((pos < 0.0) || (pos > tract->centerLineLength))
   {
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
     dc.SetBackgroundMode(wxTRANSPARENT);
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
     dc.DrawText("Cut vector position out of range.", 0, 0);
@@ -129,7 +129,9 @@ void CrossSectionPicture::draw(wxDC &dc)
   tract->getCrossProfiles(P, v, upperProfile, lowerProfile, false, articulator, debug);
   leftX = (int)(centerX - 0.5*VocalTract::PROFILE_LENGTH*zoom);
 
-  dc.SetPen(*wxMEDIUM_GREY_PEN);
+  auto pen = *wxMEDIUM_GREY_PEN;
+  pen.SetWidth(lineWidth);
+  dc.SetPen(pen);
 //  dc.SetPen(*wxGREEN_PEN);
 
   for (i=0; i < VocalTract::NUM_PROFILE_SAMPLES-1; i++)
@@ -197,18 +199,18 @@ void CrossSectionPicture::draw(wxDC &dc)
       points[3].y = (int)(centerY - bottomY[0]);
 
       dc.SetBrush(*wxLIGHT_GREY_BRUSH);
-      dc.SetPen(*wxLIGHT_GREY_PEN);
+      dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
       dc.DrawPolygon(4, points);
     }
 
     if (topValid) 
     { 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       dc.DrawLine(leftX, (int)centerY - topY[0], rightX, (int)centerY - topY[1]); 
     }
     if (bottomValid) 
     { 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       dc.DrawLine(leftX, (int)centerY - bottomY[0], rightX, (int)centerY - bottomY[1]); 
     }
 
@@ -219,10 +221,10 @@ void CrossSectionPicture::draw(wxDC &dc)
   // Draw a point where the center line crosses the section.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   wxBrush yellowBrush(wxColor(255, 255, 0));
   dc.SetBrush( yellowBrush );
-  dc.DrawEllipse((int)centerX-3, (int)centerY-3, 6, 6);
+  dc.DrawEllipse((int)centerX-this->FromDIP(3), (int)centerY-this->FromDIP(3), this->FromDIP(6), this->FromDIP(6));
 
   // ****************************************************************
   // Print the area and circumference.
@@ -233,7 +235,7 @@ void CrossSectionPicture::draw(wxDC &dc)
 
   wxString st = wxString::Format("A: %2.2f cm^2  C: %2.2f cm", 
     crossSection.area, crossSection.circ);
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBackgroundMode(wxTRANSPARENT);
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
   dc.DrawText(st, 0, 0);
@@ -251,7 +253,7 @@ void CrossSectionPicture::draw(wxDC &dc)
   default: st = "Unknown articulator"; break;
   }
 
-  dc.DrawText(st, 0, 20);
+  dc.DrawText(st, 0, this->FromDIP(20));
 
 }
 

@@ -115,6 +115,7 @@ public:
 private:
   wxString spectrumFileName;
   VocalTractPicture *picVocalTract;
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Private functions.

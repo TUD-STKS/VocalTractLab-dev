@@ -34,7 +34,7 @@ TimeAxisPicture::TimeAxisPicture(wxWindow *parent) : BasicPicture(parent)
   // ****************************************************************
 
   graph = Data::getInstance()->gsTimeAxisGraph;
-  graph->init(this, Data::LEFT_SCORE_MARGIN, 0, 25, 0);
+  graph->init(this, this->FromDIP(Data::LEFT_SCORE_MARGIN), 0, this->FromDIP(25), 0);
   graph->abscissaAtBottom = false;
   graph->initAbscissa(PQ_TIME, 0.0, 0.001,
     0.0, 0.0, 0.0, 0.1, 10.0, 1.2,

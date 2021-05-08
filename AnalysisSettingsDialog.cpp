@@ -202,16 +202,16 @@ wxPanel *AnalysisSettingsDialog::initSpectrumPage(wxWindow *parent)
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   label = new wxStaticText(page, wxID_ANY, "Window length");
-  label->SetMinSize( wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) );    
+  label->SetMinSize( this->FromDIP(wxSize(NAME_LABEL_WIDTH, wxDefaultCoord)) );    
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   scrSpectrumWindowLength = new wxScrollBar(page, IDS_SPECTRUM_WINDOW_LENGTH);
-  scrSpectrumWindowLength->SetMinSize( wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) );    
+  scrSpectrumWindowLength->SetMinSize(this->FromDIP(wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) ));
   scrSpectrumWindowLength->SetScrollbar(0, 1, MAX_WINDOW_LENGTH_PT - MIN_WINDOW_LENGTH_PT + 1, 1, false);
   sizer->Add(scrSpectrumWindowLength, 1, wxRIGHT | wxGROW, 5);
 
   labSpectrumWindowLength = new wxStaticText(page, IDL_SPECTRUM_WINDOW_LENGTH, "0.0");
-  labSpectrumWindowLength->SetMinSize( wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) );    
+  labSpectrumWindowLength->SetMinSize(this->FromDIP(wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(labSpectrumWindowLength, 0, wxGROW);
 
   topLevelSizer->Add(sizer, 0, wxALL | wxGROW, 5);
@@ -226,7 +226,7 @@ wxPanel *AnalysisSettingsDialog::initSpectrumPage(wxWindow *parent)
     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
   sizer->Add(label, 0, wxRIGHT | wxALIGN_CENTER, 5);
 
-  txtAverageSpectrumTimeStep = new wxTextCtrl(page, IDE_AVERAGE_SPECTRUM_TIME_STEP, "", wxDefaultPosition, wxSize(50, -1));
+  txtAverageSpectrumTimeStep = new wxTextCtrl(page, IDE_AVERAGE_SPECTRUM_TIME_STEP, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   txtAverageSpectrumTimeStep->Connect(-1, wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(AnalysisSettingsDialog::OnSpectrumTimeStepLostFocus), NULL, this);
   sizer->Add(txtAverageSpectrumTimeStep, 0, wxRIGHT | wxGROW, 5);
@@ -300,16 +300,16 @@ wxPanel *AnalysisSettingsDialog::initSpectrogramPage(wxWindow *parent)
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   label = new wxStaticText(page, wxID_ANY, "Window length");
-  label->SetMinSize( wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) );    
+  label->SetMinSize(this->FromDIP(wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   scrSpectrogramWindowLength = new wxScrollBar(page, IDS_SPECTROGRAM_WINDOW_LENGTH);
-  scrSpectrogramWindowLength->SetMinSize( wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) );    
+  scrSpectrogramWindowLength->SetMinSize(this->FromDIP(wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) ));
   scrSpectrogramWindowLength->SetScrollbar(0, 1, MAX_WINDOW_LENGTH_PT - MIN_WINDOW_LENGTH_PT + 1, 1, false);
   sizer->Add(scrSpectrogramWindowLength, 1, wxRIGHT | wxGROW, 5);
 
   labSpectrogramWindowLength = new wxStaticText(page, IDL_SPECTROGRAM_WINDOW_LENGTH, "0.0");
-  labSpectrogramWindowLength->SetMinSize( wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) );    
+  labSpectrogramWindowLength->SetMinSize(this->FromDIP(wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(labSpectrogramWindowLength, 0, wxGROW);
 
   topLevelSizer->Add(sizer, 0, wxALL | wxGROW, 5);
@@ -321,16 +321,16 @@ wxPanel *AnalysisSettingsDialog::initSpectrogramPage(wxWindow *parent)
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   label = new wxStaticText(page, wxID_ANY, "FFT length");
-  label->SetMinSize( wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) );    
+  label->SetMinSize(this->FromDIP(wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   scrFftLength = new wxScrollBar(page, IDS_SPECTROGRAM_FFT_LENGTH);
-  scrFftLength->SetMinSize( wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) );    
+  scrFftLength->SetMinSize(this->FromDIP(wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) ));
   scrFftLength->SetScrollbar(0, 1, MAX_FFT_EXPONENT - MIN_FFT_EXPONENT + 1, 1, false);
   sizer->Add(scrFftLength, 1, wxRIGHT | wxGROW, 5);
 
   labFftLength = new wxStaticText(page, IDL_SPECTROGRAM_FFT_LENGTH, "0.0");
-  labFftLength->SetMinSize( wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) );    
+  labFftLength->SetMinSize(this->FromDIP(wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(labFftLength, 0, wxGROW);
 
   topLevelSizer->Add(sizer, 0, wxALL | wxGROW, 5);
@@ -342,16 +342,16 @@ wxPanel *AnalysisSettingsDialog::initSpectrogramPage(wxWindow *parent)
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   label = new wxStaticText(page, wxID_ANY, "Dynamic range");
-  label->SetMinSize( wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) );    
+  label->SetMinSize(this->FromDIP(wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   scrDynamicRange = new wxScrollBar(page, IDS_SPECTROGRAM_DYNAMIC_RANGE);
-  scrDynamicRange->SetMinSize( wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) );    
+  scrDynamicRange->SetMinSize(this->FromDIP(wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) ));
   scrDynamicRange->SetScrollbar(0, 1, MAX_DYNAMIC_RANGE_DB - MIN_DYNAMIC_RANGE_DB + 1, 1, false);
   sizer->Add(scrDynamicRange, 1, wxRIGHT | wxGROW, 5);
 
   labDynamicRange = new wxStaticText(page, IDL_SPECTROGRAM_DYNAMIC_RANGE, "0.0");
-  labDynamicRange->SetMinSize( wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) );    
+  labDynamicRange->SetMinSize(this->FromDIP(wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(labDynamicRange, 0, wxGROW);
 
   topLevelSizer->Add(sizer, 0, wxALL | wxGROW, 5);
@@ -363,16 +363,16 @@ wxPanel *AnalysisSettingsDialog::initSpectrogramPage(wxWindow *parent)
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   label = new wxStaticText(page, wxID_ANY, "View range");
-  label->SetMinSize( wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) );    
+  label->SetMinSize(this->FromDIP(wxSize(NAME_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   scrViewRange = new wxScrollBar(page, IDS_SPECTROGRAM_VIEW_RANGE);
-  scrViewRange->SetMinSize( wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) );    
+  scrViewRange->SetMinSize(this->FromDIP(wxSize(SCROLL_BAR_WIDTH, wxDefaultCoord) ));
   scrViewRange->SetScrollbar(0, 1, MAX_VIEW_RANGE_HZ - MIN_VIEW_RANGE_HZ + 1, 1, false);
   sizer->Add(scrViewRange, 1, wxRIGHT | wxGROW, 5);
 
   labViewRange = new wxStaticText(page, IDL_SPECTROGRAM_VIEW_RANGE, "0.0");
-  labViewRange->SetMinSize( wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) );    
+  labViewRange->SetMinSize(this->FromDIP(wxSize(VALUE_LABEL_WIDTH, wxDefaultCoord) ));
   sizer->Add(labViewRange, 0, wxGROW);
 
   topLevelSizer->Add(sizer, 0, wxALL | wxGROW, 5);
@@ -428,7 +428,7 @@ wxPanel *AnalysisSettingsDialog::initF0Page(wxWindow *parent)
     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
   sizer->Add(label, 0, wxALL | wxALIGN_CENTER, 5);
 
-  txtF0Threshold = new wxTextCtrl(page, IDT_F0_THRESHOLD, "", wxDefaultPosition, wxSize(40, -1));
+  txtF0Threshold = new wxTextCtrl(page, IDT_F0_THRESHOLD, "", wxDefaultPosition, this->FromDIP(wxSize(40, -1)));
   txtF0Threshold->Connect(-1, wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(AnalysisSettingsDialog::OnThresholdLostFocus), NULL, this);
   sizer->Add(txtF0Threshold, 0, wxALL, 5);
@@ -442,7 +442,7 @@ wxPanel *AnalysisSettingsDialog::initF0Page(wxWindow *parent)
     wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
   sizer->Add(label, 0, wxALL | wxALIGN_CENTER, 5);
 
-  txtF0TimeStep = new wxTextCtrl(page, IDT_F0_TIME_STEP, "", wxDefaultPosition, wxSize(50, -1));
+  txtF0TimeStep = new wxTextCtrl(page, IDT_F0_TIME_STEP, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   txtF0TimeStep->Connect(-1, wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(AnalysisSettingsDialog::OnF0TimeStepLostFocus), NULL, this);
   sizer->Add(txtF0TimeStep, 0, wxALL, 5);

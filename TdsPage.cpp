@@ -272,7 +272,7 @@ void TdsPage::initWidgets()
   sizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   ctrlSynthesisSpeed = new wxSpinCtrl(this, IDC_SYNTHESIS_SPEED, "", wxDefaultPosition,
-    wxSize(50, 20), wxSP_ARROW_KEYS, 1, 100, 1);
+    wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1);
   sizer->Add(ctrlSynthesisSpeed, 0, wxALL, 3);
 
   // ********************************************

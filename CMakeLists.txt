@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for VocalTractLabGui, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.16)
 
 project ("VocalTractLabGui")
 
@@ -98,6 +98,10 @@ VocalTractPage.cpp VocalTractPage.h
 VocalTractPicture.cpp VocalTractPicture.h
 VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
+
+if(MSVC)
+set_property(TARGET VocalTractLab PROPERTY VS_DPI_AWARE "PerMonitor")
+endif()
 
 target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES})
 

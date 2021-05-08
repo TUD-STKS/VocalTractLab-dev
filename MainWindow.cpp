@@ -286,6 +286,8 @@ MainWindow::MainWindow()
   // Make the main window double buffered to avoid any flickering
   // of the child-windows and during resizing.
   this->SetDoubleBuffered(true);
+
+  this->Maximize();
 }
 
 
@@ -453,8 +455,8 @@ void MainWindow::initWidgets()
   int numTools = 0;
   wxBitmap bitmap;
   toolBar = CreateToolBar();
-//  toolBar->SetToolBitmapSize(wxSize(20, 20));
-
+  toolBar->SetToolBitmapSize(wxSize(24, 24));
+  
   toolBar->AddTool(IDB_TOOLBAR_RECORD, "Record", xpmRecord);
   toolBar->AddTool(IDB_TOOLBAR_PLAY_ALL, "Play all", xpmPlayAll);
   toolBar->AddTool(IDB_TOOLBAR_PLAY_PART, "Play part", xpmPlayPart);

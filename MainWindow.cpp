@@ -455,7 +455,7 @@ void MainWindow::initWidgets()
   int numTools = 0;
   wxBitmap bitmap;
   toolBar = CreateToolBar();
-  toolBar->SetToolBitmapSize(wxSize(24, 24));
+  toolBar->SetToolBitmapSize(this->FromDIP(wxSize(24, 24)));
   
   toolBar->AddTool(IDB_TOOLBAR_RECORD, "Record", xpmRecord);
   toolBar->AddTool(IDB_TOOLBAR_PLAY_ALL, "Play all", xpmPlayAll);

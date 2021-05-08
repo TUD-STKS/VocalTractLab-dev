@@ -173,7 +173,7 @@ void GesturalScorePage::initWidgets()
 
   txtContinualValue = new wxTextCtrl(staticBox, IDT_CONTINUAL_VALUE, "", wxDefaultPosition,
     wxDefaultSize, wxTE_PROCESS_ENTER);
-  txtContinualValue->SetMinSize( wxSize(50, -1) );
+  txtContinualValue->SetMinSize(this->FromDIP(wxSize(50, -1) ));
   // Connect the lost-focus-event to the event handler
   txtContinualValue->Connect(wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(GesturalScorePage::OnContinualValueChanged), NULL, this);
@@ -183,7 +183,7 @@ void GesturalScorePage::initWidgets()
 
   lstNominalValue = new wxComboBox(staticBox, IDL_NOMINAL_VALUE, wxEmptyString, wxDefaultPosition,
     wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER);
-  lstNominalValue->SetMinSize( wxSize(100, -1) );
+  lstNominalValue->SetMinSize(this->FromDIP(wxSize(100, -1) ));
   sizer->Add(lstNominalValue, 1, wxGROW);
 
   gestureSizer->Add(sizer, 0, wxALL | wxGROW, 2);
@@ -217,7 +217,7 @@ void GesturalScorePage::initWidgets()
   label = new wxStaticText(staticBox, wxID_ANY, "Duration:");
   sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
 
-  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, this->FromDIP(wxSize(80, -1)), wxTE_PROCESS_ENTER);
   txtDuration->SetRange(MIN_GESTURE_DURATION_MS, MAX_GESTURE_DURATION_MS);
   this->Connect(IDE_DURATION, wxEVT_COMMAND_TEXT_ENTER,
     wxCommandEventHandler(GesturalScorePage::OnDurationEntered));
@@ -254,11 +254,11 @@ void GesturalScorePage::initWidgets()
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
   button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-");
-  button->SetMinSize( wxSize(20, 20) );
+  button->SetMinSize(this->FromDIP(wxSize(20, 20) ));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
   button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+");
-  button->SetMinSize( wxSize(20, 20) );
+  button->SetMinSize(this->FromDIP(wxSize(20, 20) ));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
   leftSizer->Add(sizer, 0, wxALL | wxGROW, 3);
@@ -382,7 +382,7 @@ void GesturalScorePage::initWidgets()
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   timeAxisPicture = new TimeAxisPicture(upperPanel);
-  timeAxisPicture->SetMinSize( wxSize(-1, 25) );
+  timeAxisPicture->SetMinSize(this->FromDIP(wxSize(-1, 25) ));
   sizer->Add(timeAxisPicture, 1, wxGROW);
 
   sizer->AddSpacer(20);
@@ -398,7 +398,7 @@ void GesturalScorePage::initWidgets()
 
   scrUpperOffset = new wxScrollBar(upperPanel, IDS_UPPER_OFFSET, wxDefaultPosition,
     wxDefaultSize, wxSB_VERTICAL);
-  scrUpperOffset->SetMinSize( wxSize(20, -1) );
+  scrUpperOffset->SetMinSize(this->FromDIP(wxSize(20, -1) ));
   scrUpperOffset->SetScrollbar(0, 1, 100, 1);
   sizer->Add(scrUpperOffset, 0, wxGROW);
 
@@ -417,12 +417,12 @@ void GesturalScorePage::initWidgets()
 
   // Add a dummy label as spacer at the left.
   label =new wxStaticText(lowerPanel, wxID_ANY, "");
-  label->SetMinSize( wxSize(Data::LEFT_SCORE_MARGIN, -1) );
+  label->SetMinSize(this->FromDIP(wxSize(Data::LEFT_SCORE_MARGIN, -1) ));
   sizer->Add(label, 0, wxGROW);
 
   horzScrollBar = new wxScrollBar(lowerPanel, IDS_HORZ_SCROLL_BAR, wxDefaultPosition,
     wxDefaultSize, wxSB_HORIZONTAL);
-  horzScrollBar->SetMinSize( wxSize(-1, 20) );
+  horzScrollBar->SetMinSize(this->FromDIP(wxSize(-1, 20) ));
   horzScrollBar->SetScrollbar(0, 100, 60001, 100);    // Scroll units are ms.
   sizer->Add(horzScrollBar, 1, wxGROW);
 
@@ -440,7 +440,7 @@ void GesturalScorePage::initWidgets()
 
   scrLowerOffset = new wxScrollBar(lowerPanel, IDS_LOWER_OFFSET, wxDefaultPosition,
     wxDefaultSize, wxSB_VERTICAL);
-  scrLowerOffset->SetMinSize( wxSize(20, -1) );
+  scrLowerOffset->SetMinSize(this->FromDIP(wxSize(20, -1) ));
   scrLowerOffset->SetScrollbar(0, 1, 100, 1);
   sizer->Add(scrLowerOffset, 0, wxGROW);
 

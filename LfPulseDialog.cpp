@@ -132,12 +132,12 @@ void LfPulseDialog::initWidgets()
     topSizer->Add(label, 0, wxALL, 5);
 
     scrParam[i] = new wxScrollBar(this, IDS_FIRST_PARAM + i);
-    scrParam[i]->SetMinSize( wxSize(100, wxDefaultCoord) );    // Set a fixed size
+    scrParam[i]->SetMinSize(this->FromDIP(wxSize(100, wxDefaultCoord) ));    // Set a fixed size
     scrParam[i]->SetScrollbar(0, 1, 101, 1, false);
     topSizer->Add(scrParam[i], 1, wxALL, 5);
 
     labParam[i] = new wxStaticText(this, IDL_FIRST_PARAM + i, "0.00");
-    labParam[i]->SetMinSize( wxSize(50, wxDefaultCoord) );    // Set a fixed size
+    labParam[i]->SetMinSize(this->FromDIP(wxSize(50, wxDefaultCoord) ));    // Set a fixed size
     topSizer->Add(labParam[i], 0, wxALL, 5);
   }
 
@@ -146,7 +146,7 @@ void LfPulseDialog::initWidgets()
   // ****************************************************************
 
   lfPulsePicture = new LfPulsePicture(this);
-  lfPulsePicture->SetMinSize( wxSize(250, 200) );
+  lfPulsePicture->SetMinSize(this->FromDIP(wxSize(250, 200) ));
 
   bottomSizer->Add(lfPulsePicture, 0, wxALL | wxGROW, 5);
 

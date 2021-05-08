@@ -147,7 +147,7 @@ void AnnotationDialog::initWidgets()
   // Create the table grid.
   // ****************************************************************
 
-  grid = new wxGrid(this, IDG_GRID, wxDefaultPosition, wxSize(250, 350));
+  grid = new wxGrid(this, IDG_GRID, wxDefaultPosition, this->FromDIP(wxSize(250, 350)));
   grid->CreateGrid(NUM_ROWS, NUM_COLS);
 
   grid->DisableDragColSize();

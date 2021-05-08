@@ -285,7 +285,7 @@ void VocalTractDialog::initWidgets()
   openGlArgs.PlatformDefaults().Defaults().RGBA().DoubleBuffer().Depth(24).EndList(); // Depth(32) causes display error. Possible bug?
   picVocalTract = new VocalTractPicture(this, data->vocalTract, openGlArgs, this);
   
-  picVocalTract->SetMinSize( wxSize(300, 300) );
+  picVocalTract->SetMinSize(this->FromDIP(wxSize(300, 300) ));
 
   picVocalTract->showControlPoints = true;
   picVocalTract->showCenterLine = false;
@@ -297,7 +297,7 @@ void VocalTractDialog::initWidgets()
   // ****************************************************************
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
-  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, wxSize(20, 20));
+  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, this->FromDIP(wxSize(20, 20)));
   sizer->Add(showHideControlsButton, 0, wxALL, 2);
 
   line = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
@@ -340,7 +340,7 @@ void VocalTractDialog::initWidgets()
   {
     scrTongueSide[i] = new wxScrollBar(controlPanel, IDS_TONGUE_SIDE_ELEVATION_0 + i);
     scrTongueSide[i]->SetScrollbar(0, 1, NUM_SCROLLBAR_STEPS, 1);
-    labTongueSide[i] = new wxStaticText(controlPanel, wxID_ANY, "0", wxDefaultPosition, wxSize(50, -1));
+    labTongueSide[i] = new wxStaticText(controlPanel, wxID_ANY, "0", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   }
 
   label = new wxStaticText(controlPanel, wxID_ANY, "");   // A dummy label
@@ -457,7 +457,7 @@ void VocalTractDialog::initWidgets()
   this->SetMinSize(minSizeWithControls);
 
   // Set the size to start up with.
-  picVocalTract->SetMinSize(wxSize(400, 400));
+  picVocalTract->SetMinSize(this->FromDIP(wxSize(400, 400)));
   topLevelSizer->Fit(this);
 }
 

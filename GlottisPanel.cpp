@@ -203,7 +203,7 @@ void GlottisPanel::initWidgets()
     derivedParamSizer->Add(label, 0, wxALL, 2);
 
     labDerivedParam[i] = new wxStaticText(this, IDL_DERIVED_PARAM_0 + i, "xx");
-    labDerivedParam[i]->SetMinSize( wxSize(55, -1) );
+    labDerivedParam[i]->SetMinSize(this->FromDIP(wxSize(55, -1) ));
     derivedParamSizer->Add(labDerivedParam[i], 0, wxALL, 2);
   }
 
@@ -222,11 +222,11 @@ void GlottisPanel::initWidgets()
 
     scrControlParam[i] = new wxScrollBar(this, IDS_CONTROL_PARAM_0 + i);
     scrControlParam[i]->SetScrollbar(0, 1, NUM_SCROLL_STEPS + 1, 1);
-    scrControlParam[i]->SetMinSize( wxSize(120, -1) );
+    scrControlParam[i]->SetMinSize(this->FromDIP(wxSize(120, -1) ));
     controlParamSizer->Add(scrControlParam[i], 0, wxALL, 5);
 
     labControlParam[i] = new wxStaticText(this, IDL_CONTROL_PARAM_0 + i, "xx");
-    labControlParam[i]->SetMinSize( wxSize(55, -1) );
+    labControlParam[i]->SetMinSize(this->FromDIP(wxSize(55, -1) ));
     controlParamSizer->Add(labControlParam[i], 0, wxALL, 5);
   }
 
@@ -237,7 +237,7 @@ void GlottisPanel::initWidgets()
 
   lstShape = new wxComboBox(this, IDL_SETTINGS, wxEmptyString, wxDefaultPosition, 
     wxDefaultSize, 0, 0, wxCB_READONLY | wxCB_SORT);
-  lstShape->SetMinSize( wxSize(100, -1) );
+  lstShape->SetMinSize(this->FromDIP(wxSize(100, -1) ));
   settingSizer1->Add(lstShape, 0, wxALL, 5);
 
   button = new wxButton(this, IDB_SAVE_AS_SELECTED, "Save as selected");
@@ -271,7 +271,7 @@ void GlottisPanel::initWidgets()
 
     txtStaticParam[i] = new wxTextCtrl(this, IDT_STATIC_PARAM_0 + i, "", wxDefaultPosition,
       wxDefaultSize, wxTE_PROCESS_ENTER);
-    txtStaticParam[i]->SetMinSize( wxSize(60, -1) );
+    txtStaticParam[i]->SetMinSize(this->FromDIP(wxSize(60, -1) ));
     staticParamSizer->Add(txtStaticParam[i], 0, wxALL, 3);
     
     // Connect the lost-focus-event to the event handler

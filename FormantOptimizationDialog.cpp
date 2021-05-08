@@ -92,7 +92,7 @@ void FormantOptimizationDialog::initWidgets()
   topLevelSizer->Add(label, 0, wxALL, 3);
   topLevelSizer->AddSpacer(10);
 
-  txtFormants = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(300, -1));
+  txtFormants = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(300, -1)));
   topLevelSizer->Add(txtFormants, 0, wxALL, 3);
 
   // ****************************************************************
@@ -122,7 +122,7 @@ void FormantOptimizationDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Max. contour displacement:");
   horizSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  txtMaxDisplacement = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(50, -1));
+  txtMaxDisplacement = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   horizSizer->Add(txtMaxDisplacement, 0, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, "mm");
@@ -139,7 +139,7 @@ void FormantOptimizationDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Min. cross-sectional area:");
   horizSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  txtMinArea = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(50, -1));
+  txtMinArea = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   horizSizer->Add(txtMinArea, 0, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, "mm^2");
@@ -171,7 +171,7 @@ void FormantOptimizationDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Release area:");
   horizSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  txtReleaseArea = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(50, -1));
+  txtReleaseArea = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   horizSizer->Add(txtReleaseArea, 0, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, "mm^2 (for consonants)");
@@ -188,7 +188,7 @@ void FormantOptimizationDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Context vowel:");
   horizSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  txtContextVowel = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(50, -1));
+  txtContextVowel = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   horizSizer->Add(txtContextVowel, 0, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, "(for consonants)");

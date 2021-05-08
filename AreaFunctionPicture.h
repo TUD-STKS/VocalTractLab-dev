@@ -74,6 +74,11 @@ private:
 private:
   void OnMouseEvent(wxMouseEvent &event);
 
+
+private:
+	// Line width of the pen used for drawing
+	int lineWidth{ this->FromDIP(1) };
+	
   // ****************************************************************************
   // Declare the event table right at the end
   // ****************************************************************************

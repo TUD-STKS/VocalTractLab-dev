@@ -147,23 +147,23 @@ void SpectrumPicture::draw(wxDC &dc)
   if (showPhase)
   {
     double y[5];
-    wxPen linePen(*wxLIGHT_GREY, 1, wxPENSTYLE_SHORT_DASH);
-
-    dc.SetPen(*wxBLACK_PEN);
+    wxPen linePen(*wxLIGHT_GREY, lineWidth, wxPENSTYLE_SHORT_DASH);
+    wxPen blackPen(*wxBLACK, lineWidth);
+    dc.SetPen(blackPen);
     dc.DrawLine(graphX + graphW, graphY, graphX + graphW, graphY + graphH);
 
     for (i=0; i < 5; i++) 
     { 
       y[i] = graphY + graphH - 1 - 0.25*graphH*i; 
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(blackPen);
       dc.DrawLine(graphX + graphW, (int)y[i], graphX + graphW + 6, (int)y[i]);
       
       dc.SetPen(linePen);
       dc.DrawLine(graphX, (int)y[i], graphX + graphW - 1, (int)y[i]);
     }
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(blackPen);
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
     dc.DrawText("Pi",    graphX + graphW + 8, y[4] + 1);
@@ -254,7 +254,7 @@ void SpectrumPicture::draw(wxDC &dc)
         int i;
         int x, y;
 
-        wxPen dashedPen(*wxBLACK, 1, wxPENSTYLE_DOT);
+        wxPen dashedPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH);
         dc.SetPen(dashedPen);
         dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
@@ -494,7 +494,7 @@ void SpectrumPicture::draw(wxDC &dc)
 
 void SpectrumPicture::paintContinualSpectrum(wxDC &dc, ComplexSignal *spectrum, double ampFactor, wxColor color)
 {
-  const int LINE_WIDTH = 1;   // = 1
+  const int LINE_WIDTH = lineWidth;   // = 1
   int i;
   int graphX, graphY, graphW, graphH;
   double freq;
@@ -638,7 +638,7 @@ void SpectrumPicture::paintContinualSpectrum(wxDC &dc, ComplexSignal *spectrum, 
 
 void SpectrumPicture::paintDiscreteSpectrum(wxDC &dc, ComplexSignal *spectrum, double ampFactor, wxColor color)
 {
-  const int LINE_WIDTH = 1; // 3;
+  const int LINE_WIDTH = lineWidth; // 3;
   int graphX, graphY, graphW, graphH;
   int x, y;
   int i;

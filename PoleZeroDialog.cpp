@@ -170,7 +170,7 @@ void PoleZeroDialog::initWidgets()
   // ****************************************************************
 
   poleZeroPlot = new PoleZeroPlot(this);
-  poleZeroPlot->SetMinSize( wxSize(350, 500) );
+  poleZeroPlot->SetMinSize(this->FromDIP(wxSize(350, 500) ));
 
   topLevelSizer->Add(poleZeroPlot, 1, wxALL, 3);
 
@@ -186,13 +186,13 @@ void PoleZeroDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Poles");
   sizer->Add(label, 0, wxALL, 3);
 
-  labPoleLocations = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxSize(80, 150));
+  labPoleLocations = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(80, 150)));
   sizer->Add(labPoleLocations, 0, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, "Zeros");
   sizer->Add(label, 0, wxALL, 3);
 
-  labZeroLocations = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxSize(80, 150));
+  labZeroLocations = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(80, 150)));
   sizer->Add(labZeroLocations, 0, wxALL, 3);
 
   // ... and a check box and buttons

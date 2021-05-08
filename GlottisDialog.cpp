@@ -182,7 +182,7 @@ void GlottisDialog::initWidgets()
   // The notebook pages are wxScrolledWindows, so that
   // a (vertical) scroll bar is provided automatically if needed.
 
-  notebook->SetMinSize(wxSize(400, 600));
+  notebook->SetMinSize(this->FromDIP(wxSize(400, 600)));
 
   // ****************************************************************
   // Init the top-level sizer and set it for this dialog

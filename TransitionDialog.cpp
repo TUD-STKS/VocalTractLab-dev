@@ -238,7 +238,7 @@ void TransitionDialog::initWidgets()
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   lstConsonant = new wxComboBox(this, IDL_CONSONANT, "", wxDefaultPosition, 
-    wxSize(150, -1), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+      this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
   lineSizer->Add(lstConsonant, 0, wxALL, 3);
 
   button = new wxButton(this, IDB_UPDATE_LISTS, "Update lists");
@@ -259,12 +259,12 @@ void TransitionDialog::initWidgets()
   lineSizer->Add(radFixedVowel, 0, wxALL | wxALIGN_CENTER, 3);
 
   lstVowel = new wxComboBox(this, IDL_VOWEL, "", wxDefaultPosition, 
-    wxSize(100, -1), wxArrayString(), wxCB_DROPDOWN);
+      this->FromDIP(wxSize(100, -1)), wxArrayString(), wxCB_DROPDOWN);
 //  | wxCB_READONLY);  // When read-only is set, the box is case-INsensitive !!
   lineSizer->Add(lstVowel, 0, wxALL, 3);
 
   labVowelParams = new wxStaticText(this, IDL_VOWEL_PARAMS, "for a=...  b=...", 
-    wxDefaultPosition, wxSize(160, -1));
+    wxDefaultPosition, this->FromDIP(wxSize(160, -1)));
   lineSizer->Add(labVowelParams, 0, wxALL | wxALIGN_CENTER, 3);
 
   topLevelSizer->Add(lineSizer);
@@ -286,11 +286,11 @@ void TransitionDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "a: ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  scrAlpha = new wxScrollBar(this, IDS_ALPHA, wxDefaultPosition, wxSize(180, -1), wxSB_HORIZONTAL);
+  scrAlpha = new wxScrollBar(this, IDS_ALPHA, wxDefaultPosition, this->FromDIP(wxSize(180, -1)), wxSB_HORIZONTAL);
   scrAlpha->SetScrollbar(0, 1, 1000, 1, true);
   lineSizer->Add(scrAlpha, 0, wxALL, 3);
 
-  labAlpha = new wxStaticText(this, IDL_ALPHA, "xx", wxDefaultPosition, wxSize(30, -1));
+  labAlpha = new wxStaticText(this, IDL_ALPHA, "xx", wxDefaultPosition, this->FromDIP(wxSize(30, -1)));
   lineSizer->Add(labAlpha, 0, wxALL | wxALIGN_CENTER, 3);
 
   topLevelSizer->Add(lineSizer);
@@ -303,11 +303,11 @@ void TransitionDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "b: ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  scrBeta = new wxScrollBar(this, IDS_BETA, wxDefaultPosition, wxSize(180, -1), wxSB_HORIZONTAL);
+  scrBeta = new wxScrollBar(this, IDS_BETA, wxDefaultPosition, this->FromDIP(wxSize(180, -1)), wxSB_HORIZONTAL);
   scrBeta->SetScrollbar(0, 1, 1000, 1, true);
   lineSizer->Add(scrBeta, 0, wxALL, 3);
 
-  labBeta = new wxStaticText(this, IDL_BETA, "xx", wxDefaultPosition, wxSize(30, -1));
+  labBeta = new wxStaticText(this, IDL_BETA, "xx", wxDefaultPosition, this->FromDIP(wxSize(30, -1)));
   lineSizer->Add(labBeta, 0, wxALL | wxALIGN_CENTER, 3);
   
   topLevelSizer->Add(lineSizer);
@@ -328,7 +328,7 @@ void TransitionDialog::initWidgets()
   scrTransitionPos->SetScrollbar(0, 1, 1000, 1, true);
   lineSizer->Add(scrTransitionPos, 2, wxALL, 3);
 
-  labTransitionPos = new wxStaticText(this, IDL_TRANSITION_POS, "xx", wxDefaultPosition, wxSize(40, -1));
+  labTransitionPos = new wxStaticText(this, IDL_TRANSITION_POS, "xx", wxDefaultPosition, this->FromDIP(wxSize(40, -1)));
   lineSizer->Add(labTransitionPos, 0, wxALL | wxALIGN_CENTER, 3);
 
   topLevelSizer->Add(lineSizer, 0, wxEXPAND);
@@ -347,7 +347,7 @@ void TransitionDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, " at area of ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  txtMinArea = new wxTextCtrl(this, IDE_MIN_AREA, "", wxDefaultPosition, wxSize(40, -1), wxTE_PROCESS_ENTER);
+  txtMinArea = new wxTextCtrl(this, IDE_MIN_AREA, "", wxDefaultPosition, this->FromDIP(wxSize(40, -1)), wxTE_PROCESS_ENTER);
 //  txtMinArea->Connect(-1, wxEVT_KILL_FOCUS, wxFocusEventHandler(TransitionDialog::OnMinAreaLostFocus), NULL, this);
   lineSizer->Add(txtMinArea, 0, wxALL, 3);
 

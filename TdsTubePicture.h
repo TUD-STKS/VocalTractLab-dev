@@ -55,6 +55,7 @@ public:
 
 private:
   wxWindow *updateEventReceiver;
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Event handlers.

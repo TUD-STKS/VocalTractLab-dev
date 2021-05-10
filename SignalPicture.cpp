@@ -25,13 +25,6 @@
 #include "Backend/Dsp.h"
 
 
-static const wxPen trackPen[Data::NUM_TRACKS] = 
-{
-  *wxBLACK_PEN,
-  wxPen( wxColor(0, 190, 0) ),
-  *wxRED_PEN
-};
-
 // ****************************************************************************
 // IDs.
 // ****************************************************************************
@@ -167,12 +160,12 @@ void SignalPicture::drawSelectionMark(wxDC &dc, int x, int y1, int y2, bool isLe
 {
   wxPen oldPen = dc.GetPen();
   
-  dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+  dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
   dc.DrawLine(x, y1, x, y2);
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxBLACK_BRUSH);
-  const int W = 8;
+  const int W = this->FromDIP(8);
   
   if (isLeftMark)
   {
@@ -234,7 +227,7 @@ void SignalPicture::paintUpperOscillogram(wxDC &dc, int w, int h)
   // Horizontal center line
   if (data->showSpectrogramText) 
   { 
-    wxPen grayPen( wxColor(240, 240, 240) );
+    wxPen grayPen( wxColor(240, 240, 240), lineWidth );
     dc.SetPen(grayPen);
     dc.DrawLine(zeroX, h/2, w-1, h/2); 
   }
@@ -258,7 +251,7 @@ void SignalPicture::paintUpperOscillogram(wxDC &dc, int w, int h)
         x2 = w-1;
       }
 
-      dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_TRANSPARENT));    // no pen
+      dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_TRANSPARENT));    // no pen
       dc.SetBrush( wxBrush(wxColor(220, 220, 220)) );
       dc.DrawRectangle(x1, 0, x2 - x1, h/4);
       dc.DrawRectangle(x1, 3*h/4, x2 - x1, h/4);

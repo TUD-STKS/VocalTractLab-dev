@@ -1054,11 +1054,8 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
   if (event.GetInt() == UPDATE_PICTURES)
   {
     gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
     signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
     timeAxisPicture->Refresh();
-    timeAxisPicture->Update();
     // Of the controls, update only the time mark.
     labMark->SetLabel(wxString::Format("%2.3f s", data->gesturalScoreMark_s));
   }
@@ -1079,12 +1076,12 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
 
     // Refreshing of pictures is not included in updateWidgets() currently !!!
     gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
     signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
     timeAxisPicture->Refresh();
-    timeAxisPicture->Update();
   }
+
+  // Update this window and all of its children in a single pass	
+  this->Update();
 }
 
 

@@ -90,6 +90,7 @@ private:
   int menuX, menuY;
   int lastMx, lastMy;
   bool moveBorder;
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Private functions.

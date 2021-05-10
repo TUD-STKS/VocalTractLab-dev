@@ -73,6 +73,7 @@ private:
   int lastMx, lastMy;
   bool moveBorder;
   bool moveTarget;
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Private functions.

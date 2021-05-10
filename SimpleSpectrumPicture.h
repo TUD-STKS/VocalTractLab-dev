@@ -55,6 +55,7 @@ private:
   Graph timeSignalGraph;
   Graph spectrumGraph;
   Graph *graph;    // One of the two graphs above
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Private functions.

@@ -37,9 +37,9 @@ END_EVENT_TABLE()
 
 SimpleSpectrumPicture::SimpleSpectrumPicture(wxWindow *parent) : BasicPicture(parent)
 {
-  const int LEFT_MARGIN = 55;
+  const int LEFT_MARGIN = this->FromDIP(55);
   const int RIGHT_MARGIN = 0;
-  const int BOTTOM_MARGIN = 25;
+  const int BOTTOM_MARGIN = this->FromDIP(25);
   const int TOP_MARGIN = 0;
 
   data = Data::getInstance();
@@ -180,7 +180,7 @@ void SimpleSpectrumPicture::drawFunction(wxDC &dc)
     double w;
     double value;
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
     for (i=0; i < graphW; i++)
     {
@@ -215,7 +215,7 @@ void SimpleSpectrumPicture::drawFunction(wxDC &dc)
     double w;
     double value;
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
     for (i=0; i < graphW; i++)
     {

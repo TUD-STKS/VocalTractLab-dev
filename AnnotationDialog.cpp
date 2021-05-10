@@ -153,8 +153,8 @@ void AnnotationDialog::initWidgets()
   grid->DisableDragColSize();
   grid->DisableDragRowSize();
 
-  grid->SetRowLabelSize(25);    // Width of the row labels
-  grid->SetColSize(0, 130);     // Width of columns with the keys
+  grid->SetRowLabelSize(this->FromDIP(25));    // Width of the row labels
+  grid->SetColSize(0, this->FromDIP(130));     // Width of columns with the keys
   grid->SetSelectionMode(wxGrid::wxGridSelectCells);
 
 
@@ -191,7 +191,7 @@ void AnnotationDialog::initWidgets()
   grid->SetScrollRate(0, 5);
 
   wxSize size = grid->GetSize();
-  this->SetClientSize(size.x, 300);
+  this->SetClientSize(size.x, this->FromDIP(300));
 }
 
 

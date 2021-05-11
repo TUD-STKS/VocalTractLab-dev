@@ -93,7 +93,7 @@ void GlottisPicture::drawGeometricGlottis(wxDC &dc)
 
   // Mark the 3D-bounding box with gray lines
 
-  dc.SetPen(*wxLIGHT_GREY_PEN);
+  dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
   dc.SetBrush(wxBrush(*wxBLACK, wxBRUSHSTYLE_TRANSPARENT));
 
   Point3d p1[4] =
@@ -196,7 +196,7 @@ void GlottisPicture::drawGeometricGlottis(wxDC &dc)
 
   // Draw the outline of the glottis
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   drawLines(dc, NUM_EDGE_POINTS, lowerLeftEdge);
   drawLines(dc, NUM_EDGE_POINTS, lowerRightEdge);
   drawLines(dc, NUM_EDGE_POINTS, upperLeftEdge);
@@ -266,7 +266,7 @@ void GlottisPicture::drawGeometricGlottis(wxDC &dc)
 
   // Draw the outline of the chink
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   drawLines(dc, NUM_CHINK_POINTS, chinkTop);
   drawLine(dc, -endX[1], 0.0, -length, chinkTop[0].x, chinkTop[0].y, chinkTop[0].z);
@@ -307,7 +307,7 @@ void GlottisPicture::drawTwoMassModel(wxDC &dc)
 
   // Mark the 3D-bounding box with gray lines
 
-  dc.SetPen(*wxLIGHT_GREY_PEN);
+  dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
   dc.SetBrush( wxBrush(*wxBLACK, wxBRUSHSTYLE_TRANSPARENT) );
   
   Point3d p1[4] =
@@ -411,7 +411,7 @@ void GlottisPicture::drawTwoMassModel(wxDC &dc)
 
   // Draw left lower mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, lowerFrontalPlane, -W-x[0], 0.0, 0.0);
@@ -420,7 +420,7 @@ void GlottisPicture::drawTwoMassModel(wxDC &dc)
 
   // Draw right lower mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, lowerFrontalPlane, x[0], 0.0, 0.0);
@@ -469,7 +469,7 @@ void GlottisPicture::drawTwoMassModel(wxDC &dc)
 
   // Draw left upper mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, upperFrontalPlane, -W-x[1], 0.0, 0.0);
@@ -478,7 +478,7 @@ void GlottisPicture::drawTwoMassModel(wxDC &dc)
 
   // Draw right upper mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, upperFrontalPlane, x[1], 0.0, 0.0);
@@ -518,7 +518,7 @@ void GlottisPicture::drawTriangularGlottis(wxDC &dc)
 
   // Mark the 3D-bounding box with gray lines
 
-  dc.SetPen(*wxLIGHT_GREY_PEN);
+  dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
   dc.SetBrush( wxBrush(*wxBLACK, wxBRUSHSTYLE_TRANSPARENT) );
   
   Point3d p1[4] =
@@ -676,7 +676,7 @@ void GlottisPicture::drawTriangularGlottis(wxDC &dc)
 
   // Draw left lower mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, lowerFrontalPlane, -W-backX[0], 0.0, 0.0);
@@ -685,7 +685,7 @@ void GlottisPicture::drawTriangularGlottis(wxDC &dc)
 
   // Draw right lower mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, lowerFrontalPlane, backX[0], 0.0, 0.0);
@@ -751,7 +751,7 @@ void GlottisPicture::drawTriangularGlottis(wxDC &dc)
 
   // Draw left upper mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, upperFrontalPlane, -W-backX[1], 0.0, 0.0);
@@ -760,7 +760,7 @@ void GlottisPicture::drawTriangularGlottis(wxDC &dc)
 
   // Draw right upper mass
   
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxWHITE_BRUSH);
 
   drawPolygon(dc, 4, upperFrontalPlane, backX[1], 0.0, 0.0);

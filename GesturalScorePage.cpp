@@ -382,7 +382,7 @@ void GesturalScorePage::initWidgets()
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
   timeAxisPicture = new TimeAxisPicture(upperPanel);
-  timeAxisPicture->SetMinSize(this->FromDIP(wxSize(-1, 25) ));
+  timeAxisPicture->SetMinSize(wxSize(-1, timeAxisPicture->getMinHeight()) );
   sizer->Add(timeAxisPicture, 1, wxGROW);
 
   sizer->AddSpacer(this->FromDIP(20));
@@ -689,6 +689,8 @@ void GesturalScorePage::updateWidgets()
     labValue->SetLabel("Value:");
   }
 
+  // Reset the size of the time axis picture to the required height
+  timeAxisPicture->SetMinSize(wxSize(-1, timeAxisPicture->getMinHeight()));
 }
 
 

@@ -417,7 +417,7 @@ void GesturalScorePage::initWidgets()
 
   // Add a dummy label as spacer at the left.
   label =new wxStaticText(lowerPanel, wxID_ANY, "");
-  label->SetMinSize(this->FromDIP(wxSize(Data::LEFT_SCORE_MARGIN, -1) ));
+  label->SetMinSize(wxSize(Data::getInstance()->LEFT_SCORE_MARGIN, -1) );
   sizer->Add(label, 0, wxGROW);
 
   horzScrollBar = new wxScrollBar(lowerPanel, IDS_HORZ_SCROLL_BAR, wxDefaultPosition,

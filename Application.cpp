@@ -53,7 +53,7 @@ bool Application::OnInit()
 	fstream file;
 	file.open("stderr.log", ios::out);
 	cerr.rdbuf(file.rdbuf());	
-	freopen( "stderr.log", "w", stderr );
+	auto f = freopen( "stderr.log", "w", stderr );
   #endif
 
   // Set the current locale to UTF-8 so "special" characters (e.g. ä, é) are 

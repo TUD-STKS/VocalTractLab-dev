@@ -239,7 +239,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   // ****************************************************************
   // ****************************************************************
 
-  const int LEFT_MARGIN = this->FromDIP(Data::LEFT_SCORE_MARGIN);
+  int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
   double startTime_s = data->gsTimeAxisGraph->abscissa.reference;
   double duration_s  = data->gsTimeAxisGraph->abscissa.positiveLimit;
   

@@ -1057,13 +1057,6 @@ wxFont Graph::getFont()
   return font;
 }
 
-int Graph::getLabelHeight(const wxString& label)
-{
-    wxScreenDC dc;
-    dc.SetFont(this->getFont());
-    return dc.GetTextExtent(label).GetHeight();
-}
-
 void Graph::setFont(const wxFont& newFont)
 {
   this->font = newFont;

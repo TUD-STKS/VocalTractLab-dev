@@ -223,11 +223,13 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   {
     y = gestureRowY[i];
     h = gestureRowH[i];
+  	// Determine the width of every label, even the ones currently not visible
+    label = gs->gestures[i].name;
+    maxWidth = std::max(maxWidth, dc.GetTextExtent(label).GetWidth());
+  	// Only draw the label if it is visible
     if ((y+h >= 0) && (y < windowHeight))
     {
-      label = gs->gestures[i].name;
-      maxWidth = std::max(maxWidth, dc.GetTextExtent(label).GetWidth());
-      dc.DrawText(label, 5, y);
+      dc.DrawText(label, this->FromDIP(5), y);
     }
   }
   Data::getInstance()->LEFT_SCORE_MARGIN = maxWidth + this->FromDIP(10);

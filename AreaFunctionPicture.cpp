@@ -23,6 +23,8 @@
 #include "VocalTractDialog.h"
 #include "Data.h"
 
+#include <sstream>
+
 
 const wxBrush AreaFunctionPicture::ARTICULATOR_BRUSH[Tube::NUM_ARTICULATORS] =
 {
@@ -348,39 +350,61 @@ void AreaFunctionPicture::draw(wxDC &dc)
   if (showText)
   {
     wxString st;
+    int offsetX{ this->FromDIP(50) };
+    int offsetY{ this->FromDIP(4) };
+    int col1Width{ 0 };  // Width of the widest line in the first column
+    int gutterWidth{ this->FromDIP(5) };  // Space between the two columns of text
+    
 
     dc.SetPen(wxPen(*wxBLACK, lineWidth));
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-    st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
-    dc.DrawText(st, this->FromDIP(50), this->FromDIP(4));
+  	// Create the multi-line string for the first column and find the width of the widest line
+    std::stringstream col1;
+
+  	st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+  	col1 << st << std::endl;
 
     st = wxString::Format("Velum area: %2.3f cm^2", tract->nasalPortArea_cm2);
-    dc.DrawText(st, this->FromDIP(50), this->FromDIP(24));
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     st = wxString::Format("Curr. area: %2.3f cm^2", currentArea);
-    dc.DrawText(st, this->FromDIP(50), this->FromDIP(44));
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     st = wxString::Format("Min. area: %2.3f cm^2 at %2.1f cm", absMinArea_cm2, absMinAreaPos_cm);
-    dc.DrawText(st, this->FromDIP(50), this->FromDIP(64));
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     if (showArticulators)
     {
-      st = wxString::Format("Tongue tip sides: %2.2f", tract->param[VocalTract::TS3].x);
-      dc.DrawText(st, this->FromDIP(50), this->FromDIP(84));
+        st = wxString::Format("Tongue tip sides: %2.2f", tract->param[VocalTract::TS3].x);
+        col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+        col1 << st << std::endl;
     }
 
+    // Draw the first column
+    dc.DrawText(col1.str(), offsetX, offsetY);
+  	
+    // Create the multi-line string for the second column
+    std::stringstream col2;
     if (picVocalTract->showCenterLine)
     {
-      st = wxString::Format("Slice pos.: %2.2f cm", picVocalTract->cutPlanePos_cm);
-      dc.DrawText(st, this->FromDIP(220), this->FromDIP(4));
+        st = wxString::Format("Slice pos.: %2.2f cm", picVocalTract->cutPlanePos_cm);
+        col2 << st << std::endl;
     }
-
+  	
     st = wxString::Format("Velum pos.: %2.2f cm", tract->nasalPortPos_cm);
-    dc.DrawText(st, this->FromDIP(220), this->FromDIP(24));
-
+    col2 << st << std::endl;
+    
     st = wxString::Format("Teeth pos.: %2.2f cm", tract->incisorPos_cm);
-    dc.DrawText(st, this->FromDIP(220), this->FromDIP(44));
+    col2 << st << std::endl;
+
+     // Draw the second column
+    dc.DrawText(col2.str(), offsetX + col1Width + gutterWidth, offsetY);
+    
 
     // Draw the teeth position
     x[0] = graph->getXPos(tract->incisorPos_cm);

@@ -39,6 +39,8 @@ public:
   TimeAxisPicture(wxWindow *parent);
   virtual void draw(wxDC &dc);
 
+  // Returns the minimum height so that the axis with labels fits 
+  int getMinHeight();
 private:
   Graph *graph;
 };

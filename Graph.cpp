@@ -268,7 +268,7 @@ void Graph::paintAbscissa(wxDC &dc)
 
   dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
   dc.SetBackgroundMode(wxTRANSPARENT);
-  dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+  dc.SetFont(font);
 
   dc.GetTextExtent(unitString, &w, &h);
   int unitLengthInPixels = w + 10;
@@ -1050,6 +1050,23 @@ double Graph::getAbsYValue(int yPos)
   }
 
   return absYValue;
+}
+
+wxFont Graph::getFont()
+{
+  return font;
+}
+
+int Graph::getLabelHeight(const wxString& label)
+{
+    wxScreenDC dc;
+    dc.SetFont(this->getFont());
+    return dc.GetTextExtent(label).GetHeight();
+}
+
+void Graph::setFont(const wxFont& newFont)
+{
+  this->font = newFont;
 }
 
 // ****************************************************************************

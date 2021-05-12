@@ -180,8 +180,7 @@ public:
   double getAbsYValue(int yPos);
 
   wxFont getFont();
-  int getLabelHeight(const wxString& label = wxString("0"));
-	
+  	
   void setFont(const wxFont& newFont);
 	
 

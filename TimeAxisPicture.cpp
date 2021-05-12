@@ -34,8 +34,8 @@ TimeAxisPicture::TimeAxisPicture(wxWindow *parent) : BasicPicture(parent)
   // ****************************************************************
 
   graph = Data::getInstance()->gsTimeAxisGraph;
-  const int labelHeight = graph->getLabelHeight();
-  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, labelHeight + this->FromDIP(10), 0);
+  const int labelHeight = graph->getFont().GetPixelSize().GetHeight();
+  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, 1.5 * labelHeight , 0);
   graph->abscissaAtBottom = false;
   graph->initAbscissa(PQ_TIME, 0.0, 0.001,
     0.0, 0.0, 0.0, 0.1, 10.0, 1.2,
@@ -50,8 +50,8 @@ TimeAxisPicture::TimeAxisPicture(wxWindow *parent) : BasicPicture(parent)
 void TimeAxisPicture::draw(wxDC &dc)
 {
   // Re-init graph because the margin may have changed
-  const int labelHeight = graph->getLabelHeight();
-  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, labelHeight + this->FromDIP(10), 0);
+  const int labelHeight = graph->getFont().GetPixelSize().GetHeight();
+  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, 1.5 * labelHeight, 0);
 	
   int graphX, graphY, graphW, graphH;
   graph->getDimensions(graphX, graphY, graphW, graphH);

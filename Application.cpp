@@ -43,6 +43,16 @@ IMPLEMENT_APP(Application)
 
 bool Application::OnInit()
 {
+  #ifdef __linux__
+	// On Linux (or at least GTK), a ton of warnings are generated and 
+	// printed to the terminal. This is because of a well-known 
+	// hyper-sensitivity of GTK and thus simplest way to avoid flooding 
+	// the terminal is to redirect stderr to a log file.
+	fstream file;
+	file.open("stderr.log", ios::out);
+	cerr.rdbuf(file.rdbuf());	
+	freopen( "stderr.log", "w", stderr );
+  #endif
   createConsole();
   wxPrintf("=== Console output for VocalTractLab 2.3 (built %s) ===\n\n", __DATE__);
 

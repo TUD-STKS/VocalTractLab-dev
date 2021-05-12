@@ -195,7 +195,7 @@ private:
   int leftMargin, rightMargin, bottomMargin, topMargin;
   wxWindow *control;
   // Width of the pen used for drawing
-  int lineWidth{ 1 };
+  int lineWidth{ wxWindow::FromDIP(1, nullptr) };
   // A grey that is lighter than wxLIGHT_GREY for drawing more subtle background lines
   wxColor veryLightGrey{ 220, 220, 220 };
   wxFont font{ 9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };

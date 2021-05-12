@@ -104,9 +104,6 @@ VocalTractPicture::VocalTractPicture(wxWindow *parent, VocalTract *vocalTract,
   posterCenterX_cm = 0.0;
   posterCenterY_cm = 0.0;
   posterScalingFactor = 1.0;
-
-  // Display options
-
   showPalatogramDivision = false;
   showPoster = true;
   posterEditing = false;
@@ -138,8 +135,8 @@ VocalTractPicture::~VocalTractPicture()
 
 void VocalTractPicture::projection2D()
 {
-  int width = this->GetSize().x;
-  int height = this->GetSize().y;
+  int width = this->GetSize().x * GetContentScaleFactor();
+  int height = this->GetSize().y * GetContentScaleFactor();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -158,8 +155,8 @@ void VocalTractPicture::projection2D()
 
 void VocalTractPicture::projection3D()
 {
-  int width = this->GetSize().x;
-  int height = this->GetSize().y;
+  int width = this->GetSize().x * GetContentScaleFactor();
+  int height = this->GetSize().y * GetContentScaleFactor();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -189,8 +186,8 @@ void VocalTractPicture::drawTestImage()
 
   projection2D();
 
-  int w = this->GetSize().x;
-  int h = this->GetSize().y;
+  int w = this->GetSize().x * GetContentScaleFactor();
+  int h = this->GetSize().y * GetContentScaleFactor();
 
 
   // White background
@@ -267,6 +264,8 @@ void VocalTractPicture::display()
   {
     int pictureWidth, pictureHeight;
     this->GetSize(&pictureWidth, &pictureHeight);
+    pictureWidth *= GetContentScaleFactor();
+    pictureHeight *= GetContentScaleFactor();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -432,7 +431,7 @@ void VocalTractPicture::display()
       glEnd();
     }
 
-    // Die aktuelle Schnittfläche einzeichnen ***********************
+    // Die aktuelle SchnittflÃ¤che einzeichnen ***********************
 
     glDisable(GL_DEPTH_TEST);
 
@@ -681,8 +680,8 @@ void VocalTractPicture::display()
 
 
 // ****************************************************************************
-// Gibt zu den übergebenen Bildschirmkoordinaten die Objektkoordinaten zurück, 
-// die auf der übergebenen Ebene liegen.
+// Gibt zu den Ã¼bergebenen Bildschirmkoordinaten die Objektkoordinaten zurÃ¼ck, 
+// die auf der Ã¼bergebenen Ebene liegen.
 // ****************************************************************************
 
 Point3D VocalTractPicture::getObjectCoordinates(int screenX, int screenY, 
@@ -711,7 +710,7 @@ Point3D VocalTractPicture::getObjectCoordinates(int screenX, int screenY,
   // Bei der Parallelprojektion (2D) ist P.x=Q.x und P.y=Q.y
   if (orthogonalProjection) { P.set(Q.x, Q.y, 0.0); }
 
-  // Die Punkte P und Q rückwärts transformieren
+  // Die Punkte P und Q rÃ¼ckwÃ¤rts transformieren
 
   double x, y, z, w;
   double *m = inverseModelViewMatrix;
@@ -744,7 +743,7 @@ Point3D VocalTractPicture::getObjectCoordinates(int screenX, int screenY,
   Point3D temp = planePoint;
   t = scalarProduct(temp - P, planeNormal) / denominator;
 
-  // Rückgabepunkt
+  // RÃ¼ckgabepunkt
 
   R = P + v*t;
   return R;
@@ -752,7 +751,7 @@ Point3D VocalTractPicture::getObjectCoordinates(int screenX, int screenY,
 
 
 // ****************************************************************************
-// Gibt den Punkt H auf dem Linienzug points[0 .. numPoints-1] zurück, der am  
+// Gibt den Punkt H auf dem Linienzug points[0 .. numPoints-1] zurÃ¼ck, der am  
 // dichtesten an dem Sichtstrahl durch (screenX, screenY) liegt.
 // ****************************************************************************
 
@@ -779,7 +778,7 @@ Point3D VocalTractPicture::getMinDistancePoint(int screenX, int screenY, Point3D
   // Bei der Parallelprojektion (2D) ist P.x=Q.x und P.y=Q.y
   if (orthogonalProjection) { P.set(Q.x, Q.y, 0.0); }
 
-  // Die Punkte P und Q rückwärts transformieren
+  // Die Punkte P und Q rÃ¼ckwÃ¤rts transformieren
 
   double x, y, z, a;
   double *m = inverseModelViewMatrix;
@@ -825,7 +824,7 @@ Point3D VocalTractPicture::getMinDistancePoint(int screenX, int screenY, Point3D
 
   for (i=0; i < numPoints; i++)
   {
-    // Abstand vom Stützpunkt zum Blickpunktstrahl
+    // Abstand vom StÃ¼tzpunkt zum Blickpunktstrahl
 
     R = point[i] - P;
     s = scalarProduct(R, v) / scalarProduct(v, v);
@@ -885,9 +884,9 @@ Point3D VocalTractPicture::getMinDistancePoint(int screenX, int screenY, Point3D
 
 // ****************************************************************************
 // Setzt den Kontrollpunkt pointIndex auf die Bildschirmkoordinaten (screenX,  
-// screenY) und verändert entsprechend die betroffenen Vokaltraktparameter.
+// screenY) und verÃ¤ndert entsprechend die betroffenen Vokaltraktparameter.
 // Der Wertebereich der Parameter (und die Lage des Kontrollpunktes) wird 
-// automatisch eingeschränkt.
+// automatisch eingeschrÃ¤nkt.
 // ****************************************************************************
 
 void VocalTractPicture::setControlPoint(int pointIndex, int screenX, int screenY)
@@ -1165,7 +1164,7 @@ void VocalTractPicture::setControlPoint(int pointIndex, int screenX, int screenY
 
 
 // ****************************************************************************
-// Berechnet die Lage eines Kontrollpunktes in Objektkoordinaten in Abhängigkeit
+// Berechnet die Lage eines Kontrollpunktes in Objektkoordinaten in AbhÃ¤ngigkeit
 // von den entsprechenden Vokaltrakt-Parameterwerten.
 // ****************************************************************************
 
@@ -1342,7 +1341,9 @@ void VocalTractPicture::projection(Point3D P, double &screenX, double &screenY, 
              &sx, &sy, &sz);
 
   screenX = sx;
+  screenX /= GetContentScaleFactor();
   screenY = viewportHeight - 1 - sy;     // Die y-Koordinate auf den Kopf stellen
+  screenY /= GetContentScaleFactor();
   screenZ = sz;
 }
 
@@ -1367,7 +1368,7 @@ void VocalTractPicture::get2DRegion(double &left_cm, double &right_cm, double &b
 
 
 // ****************************************************************************
-// Schreibt die Daten zu einer Gitter-Oberfläche in eine SVG-Datei.
+// Schreibt die Daten zu einer Gitter-OberflÃ¤che in eine SVG-Datei.
 // ****************************************************************************
 
 void VocalTractPicture::addSurfaceToSVG(std::ostream &os, ::Surface *surface, int firstRib, int lastRib,
@@ -1459,7 +1460,7 @@ void VocalTractPicture::addSurfaceToSVG(std::ostream &os, ::Surface *surface, in
   
   for (i=0; i < numLines; i++)
   {
-    // Diejenige der verbleibenden Linien mit der größten Tiefe raussuchen
+    // Diejenige der verbleibenden Linien mit der grÃ¶ÃŸten Tiefe raussuchen
     index = -1;
     maxDepth = 0.0;
     for (k=0; k < numLines; k++)
@@ -1663,22 +1664,22 @@ bool VocalTractPicture::exportTractWireframeSVG(const wxString &fileName, int it
   {
     if (renderBothSides)
     {
-      // Gesamte obere Hülle
+      // Gesamte obere HÃ¼lle
       surface = &tract->surface[VocalTract::UPPER_COVER_TWOSIDE];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Gesamte untere Hülle
+      // Gesamte untere HÃ¼lle
       surface = &tract->surface[VocalTract::LOWER_COVER_TWOSIDE];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Obere Zähne
+      // Obere ZÃ¤hne
       surface = &tract->surface[VocalTract::UPPER_TEETH_TWOSIDE];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Untere Zähne
+      // Untere ZÃ¤hne
       surface = &tract->surface[VocalTract::LOWER_TEETH_TWOSIDE];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
@@ -1709,22 +1710,22 @@ bool VocalTractPicture::exportTractWireframeSVG(const wxString &fileName, int it
     }
     else
     {
-      // Gesamte obere Hülle
+      // Gesamte obere HÃ¼lle
       surface = &tract->surface[VocalTract::UPPER_COVER];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Gesamte untere Hülle
+      // Gesamte untere HÃ¼lle
       surface = &tract->surface[VocalTract::LOWER_COVER];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Obere Zähne
+      // Obere ZÃ¤hne
       surface = &tract->surface[VocalTract::UPPER_TEETH];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
 
-      // Untere Zähne
+      // Untere ZÃ¤hne
       surface = &tract->surface[VocalTract::LOWER_TEETH];
       addSurfaceToSVG(os, surface, 
         0, surface->numRibs-1, 0, surface->numRibPoints-1, minZ, maxZ, false);
@@ -1762,11 +1763,11 @@ bool VocalTractPicture::exportTractWireframeSVG(const wxString &fileName, int it
 
   if (item == -2)
   {
-    // Obere Zähne
+    // Obere ZÃ¤hne
     surface = &tract->surface[VocalTract::UPPER_TEETH_TWOSIDE];
     addSurfaceToSVG(os, surface, 0, surface->numRibs-1, 3, 3, minZ, maxZ, false);
 
-    // Untere Zähne
+    // Untere ZÃ¤hne
     surface = &tract->surface[VocalTract::LOWER_TEETH_TWOSIDE];
     addSurfaceToSVG(os, surface, 0, surface->numRibs-1, 3, 3, minZ, maxZ, false);
 
@@ -1850,7 +1851,7 @@ bool VocalTractPicture::exportTractWireframeSVG(const wxString &fileName, int it
 
   if (item == -3)
   {
-    // Obere Zähne
+    // Obere ZÃ¤hne
     surface = &tract->surface[VocalTract::UPPER_TEETH_TWOSIDE];
     addSurfaceToSVG(os, surface, 0, surface->numRibs-1, 3, 4, minZ, maxZ, false);
 
@@ -2054,7 +2055,7 @@ bool VocalTractPicture::exportCrossSectionSVG(const wxString &fileName)
      SCALE*VocalTract::PROFILE_SAMPLE_LENGTH * VocalTract::NUM_PROFILE_SAMPLES/2, 0.0, 13, 10);
   os << st;
 
-  // Horizontalen Strich dorthin malen, wo das obere das untere Profil berührt
+  // Horizontalen Strich dorthin malen, wo das obere das untere Profil berÃ¼hrt
 
   double minY = 1000.0;
   for (i=0; i < VocalTract::NUM_PROFILE_SAMPLES; i++)
@@ -2083,7 +2084,7 @@ bool VocalTractPicture::exportCrossSectionSVG(const wxString &fileName)
   sprintf(st, "</svg>%c%c", 13,10);
   os << st;
 
-  // Datei schließen ************************************************
+  // Datei schlieÃŸen ************************************************
   os.close();
 
   return true;
@@ -2123,8 +2124,8 @@ void VocalTractPicture::setProjectionMatrix3D(double fovy, double nearPlane, dou
 {
   orthogonalProjection = false;
 
-  int w = this->GetSize().x;
-  int h = this->GetSize().y;
+  int w = this->GetSize().x * GetContentScaleFactor();
+  int h = this->GetSize().y * GetContentScaleFactor();
   if (w < 1) { w = 1; }
   if (h < 1) { h = 1; }
 
@@ -2156,8 +2157,8 @@ void VocalTractPicture::setProjectionMatrix3D(double fovy, double nearPlane, dou
 
 void VocalTractPicture::setProjectionMatrix2D(double left, double right, double bottom, double top)
 {
-  int w = this->GetSize().x;
-  int h = this->GetSize().y;
+  int w = this->GetSize().x * GetContentScaleFactor();
+  int h = this->GetSize().y * GetContentScaleFactor();
 
   orthogonalProjection = true;
 
@@ -2203,7 +2204,7 @@ void VocalTractPicture::setModelViewMatrix3D()
   
   glGetDoublev(GL_MODELVIEW_MATRIX, inverseModelViewMatrix);
 
-  // Dann die Matrix für die richtige Transformationsreihenfolge ****
+  // Dann die Matrix fÃ¼r die richtige Transformationsreihenfolge ****
 
   glLoadIdentity();
 
@@ -2413,7 +2414,7 @@ void VocalTractPicture::setLights()
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
-  // Für korrekte Beleuchtung der Rückseiten
+  // FÃ¼r korrekte Beleuchtung der RÃ¼ckseiten
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 }
 
@@ -3107,7 +3108,7 @@ void VocalTractPicture::render2D()
 
   glDisable(GL_LINE_STIPPLE);
 
-  // Einige zusätzliche Punkte **************************************
+  // Einige zusÃ¤tzliche Punkte **************************************
 /*
   double yClose;
   Point3D onset, corner, F0, F1;
@@ -3621,7 +3622,7 @@ void VocalTractPicture::OnMouseChanged(wxMouseEvent &event)
     {
       if (selectedControlPoint != -1)
       {
-        setControlPoint(selectedControlPoint, mx, my);
+        setControlPoint(selectedControlPoint, mx*GetContentScaleFactor(), my*GetContentScaleFactor());
         
         // Re-calculate the vocal tract model
         tract->calculateAll();

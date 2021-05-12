@@ -160,7 +160,7 @@ void PhoneticParamsDialog::initWidgets()
     scrValue[i]->SetScrollbar(0, 1, 101, 1, true);
     lineSizer->Add(scrValue[i], 0, wxALL, 2);
 
-    labValue[i] = new wxStaticText(this, IDL_VALUE_0 + i, "0", wxDefaultPosition, this->FromDIP(wxSize(50, 20)));
+    labValue[i] = new wxStaticText(this, IDL_VALUE_0 + i, "0");
     lineSizer->Add(labValue[i], 0, wxALL, 2);
 
     topLevelSizer->Add(lineSizer, 0, wxALL, 2);

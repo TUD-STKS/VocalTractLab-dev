@@ -99,6 +99,7 @@ void Data::init(const wxString &arg0)
   // ****************************************************************
 
   wxFileName fileName(arg0);
+  fileName.Normalize();  // On Linux, the program path is passed as a relative path
   programPath = fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
   wxPrintf("The program path is %s.\n", programPath.c_str());
 

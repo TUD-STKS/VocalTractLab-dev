@@ -490,7 +490,10 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   dc.SetPen(wxPen(*wxBLACK, lineWidth));
   for (const auto& line : lines)
   {
-    dc.DrawLines(line.size(), &line[0]);
+	  if (!line.empty())
+	  {
+    		dc.DrawLines(line.size(), &line[0]);
+	  }
   }	
 
   // ****************************************************************

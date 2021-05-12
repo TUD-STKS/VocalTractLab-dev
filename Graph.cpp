@@ -232,8 +232,7 @@ void Graph::paintAbscissa(wxDC &dc)
   // ****************************************************************
   // Paint the coordinate axis.
   // ****************************************************************
-  
-  dc.SetPen(wxPen(*wxBLACK, dc.LogicalToDeviceXRel(lineWidth)));
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   if (abscissaAtBottom)
   { 
     dc.DrawLine(graphX, graphY+graphH, graphX+graphW-1, graphY+graphH);

@@ -166,7 +166,15 @@ void Application::createConsole()
   //ios::sync_with_stdio();
 
 #endif
-
 }
 
 // ****************************************************************************
+
+#ifdef __linux__
+  int Application::OnExit()
+  {
+    return fclose(stderr);
+  }
+#endif
+
+

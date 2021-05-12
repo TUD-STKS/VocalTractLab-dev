@@ -51,7 +51,7 @@ bool Application::OnInit()
 	fstream file;
 	file.open("stderr.log", ios::out);
 	cerr.rdbuf(file.rdbuf());	
-	freopen( "stderr.log", "w", stderr );
+	auto f = freopen( "stderr.log", "w", stderr );
   #endif
   createConsole();
   wxPrintf("=== Console output for VocalTractLab 2.3 (built %s) ===\n\n", __DATE__);

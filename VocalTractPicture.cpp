@@ -135,8 +135,14 @@ VocalTractPicture::~VocalTractPicture()
 
 void VocalTractPicture::projection2D()
 {
-  int width = this->GetSize().x * GetContentScaleFactor();
-  int height = this->GetSize().y * GetContentScaleFactor();
+  int width = this->GetSize().x;
+  int height = this->GetSize().y;
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  width *= GetContentScaleFactor();
+  height *= GetContentScaleFactor();
+#endif
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -155,9 +161,16 @@ void VocalTractPicture::projection2D()
 
 void VocalTractPicture::projection3D()
 {
-  int width = this->GetSize().x * GetContentScaleFactor();
-  int height = this->GetSize().y * GetContentScaleFactor();
+  int width = this->GetSize().x;
+  int height = this->GetSize().y;
 
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  width *= GetContentScaleFactor();
+  height *= GetContentScaleFactor();
+#endif
+	
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(40.0, (double)width/(double)height, 5.0, 100.0);
@@ -186,9 +199,14 @@ void VocalTractPicture::drawTestImage()
 
   projection2D();
 
-  int w = this->GetSize().x * GetContentScaleFactor();
-  int h = this->GetSize().y * GetContentScaleFactor();
-
+  int w = this->GetSize().x;
+  int h = this->GetSize().y;
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  w *= GetContentScaleFactor();
+  h *= GetContentScaleFactor();
+#endif
 
   // White background
   glColor4f(1, 1, 1, 1);
@@ -264,8 +282,12 @@ void VocalTractPicture::display()
   {
     int pictureWidth, pictureHeight;
     this->GetSize(&pictureWidth, &pictureHeight);
+#ifdef __linux__
+    // On Linux, all pixel coordinates need to be scaled by the current
+    // display scaling factor before passing them to OpenGL
     pictureWidth *= GetContentScaleFactor();
     pictureHeight *= GetContentScaleFactor();
+#endif
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -1341,10 +1363,14 @@ void VocalTractPicture::projection(Point3D P, double &screenX, double &screenY, 
              &sx, &sy, &sz);
 
   screenX = sx;
-  screenX /= GetContentScaleFactor();
   screenY = viewportHeight - 1 - sy;     // Die y-Koordinate auf den Kopf stellen
-  screenY /= GetContentScaleFactor();
   screenZ = sz;
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  screenX /= GetContentScaleFactor();
+  screenY /= GetContentScaleFactor();
+#endif
 }
 
 
@@ -2124,8 +2150,14 @@ void VocalTractPicture::setProjectionMatrix3D(double fovy, double nearPlane, dou
 {
   orthogonalProjection = false;
 
-  int w = this->GetSize().x * GetContentScaleFactor();
-  int h = this->GetSize().y * GetContentScaleFactor();
+  int w = this->GetSize().x;
+  int h = this->GetSize().y;
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  width *= GetContentScaleFactor();
+  height *= GetContentScaleFactor();
+#endif
   if (w < 1) { w = 1; }
   if (h < 1) { h = 1; }
 
@@ -2157,8 +2189,14 @@ void VocalTractPicture::setProjectionMatrix3D(double fovy, double nearPlane, dou
 
 void VocalTractPicture::setProjectionMatrix2D(double left, double right, double bottom, double top)
 {
-  int w = this->GetSize().x * GetContentScaleFactor();
-  int h = this->GetSize().y * GetContentScaleFactor();
+  int w = this->GetSize().x;
+  int h = this->GetSize().y;
+#ifdef __linux__
+  // On Linux, all pixel coordinates need to be scaled by the current
+  // display scaling factor before passing them to OpenGL
+  w *= GetContentScaleFactor();
+  h *= GetContentScaleFactor();
+#endif
 
   orthogonalProjection = true;
 
@@ -3622,8 +3660,14 @@ void VocalTractPicture::OnMouseChanged(wxMouseEvent &event)
     {
       if (selectedControlPoint != -1)
       {
-        setControlPoint(selectedControlPoint, mx*GetContentScaleFactor(), my*GetContentScaleFactor());
-        
+#ifdef __linux__
+        // On Linux, all pixel coordinates need to be scaled by the current
+        // display scaling factor before passing them to OpenGL
+        setControlPoint(selectedControlPoint, mx * GetContentScaleFactor(), my * GetContentScaleFactor());;
+#else
+        setControlPoint(selectedControlPoint, mx, my);
+#endif
+              
         // Re-calculate the vocal tract model
         tract->calculateAll();
 

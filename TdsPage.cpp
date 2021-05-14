@@ -414,18 +414,22 @@ void TdsPage::initWidgets()
 
   sizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   sizer->AddStretchSpacer();
 
-  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   middleSizer->Add(sizer, 0, wxGROW);
@@ -442,18 +446,22 @@ void TdsPage::initWidgets()
 
   sizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   sizer->AddStretchSpacer();
 
-  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   bottomSizer->Add(sizer, 0, wxGROW);

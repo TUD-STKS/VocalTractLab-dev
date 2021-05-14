@@ -173,7 +173,6 @@ void GesturalScorePage::initWidgets()
 
   txtContinualValue = new wxTextCtrl(staticBox, IDT_CONTINUAL_VALUE, "", wxDefaultPosition,
     wxDefaultSize, wxTE_PROCESS_ENTER);
-  txtContinualValue->SetMinSize(this->FromDIP(wxSize(50, -1) ));
   // Connect the lost-focus-event to the event handler
   txtContinualValue->Connect(wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(GesturalScorePage::OnContinualValueChanged), NULL, this);
@@ -183,7 +182,6 @@ void GesturalScorePage::initWidgets()
 
   lstNominalValue = new wxComboBox(staticBox, IDL_NOMINAL_VALUE, wxEmptyString, wxDefaultPosition,
     wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER);
-  lstNominalValue->SetMinSize(this->FromDIP(wxSize(100, -1) ));
   sizer->Add(lstNominalValue, 1, wxGROW);
 
   gestureSizer->Add(sizer, 0, wxALL | wxGROW, 2);
@@ -217,7 +215,7 @@ void GesturalScorePage::initWidgets()
   label = new wxStaticText(staticBox, wxID_ANY, "Duration:");
   sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
 
-  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, this->FromDIP(wxSize(80, -1)), wxTE_PROCESS_ENTER);
+  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxDefaultSize , wxTE_PROCESS_ENTER);
   txtDuration->SetRange(MIN_GESTURE_DURATION_MS, MAX_GESTURE_DURATION_MS);
   this->Connect(IDE_DURATION, wxEVT_COMMAND_TEXT_ENTER,
     wxCommandEventHandler(GesturalScorePage::OnDurationEntered));
@@ -253,12 +251,12 @@ void GesturalScorePage::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "Time axis:");
   sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
 
-  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-");
-  button->SetMinSize(this->FromDIP(wxSize(20, 20) ));
+  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
-  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+");
-  button->SetMinSize(this->FromDIP(wxSize(20, 20) ));
+  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
   leftSizer->Add(sizer, 0, wxALL | wxGROW, 3);

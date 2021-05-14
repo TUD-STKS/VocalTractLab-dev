@@ -71,7 +71,7 @@ void LfPulsePicture::draw(wxDC &dc)
   int y;
   int lastY;
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   for (i=0; i < width; i++)
   {

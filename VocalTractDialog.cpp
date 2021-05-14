@@ -297,7 +297,8 @@ void VocalTractDialog::initWidgets()
   // ****************************************************************
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
-  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, this->FromDIP(wxSize(20, 20)));
+  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  showHideControlsButton->SetMinSize(wxSize(showHideControlsButton->GetSize().GetHeight(), showHideControlsButton->GetSize().GetHeight()));
   sizer->Add(showHideControlsButton, 0, wxALL, 2);
 
   line = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);

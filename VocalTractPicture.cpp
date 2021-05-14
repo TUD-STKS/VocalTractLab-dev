@@ -2155,8 +2155,8 @@ void VocalTractPicture::setProjectionMatrix3D(double fovy, double nearPlane, dou
 #ifdef __linux__
   // On Linux, all pixel coordinates need to be scaled by the current
   // display scaling factor before passing them to OpenGL
-  width *= GetContentScaleFactor();
-  height *= GetContentScaleFactor();
+  w *= GetContentScaleFactor();
+  h *= GetContentScaleFactor();
 #endif
   if (w < 1) { w = 1; }
   if (h < 1) { h = 1; }

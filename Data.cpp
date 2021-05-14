@@ -26,6 +26,7 @@
 #include <wx/clipbrd.h>
 #include <wx/busyinfo.h>
 #include <iomanip>
+#include <iostream>
 
 #include "Data.h"
 #include "GlottisDialog.h"
@@ -648,12 +649,16 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   Signal singlePulse;
   Signal pulseSignal(BUFFER_LENGTH);
   Signal pressureSignal(BUFFER_LENGTH);
+  Signal noiseSignal(BUFFER_LENGTH);
   int i, k;
   int nextPulsePos = 10;   // Get the first pulse shape at sample number 10
   int pulseLength;
   double t_s, t_ms;
   double sum;
   double filteredValue;
+  TdsModel::NoiseSource noiseSource;
+
+  ofstream log;
 
   // Memorize the pulse params to restore them at the end of the function
   LfPulse origLfPulse = lfPulse;
@@ -737,37 +742,55 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   // Calc. the speech signal samples.
   // ****************************************************************
 
+  // Set noise source parameters
+  noiseSource.isFirstOrder = false;
+  noiseSource.cutoffFreq = 10000.;
+  noiseSource.currentAmp1kHz = 0.;
+
+  log.open("sig.txt");
+
   for (i=0; i < length; i++)
   {
     t_s = (double)i / (double)SAMPLING_RATE;
     t_ms = t_s*1000.0;
 
+	//***************************************************************
+	// Compute noise sample
+	//***************************************************************
+
+	noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms);
+	tdsModel->calcNoiseSample(&noiseSource, 0.001);
+	noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
+	tdsModel->incrementPosition();
+
+	log << noiseSource.sample ;
+
     // **************************************************************
     // Is a new glottal pulse starting?
     // **************************************************************
 
-    if (i == nextPulsePos)
-    {
-      // Get the pulse amplitude and F0.
+	if (i == nextPulsePos)
+	{
+		// Get the pulse amplitude and F0.
 
-      lfPulse.AMP = ampTimeFunction.getValue(t_ms);
-      lfPulse.F0  = f0TimeFunction.getValue(t_ms);
+		lfPulse.AMP = ampTimeFunction.getValue(t_ms);
+		lfPulse.F0 = f0TimeFunction.getValue(t_ms);
 
-      // Simulate "flutter".
+		// Simulate "flutter".
 
-      lfPulse.F0+= 0.5*(lfPulse.F0/100.0)*(sin(2.0*M_PI*12.7*t_s) + sin(2.0*M_PI*7.1*t_s) + sin(2.0*M_PI*4.7*t_s));
+		lfPulse.F0 += 0.5 * (lfPulse.F0 / 100.0) * (sin(2.0 * M_PI * 12.7 * t_s) + sin(2.0 * M_PI * 7.1 * t_s) + sin(2.0 * M_PI * 4.7 * t_s));
 
-      // Get and set the new glottal pulse.
+		// Get and set the new glottal pulse.
 
-      pulseLength = (int)((double)SAMPLING_RATE / lfPulse.F0);
-      lfPulse.getPulse(singlePulse, pulseLength, false);
-      for (k=0; k < pulseLength; k++)
-      {
-        pulseSignal.x[(i+k) & BUFFER_MASK] = singlePulse.getValue(k); 
-      }
+		pulseLength = (int)((double)SAMPLING_RATE / lfPulse.F0);
+		lfPulse.getPulse(singlePulse, pulseLength, false);
+		for (k = 0; k < pulseLength; k++)
+		{
+			pulseSignal.x[(i + k) & BUFFER_MASK] = singlePulse.getValue(k);
+		}
 
-      nextPulsePos+= pulseLength;
-    }
+		nextPulsePos += pulseLength;
+	}
 
     // **************************************************************
     // Do the convolution.
@@ -776,8 +799,14 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
     sum = 0.0;
     for (k=0; k < IMPULSE_RESPONSE_LENGTH; k++)
     {
-      sum+= impulseResponse.x[k]*pulseSignal.x[(i-k) & BUFFER_MASK];
+      sum+= impulseResponse.x[k]*pulseSignal.x[(i-k) & BUFFER_MASK]*
+		  (1. + pow(10, -lfPulse.SNR/20.)* noiseSignal.x[(i - k) & BUFFER_MASK]/500.);
     }
+	
+	log << "  " << pulseSignal.x[(i)& BUFFER_MASK] << "  " 
+		<< pulseSignal.x[(i) & BUFFER_MASK] *
+		(1. + pow(10, -lfPulse.SNR / 20.) * noiseSignal.x[(i) & BUFFER_MASK]/500.) << endl;
+	
 
     pressureSignal.x[i & BUFFER_MASK] = sum;
 
@@ -786,6 +815,8 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
     filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
     track[MAIN_TRACK]->setValue(startPos+i, (short)filteredValue);
   }
+
+  log.close();
 
   // Restore the pulse params
 

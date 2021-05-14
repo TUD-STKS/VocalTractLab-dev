@@ -173,6 +173,7 @@ void GesturalScorePage::initWidgets()
 
   txtContinualValue = new wxTextCtrl(staticBox, IDT_CONTINUAL_VALUE, "", wxDefaultPosition,
     wxDefaultSize, wxTE_PROCESS_ENTER);
+  txtContinualValue->SetMinClientSize(1.25*GetTextExtent("0000.00"));
   // Connect the lost-focus-event to the event handler
   txtContinualValue->Connect(wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(GesturalScorePage::OnContinualValueChanged), NULL, this);
@@ -216,6 +217,7 @@ void GesturalScorePage::initWidgets()
   sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
 
   txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxDefaultSize , wxTE_PROCESS_ENTER);
+  txtDuration->SetMinClientSize(1.25*GetTextExtent("0000.00"));
   txtDuration->SetRange(MIN_GESTURE_DURATION_MS, MAX_GESTURE_DURATION_MS);
   this->Connect(IDE_DURATION, wxEVT_COMMAND_TEXT_ENTER,
     wxCommandEventHandler(GesturalScorePage::OnDurationEntered));

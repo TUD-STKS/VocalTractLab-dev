@@ -54,12 +54,13 @@ public:
   // **************************************************************************
 
 private:
-  enum Params
-  {
-    OPEN_QUOTIENT,
-    SHAPE_QUOTIENT,
-    SPECTRAL_TILT,
-    FUNDAMENTAL_FREQUENCY,
+	enum Params
+	{
+	OPEN_QUOTIENT,
+	SHAPE_QUOTIENT,
+	SPECTRAL_TILT,
+	FUNDAMENTAL_FREQUENCY,
+	SIGNAL_TO_NOISE_RATIO,
     NUM_PARAMS
   };
 

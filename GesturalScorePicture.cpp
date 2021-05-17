@@ -761,8 +761,8 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
         label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].name;
       }
 
-      cutString(dc, label, LEFT_MARGIN);
-      dc.DrawText(label, 5, y);
+      cutString(dc, label, LEFT_MARGIN - FromDIP(10));
+      dc.DrawText(label, FromDIP(5), y);
     }
   }
 
@@ -897,28 +897,21 @@ void GesturalScorePicture::calcParamRowCoord()
 
 void GesturalScorePicture::cutString(wxDC &dc, wxString &st, int maxWidth_px)
 {
-  int charWidth = dc.GetCharWidth();
-  int maxChars = maxWidth_px / charWidth;
-
-  if ((int)st.length() > maxChars)
+  while(dc.GetTextExtent(st).GetWidth() > maxWidth_px)
   {
-    st.Truncate(maxChars);
-    if (maxChars > 3)
-    {
-      st[maxChars-1] = '.';
-      st[maxChars-2] = '.';
-      st[maxChars-3] = '.';
-    }
+  	if(st.size() > 0)
+  	{
+        st.Truncate(st.size() - 1);
+  	}
     else
     {
-      int i;
-      for (i=0; i < maxChars; i++)
-      {
-        st[i] = '.';
-      }
+        break;
     }
+  	for (int i = 1; st.size() - i >= 0 && i < 4; ++i)
+  	{
+        st[st.size() - i] = '.';
+  	}
   }
-
 }
 
 

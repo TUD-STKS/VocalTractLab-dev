@@ -276,14 +276,17 @@ void SignalPage::initWidgets()
 
   subSizer = new wxBoxSizer(wxHORIZONTAL);
   
-  button = new wxButton(topPanel, IDB_HORZ_ZOOM_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(topPanel, IDB_HORZ_ZOOM_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   subSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
-  labHorzZoom = new wxStaticText(topPanel, wxID_ANY, "0", wxDefaultPosition, this->FromDIP(wxSize(30, -1)),
-    wxST_NO_AUTORESIZE | wxALIGN_CENTER);
+  
+  labHorzZoom = new wxStaticText(topPanel, wxID_ANY, "M.MM", 
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
   subSizer->Add(labHorzZoom, 0, wxALIGN_CENTER | wxALL, 3);
 
-  button = new wxButton(topPanel, IDB_HORZ_ZOOM_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(topPanel, IDB_HORZ_ZOOM_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   subSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
   controlSizer->Add(subSizer, 0, wxGROW | wxALL, 3);
@@ -292,14 +295,16 @@ void SignalPage::initWidgets()
 
   // ********************************************
 
-  button = new wxButton(topPanel, IDB_VERT_ZOOM_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(topPanel, IDB_VERT_ZOOM_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   controlSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
-  labVertZoom = new wxStaticText(topPanel, wxID_ANY, "0", wxDefaultPosition, this->FromDIP(wxSize(40, -1)),
-    wxST_NO_AUTORESIZE | wxALIGN_CENTER);
+  labVertZoom = new wxStaticText(topPanel, wxID_ANY, "MM.MM", 
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
   controlSizer->Add(labVertZoom, 0, wxALIGN_CENTER | wxALL, 3);
 
-  button = new wxButton(topPanel, IDB_VERT_ZOOM_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(topPanel, IDB_VERT_ZOOM_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   controlSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
   controlSizer->AddSpacer(10);

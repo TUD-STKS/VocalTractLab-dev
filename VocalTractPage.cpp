@@ -433,18 +433,21 @@ void VocalTractPage::initWidgets(VocalTractPicture *picVocalTract)
   // Left part
 
   sizer = new wxBoxSizer(wxVERTICAL);
-
-  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 5);
-  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 5);
 
   sizer->AddSpacer(5);
   sizer->AddStretchSpacer(1);
 
-  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 5);
-  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 5);
 
   bottomSizer->Add(sizer, 0, wxGROW | wxALL, 2);
@@ -499,13 +502,21 @@ void VocalTractPage::initWidgets(VocalTractPicture *picVocalTract)
 
   extraSizer = new wxBoxSizer(wxHORIZONTAL);
   
-  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   extraSizer->Add(button);
 
-  labFrequencyRange = new wxStaticText(bottomPanel, wxID_ANY, "0");
-  extraSizer->Add(labFrequencyRange, 1, wxALIGN_CENTER | wxLEFT | wxRIGHT, 5);
+  extraSizer->AddStretchSpacer();
+  // For horizontally centered text alignment of the label, the static text must not be resized
+  // so make sure initial label is wide enough to fit longest expected string.
+  labFrequencyRange = new wxStaticText(bottomPanel, wxID_ANY, "MM.M kHz",
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
+  extraSizer->Add(labFrequencyRange, wxSizerFlags(0).Center().Border(wxRIGHT | wxLEFT, 5));
+  extraSizer->AddStretchSpacer();
 
-  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_PLUS, "+", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   extraSizer->Add(button);
 
   sizer->Add(extraSizer, 0, wxGROW);
@@ -515,24 +526,33 @@ void VocalTractPage::initWidgets(VocalTractPicture *picVocalTract)
   // Buttons and label to change the cutoff-freq. of the noise source.
 
   wxStaticText *label = new wxStaticText(bottomPanel, wxID_ANY, "Noise filter cutoff freq.");
-  sizer->Add(label, 1, wxALL, 5);
+  sizer->Add(label, wxSizerFlags(1).Center().Border(wxALL, 5));
 
   extraSizer = new wxBoxSizer(wxHORIZONTAL);
 
-  button = new wxButton(bottomPanel, IDB_NOISE_FILTER_CUTOFF_MINUS, "-", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  button = new wxButton(bottomPanel, IDB_NOISE_FILTER_CUTOFF_MINUS, "-", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   extraSizer->Add(button);
 
-  labNoiseFilterCutoff = new wxStaticText(bottomPanel, wxID_ANY, "0");
-  extraSizer->Add(labNoiseFilterCutoff, 1, wxALIGN_CENTER | wxLEFT | wxRIGHT, 5);
-
-  button = new wxButton(bottomPanel, IDB_NOISE_FILTER_CUTOFF_PLUS, "+", wxDefaultPosition, this->FromDIP(wxSize(25, 25)));
+  extraSizer->AddStretchSpacer();
+  // For horizontally centered text alignment of the label, the static text must not be resized
+  // so make sure initial label is wide enough to fit longest expected string.
+  labNoiseFilterCutoff = new wxStaticText(bottomPanel, wxID_ANY, "MMMM Hz", 
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
+  extraSizer->Add(labNoiseFilterCutoff, wxSizerFlags(0).Center().Border(wxRIGHT | wxLEFT, 5));
+  extraSizer->AddStretchSpacer();
+	
+  button = new wxButton(bottomPanel, IDB_NOISE_FILTER_CUTOFF_PLUS, "+", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   extraSizer->Add(button);
 
-  sizer->Add(extraSizer, 0, wxGROW);
+  sizer->Add(extraSizer, wxSizerFlags(0).Expand());
 
   // ********************************************
 
-  button = new wxButton(bottomPanel, IDB_SYNTHESIZE_NOISE, "Synthesize noise", wxDefaultPosition, this->FromDIP(wxSize(120, 25)));
+  button = new wxButton(bottomPanel, IDB_SYNTHESIZE_NOISE, "Synthesize noise");
   button->SetToolTip("Synthesize the radiated noise based on a noise source at the position marked in the area function.");
   sizer->Add(button, 0, wxBOTTOM | wxTOP | wxGROW, 5);
 

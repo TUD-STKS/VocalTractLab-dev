@@ -336,7 +336,7 @@ void SpectrogramPlot::drawCurve(
 
   if (dashed)
   {
-    dc.SetPen(wxPen(color, dc.LogicalToDeviceXRel(1), wxPENSTYLE_LONG_DASH));
+    dc.SetPen(wxPen(color, dc.LogicalToDeviceXRel(1), wxPENSTYLE_DOT_DASH));
   }
   else
   {

@@ -656,9 +656,7 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   double t_s, t_ms;
   double sum;
   double filteredValue;
-  TdsModel::NoiseSource noiseSource;
-
-  ofstream log;
+  std::mt19937 randomNumberGenerator;
 
   // Memorize the pulse params to restore them at the end of the function
   LfPulse origLfPulse = lfPulse;
@@ -742,12 +740,10 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   // Calc. the speech signal samples.
   // ****************************************************************
 
-  // Set noise source parameters
-  noiseSource.isFirstOrder = false;
-  noiseSource.cutoffFreq = 10000.;
-  noiseSource.currentAmp1kHz = 0.;
-
-  log.open("sig.txt");
+  // inputSample is a random number with the standard deviation
+  // 1/sqrt(12) and range limited to [-1.0, 1.0]
+  normal_distribution<double> normalDistribution(0.0, 1.0 / sqrt(12.0));
+  double inputSample = 0.0;
 
   for (i=0; i < length; i++)
   {
@@ -758,12 +754,12 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
 	// Compute noise sample
 	//***************************************************************
 
-	noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms);
-	tdsModel->calcNoiseSample(&noiseSource, 0.001);
-	noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
-	tdsModel->incrementPosition();
-
-	log << noiseSource.sample ;
+	inputSample = 0.0;
+	do
+	{
+		inputSample = normalDistribution(randomNumberGenerator);
+	} while ((inputSample < -1.0) || (inputSample > 1.0));
+	noiseSignal.x[i & BUFFER_MASK] = ampTimeFunction.getValue(t_ms) * inputSample;
 
     // **************************************************************
     // Is a new glottal pulse starting?
@@ -802,11 +798,6 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
       sum+= impulseResponse.x[k]*pulseSignal.x[(i-k) & BUFFER_MASK]*
 		  (1. + pow(10, -lfPulse.SNR/20.)* noiseSignal.x[(i - k) & BUFFER_MASK]/500.);
     }
-	
-	log << "  " << pulseSignal.x[(i)& BUFFER_MASK] << "  " 
-		<< pulseSignal.x[(i) & BUFFER_MASK] *
-		(1. + pow(10, -lfPulse.SNR / 20.) * noiseSignal.x[(i) & BUFFER_MASK]/500.) << endl;
-	
 
     pressureSignal.x[i & BUFFER_MASK] = sum;
 
@@ -815,8 +806,6 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
     filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
     track[MAIN_TRACK]->setValue(startPos+i, (short)filteredValue);
   }
-
-  log.close();
 
   // Restore the pulse params
 

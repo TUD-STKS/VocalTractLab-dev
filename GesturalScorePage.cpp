@@ -214,7 +214,7 @@ void GesturalScorePage::initWidgets()
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
   label = new wxStaticText(staticBox, wxID_ANY, "Duration:");
-  sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
   txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxDefaultSize , wxTE_PROCESS_ENTER);
   txtDuration->SetMinClientSize(1.25*GetTextExtent("0000.00"));
@@ -224,7 +224,7 @@ void GesturalScorePage::initWidgets()
   sizer->Add(txtDuration, 0, wxGROW | wxRIGHT, 5);
 
   label = new wxStaticText(staticBox, wxID_ANY, "ms");
-  sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
   gestureSizer->Add(sizer, 0, wxALL | wxGROW, 2);
 
@@ -251,14 +251,17 @@ void GesturalScorePage::initWidgets()
   
   sizer = new wxBoxSizer(wxHORIZONTAL);
   label = new wxStaticText(this, wxID_ANY, "Time axis:");
-  sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
-  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
   button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
-  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), 
+      button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
   leftSizer->Add(sizer, 0, wxALL | wxGROW, 3);

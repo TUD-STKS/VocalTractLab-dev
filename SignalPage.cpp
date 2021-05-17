@@ -280,8 +280,9 @@ void SignalPage::initWidgets()
   button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   subSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
-  labHorzZoom = new wxStaticText(topPanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize,
-     wxALIGN_CENTER);
+  
+  labHorzZoom = new wxStaticText(topPanel, wxID_ANY, "M.MM", 
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
   subSizer->Add(labHorzZoom, 0, wxALIGN_CENTER | wxALL, 3);
 
   button = new wxButton(topPanel, IDB_HORZ_ZOOM_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
@@ -298,8 +299,8 @@ void SignalPage::initWidgets()
   button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   controlSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 3);
 
-  labVertZoom = new wxStaticText(topPanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize,
-   wxALIGN_CENTER);
+  labVertZoom = new wxStaticText(topPanel, wxID_ANY, "MM.MM", 
+      wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_CENTER_HORIZONTAL);
   controlSizer->Add(labVertZoom, 0, wxALIGN_CENTER | wxALL, 3);
 
   button = new wxButton(topPanel, IDB_VERT_ZOOM_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);

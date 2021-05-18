@@ -218,21 +218,18 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   wxString label;
 
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-  int maxWidth{ 0 };
+
   for (i=0; i < N; i++)
   {
     y = gestureRowY[i];
     h = gestureRowH[i];
-  	// Determine the width of every label, even the ones currently not visible
     label = gs->gestures[i].name;
-    maxWidth = std::max(maxWidth, dc.GetTextExtent(label).GetWidth());
   	// Only draw the label if it is visible
     if ((y+h >= 0) && (y < windowHeight))
     {
       dc.DrawText(label, this->FromDIP(5), y);
     }
   }
-  Data::getInstance()->LEFT_SCORE_MARGIN = maxWidth + this->FromDIP(10);
   int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
 	
   // ****************************************************************
@@ -761,8 +758,8 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
         label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].name;
       }
 
-      cutString(dc, label, LEFT_MARGIN);
-      dc.DrawText(label, 5, y);
+      cutString(dc, label, LEFT_MARGIN - FromDIP(10));
+      dc.DrawText(label, FromDIP(5), y);
     }
   }
 
@@ -897,28 +894,21 @@ void GesturalScorePicture::calcParamRowCoord()
 
 void GesturalScorePicture::cutString(wxDC &dc, wxString &st, int maxWidth_px)
 {
-  int charWidth = dc.GetCharWidth();
-  int maxChars = maxWidth_px / charWidth;
-
-  if ((int)st.length() > maxChars)
+  while(dc.GetTextExtent(st).GetWidth() > maxWidth_px)
   {
-    st.Truncate(maxChars);
-    if (maxChars > 3)
-    {
-      st[maxChars-1] = '.';
-      st[maxChars-2] = '.';
-      st[maxChars-3] = '.';
-    }
+  	if(st.size() > 0)
+  	{
+        st.Truncate(st.size() - 1);
+  	}
     else
     {
-      int i;
-      for (i=0; i < maxChars; i++)
-      {
-        st[i] = '.';
-      }
+        break;
     }
+  	for (int i = 1; st.size() - i >= 0 && i < 4; ++i)
+  	{
+        st[st.size() - i] = '.';
+  	}
   }
-
 }
 
 

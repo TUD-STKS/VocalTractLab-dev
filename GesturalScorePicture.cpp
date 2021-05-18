@@ -218,21 +218,18 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   wxString label;
 
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-  int maxWidth{ 0 };
+
   for (i=0; i < N; i++)
   {
     y = gestureRowY[i];
     h = gestureRowH[i];
-  	// Determine the width of every label, even the ones currently not visible
     label = gs->gestures[i].name;
-    maxWidth = std::max(maxWidth, dc.GetTextExtent(label).GetWidth());
   	// Only draw the label if it is visible
     if ((y+h >= 0) && (y < windowHeight))
     {
       dc.DrawText(label, this->FromDIP(5), y);
     }
   }
-  Data::getInstance()->LEFT_SCORE_MARGIN = maxWidth + this->FromDIP(10);
   int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
 	
   // ****************************************************************

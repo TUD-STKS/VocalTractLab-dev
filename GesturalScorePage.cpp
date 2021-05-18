@@ -384,6 +384,16 @@ void GesturalScorePage::initWidgets()
   
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
+  // Calculate the margin to fit all the labels from the GesturalScorePicture 
+  // before creating all the individual pictures
+  int maxWidth{ 0 };
+  for (int i = 0; i < GesturalScore::NUM_GESTURE_TYPES; ++i)
+  {
+      wxString label = data->gesturalScore->gestures[i].name;
+      maxWidth = std::max(maxWidth, GetTextExtent(label).GetWidth());
+  }
+  data->LEFT_SCORE_MARGIN = maxWidth + FromDIP(10);
+
   timeAxisPicture = new TimeAxisPicture(upperPanel);
   timeAxisPicture->SetMinSize(wxSize(-1, timeAxisPicture->getMinHeight()) );
   sizer->Add(timeAxisPicture, 1, wxGROW);
@@ -448,7 +458,6 @@ void GesturalScorePage::initWidgets()
   sizer->Add(scrLowerOffset, 0, wxGROW);
 
   lowerSizer->Add(sizer, 1, wxGROW);
-
 
   // ****************************************************************
   // Top level sizer.
@@ -1049,18 +1058,21 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
 {
   if (event.GetInt() == REFRESH_PICTURES)
   {
-    gesturalScorePicture->Refresh();
+  	timeAxisPicture->Refresh();
     signalComparisonPicture->Refresh();
-    timeAxisPicture->Refresh();
+    gesturalScorePicture->Refresh();   
     // Of the controls, update only the time mark.
     labMark->SetLabel(wxString::Format("%2.3f s", data->gesturalScoreMark_s));
   }
   else
   if (event.GetInt() == UPDATE_PICTURES)
   {
-    gesturalScorePicture->Refresh();
-    signalComparisonPicture->Refresh();
-    timeAxisPicture->Refresh();
+      timeAxisPicture->Refresh();
+      timeAxisPicture->Update();
+      signalComparisonPicture->Refresh();
+      signalComparisonPicture->Update();
+      gesturalScorePicture->Refresh();
+      gesturalScorePicture->Update();
     // Of the controls, update only the time mark.
     labMark->SetLabel(wxString::Format("%2.3f s", data->gesturalScoreMark_s));
   }
@@ -1070,9 +1082,9 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
     updateWidgets();
 
     // Refreshing of pictures is not included in updateWidgets() currently !!!
-    gesturalScorePicture->Refresh();
-    signalComparisonPicture->Refresh();
     timeAxisPicture->Refresh();
+    signalComparisonPicture->Refresh();
+    gesturalScorePicture->Refresh();
   }
   else
   if (event.GetInt() == UPDATE_PICTURES_AND_CONTROLS)
@@ -1080,13 +1092,13 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
     updateWidgets();
 
     // Refreshing of pictures is not included in updateWidgets() currently !!!
-    gesturalScorePicture->Refresh();
-    signalComparisonPicture->Refresh();
     timeAxisPicture->Refresh();
+    timeAxisPicture->Update();
+    signalComparisonPicture->Refresh();
+    signalComparisonPicture->Update();
+    gesturalScorePicture->Refresh();
+    gesturalScorePicture->Update();
   }
-
-  // Update this window and all of its children in a single pass	
-  this->Update();
 }
 
 

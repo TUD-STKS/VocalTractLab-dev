@@ -656,7 +656,6 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   double t_s, t_ms;
   double sum;
   double filteredValue;
-  std::mt19937 randomNumberGenerator;
 
   // Memorize the pulse params to restore them at the end of the function
   LfPulse origLfPulse = lfPulse;
@@ -740,26 +739,10 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   // Calc. the speech signal samples.
   // ****************************************************************
 
-  // inputSample is a random number with the standard deviation
-  // 1/sqrt(12) and range limited to [-1.0, 1.0]
-  normal_distribution<double> normalDistribution(0.0, 1.0 / sqrt(12.0));
-  double inputSample = 0.0;
-
   for (i=0; i < length; i++)
   {
     t_s = (double)i / (double)SAMPLING_RATE;
     t_ms = t_s*1000.0;
-
-	//***************************************************************
-	// Compute noise sample
-	//***************************************************************
-
-	inputSample = 0.0;
-	do
-	{
-		inputSample = normalDistribution(randomNumberGenerator);
-	} while ((inputSample < -1.0) || (inputSample > 1.0));
-	noiseSignal.x[i & BUFFER_MASK] = ampTimeFunction.getValue(t_ms) * inputSample;
 
     // **************************************************************
     // Is a new glottal pulse starting?
@@ -795,8 +778,7 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
     sum = 0.0;
     for (k=0; k < IMPULSE_RESPONSE_LENGTH; k++)
     {
-      sum+= impulseResponse.x[k]*pulseSignal.x[(i-k) & BUFFER_MASK]*
-		  (1. + pow(10, -lfPulse.SNR/20.)* noiseSignal.x[(i - k) & BUFFER_MASK]/500.);
+      sum+= impulseResponse.x[k]*pulseSignal.x[(i-k) & BUFFER_MASK];
     }
 
     pressureSignal.x[i & BUFFER_MASK] = sum;

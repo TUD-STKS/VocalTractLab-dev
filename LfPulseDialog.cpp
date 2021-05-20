@@ -29,7 +29,8 @@ const double LfPulseDialog::PARAM_MIN[LfPulseDialog::NUM_PARAMS] =
   0.2,    // OQ
   2.0,    // SQ
   0.0,    // TL
-  60.0    // F0
+  60.0,   // F0
+  0.	  // SNR
 };
 
 const double LfPulseDialog::PARAM_MAX[LfPulseDialog::NUM_PARAMS] =
@@ -37,7 +38,8 @@ const double LfPulseDialog::PARAM_MAX[LfPulseDialog::NUM_PARAMS] =
   0.8,    // OP
   5.0,    // SQ
   0.2,    // TL
-  520.0   // F0
+  520.0,  // F0
+  50.     // SNR
 };
 
 // The single instance of this class.
@@ -107,7 +109,8 @@ void LfPulseDialog::initWidgets()
     "Open quotient",
     "Shape quotient",
     "Spectral tilt",
-    "F0"
+    "F0",
+	"SNR"
   };
 
   wxBoxSizer *topLevelSizer = new wxBoxSizer(wxVERTICAL);
@@ -178,7 +181,8 @@ void LfPulseDialog::updateWidgets()
     lfPulse->OQ,
     lfPulse->SQ,
     lfPulse->TL,
-    lfPulse->F0
+    lfPulse->F0,
+	lfPulse->SNR
   };
   int pos;
 
@@ -240,6 +244,7 @@ void LfPulseDialog::OnScrollEvent(wxScrollEvent &event)
   case SHAPE_QUOTIENT: lfPulse->SQ = value; break;
   case SPECTRAL_TILT: lfPulse->TL = value; break;
   case FUNDAMENTAL_FREQUENCY: lfPulse->F0 = value; break;
+  case SIGNAL_TO_NOISE_RATIO: lfPulse->SNR = value; break;
   default: break;
   }
 

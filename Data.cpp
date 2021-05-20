@@ -26,6 +26,7 @@
 #include <wx/clipbrd.h>
 #include <wx/busyinfo.h>
 #include <iomanip>
+#include <iostream>
 
 #include "Data.h"
 #include "GlottisDialog.h"
@@ -751,22 +752,22 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
       // Get the pulse amplitude and F0.
 
       lfPulse.AMP = ampTimeFunction.getValue(t_ms);
-      lfPulse.F0  = f0TimeFunction.getValue(t_ms);
+      lfPulse.F0 = f0TimeFunction.getValue(t_ms);
 
       // Simulate "flutter".
 
-      lfPulse.F0+= 0.5*(lfPulse.F0/100.0)*(sin(2.0*M_PI*12.7*t_s) + sin(2.0*M_PI*7.1*t_s) + sin(2.0*M_PI*4.7*t_s));
+      lfPulse.F0 += 0.5 * (lfPulse.F0 / 100.0) * (sin(2.0 * M_PI * 12.7 * t_s) + sin(2.0 * M_PI * 7.1 * t_s) + sin(2.0 * M_PI * 4.7 * t_s));
 
       // Get and set the new glottal pulse.
 
       pulseLength = (int)((double)SAMPLING_RATE / lfPulse.F0);
       lfPulse.getPulse(singlePulse, pulseLength, false);
-      for (k=0; k < pulseLength; k++)
+      for (k = 0; k < pulseLength; k++)
       {
-        pulseSignal.x[(i+k) & BUFFER_MASK] = singlePulse.getValue(k); 
+        pulseSignal.x[(i + k) & BUFFER_MASK] = singlePulse.getValue(k);
       }
 
-      nextPulsePos+= pulseLength;
+      nextPulsePos += pulseLength;
     }
 
     // **************************************************************

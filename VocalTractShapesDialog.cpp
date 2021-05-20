@@ -389,7 +389,14 @@ void VocalTractShapesDialog::updateVocalTract()
   {
     tract->param[i].x = tract->shapes[sel].param[i];
   }
-  tract->calculateAll();
+  tract->calculateAll();  //<-- The parameters of the vocal tract shape may change in here due to various constraints
+
+  // Write back the limited parameters
+  for (i = 0; i < VocalTract::NUM_PARAMS; i++)
+  {
+      tract->shapes[sel].param[i] = tract->param[i].limitedX;
+  }
+  
   data->updateTlModelGeometry(tract);
 
   // Refresh the pictures of the parent window.
@@ -603,8 +610,10 @@ void VocalTractShapesDialog::OnValueLostFocus(wxFocusEvent &event)
     tract->shapes[sel].param[k] = x;
   }
 
-  x = tract->shapes[sel].param[k];
-  txtValue[k]->SetValue(wxString::Format("%2.2f", x));
+  // Update the vocal tract, which recalculates all values and limits if necessary
+  updateVocalTract();
+  // Update the dialog to show the limited values
+  updateWidgets();
 
   // Important: Also call the base class handler.
   event.Skip();

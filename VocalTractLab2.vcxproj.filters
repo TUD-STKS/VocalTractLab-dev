@@ -1,0 +1,502 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Frontend">
+      <UniqueIdentifier>{a2e0d1de-0f9b-4400-a998-0a0d705a4fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Backend">
+      <UniqueIdentifier>{4b13d075-ac85-49c9-9e3c-1f729a97cabd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VocalTractDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="VocalTractPage.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="VocalTractPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="VocalTractShapesDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalysisResultsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalysisSettingsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="AnatomyParamsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnotationDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="AreaFunctionPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorScale.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="CrossSectionPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Data.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="EmaConfigDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="FdsOptionsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="FormantOptimizationDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GesturalScorePage.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GesturalScorePicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GlottisDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GlottisPanel.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GlottisPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="LfPulseDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="LfPulsePicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="PhoneticParamsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="PoleZeroDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="PoleZeroPlot.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalComparisonPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalPage.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SignalPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SilentMessageBox.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleSpectrumPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SpectrogramPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SpectrogramPlot.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SpectrumOptionsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SpectrumPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="SynthesisThread.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TdsOptionsDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TdsPage.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TdsSpatialSignalPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TdsTimeSignalPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TdsTubePicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeAxisPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="TransitionDialog.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\VocalTractLabApi.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\VoiceQualityEstimator.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\VowelLf.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\XmlHelper.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\XmlNode.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\AnatomyParams.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Dsp.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\F0EstimatorYin.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\GeometricGlottis.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Geometry.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\GesturalScore.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Glottis.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\IirFilter.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\ImpulseExcitation.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\LfPulse.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Matrix2x2.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\PoleZeroPlan.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Sampa.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\SegmentSequence.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Signal.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\SoundLib.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Splines.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\StaticPhone.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Surface.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Synthesizer.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\TdsModel.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\TimeFunction.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\TlModel.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\TriangularGlottis.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\Tube.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\TwoMassModel.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="Backend\VocalTract.cpp">
+      <Filter>Backend</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="LfPulsePicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="PhoneticParamsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="PoleZeroDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="PoleZeroPlot.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalComparisonPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalPage.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SignalPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SilentMessageBox.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleSpectrumPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectrogramPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectrogramPlot.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectrumOptionsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectrumPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="SynthesisThread.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TdsOptionsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TdsPage.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TdsSpatialSignalPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TdsTimeSignalPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TdsTubePicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeAxisPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="VocalTractDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="VocalTractPage.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="VocalTractPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="VocalTractShapesDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalysisResultsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalysisSettingsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="AnatomyParamsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="AnnotationDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="AreaFunctionPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorScale.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossSectionPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Data.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="EmaConfigDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="FdsOptionsDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="FormantOptimizationDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GesturalScorePage.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GesturalScorePicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GlottisDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GlottisPanel.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GlottisPicture.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="IconsXpm.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="LfPulseDialog.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TriangularGlottis.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Tube.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TubeSequence.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TwoMassModel.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\VocalTract.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\VocalTractLabApi.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\VoiceQualityEstimator.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\VowelLf.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\XmlHelper.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\XmlNode.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\AnatomyParams.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\AudioFile.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Constants.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Dsp.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\F0EstimatorYin.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\GeometricGlottis.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Geometry.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\GesturalScore.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Glottis.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\IirFilter.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\ImpulseExcitation.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\LfPulse.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Matrix2x2.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\PoleZeroPlan.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Sampa.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\SegmentSequence.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Signal.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\SoundLib.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Splines.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\StaticPhone.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Surface.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\Synthesizer.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TdsModel.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TimeFunction.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="Backend\TlModel.h">
+      <Filter>Backend</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VocalTractLab2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VocalTractLab2.rc" />
+  </ItemGroup>
+</Project>

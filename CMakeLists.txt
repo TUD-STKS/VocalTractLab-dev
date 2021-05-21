@@ -6,13 +6,19 @@ cmake_minimum_required (VERSION 3.8)
 project ("VocalTractLabGui")
 
 add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 
 # Request the required wxWidgets libs
+set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 
 # Include the wxWidgets use file to initialize various settings
 include(${wxWidgets_USE_FILE})
+
+# Request the required boost lib
+set(BOOST_ROOT C:/boost_1_71_0)
+FIND_PACKAGE( Boost )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 # Add source to this project's executable.
 add_executable (VocalTractLab WIN32
@@ -99,5 +105,6 @@ VocalTractPicture.cpp VocalTractPicture.h
 VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
 
-target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES})
+target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES}
+ ${Boost_LIBRARIES})
 

@@ -2110,7 +2110,7 @@ void MainWindow::OnTubeSequenceFileToAudio(wxCommandEvent &event)
 
   {
     // Use a special scope so that the info window disappears after the synthesis.
-    wxBusyInfo wait = ("Please wait...");
+    wxBusyInfo wait("Please wait...");
     ok = Synthesizer::synthesizeTubeSequence(name.ToStdString(),
       data->getSelectedGlottis(), data->tdsModel, audio);
   }

@@ -5,8 +5,10 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("VocalTractLabGui")
 
+#add_definitions(-D
+#_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 
 # Request the required wxWidgets libs
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
@@ -20,6 +22,13 @@ set(BOOST_ROOT C:/boost_1_71_0)
 FIND_PACKAGE( Boost )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
+# Request the required openal lib
+find_package(OpenAL)
+add_compile_definitions(HAVE_OPENAL)
+
+# Request the required opengl lib
+find_package(OpenGL)
+
 # Add source to this project's executable.
 add_executable (VocalTractLab WIN32
 Backend/AnatomyParams.cpp Backend/AnatomyParams.h
@@ -27,7 +36,7 @@ Backend/AudioFile.h
 Backend/Constants.h
 Backend/Dsp.cpp Backend/Dsp.h
 Backend/F0EstimatorYin.cpp Backend/F0EstimatorYin.h
-Backend/GeometricGlottis.cpp Backend/Geometricglottis.h
+Backend/GeometricGlottis.cpp Backend/GeometricGlottis.h
 Backend/Geometry.cpp Backend/Geometry.h
 Backend/GesturalScore.cpp Backend/GesturalScore.h
 Backend/Glottis.cpp Backend/Glottis.h
@@ -106,5 +115,7 @@ VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
 
 target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES}
- ${Boost_LIBRARIES})
+ ${Boost_LIBRARIES}
+ ${OPENAL_LIBRARY}
+ ${OPENGL_LIBRARIES})
 

@@ -5,14 +5,29 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("VocalTractLabGui")
 
-add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+IF (UNIX)
+  add_definitions(-D
+	  _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG -D HAVE_OPENAL)
+ELSE(UNIX)
+  add_definitions(-D
+  _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+ENDIF(UNIX)
 
 # Request the required wxWidgets libs
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 
 # Include the wxWidgets use file to initialize various settings
 include(${wxWidgets_USE_FILE})
+
+# Include the necessary libraries for Linux
+IF(UNIX)
+  # Request the required openal lib
+  find_package(OpenAL)
+  add_compile_definitions(HAVE_OPENAL)
+
+  # Request the required opengl lib
+  find_package(OpenGL)
+ENDIF(UNIX)
 
 # Add source to this project's executable.
 add_executable (VocalTractLab WIN32
@@ -21,7 +36,7 @@ Backend/AudioFile.h
 Backend/Constants.h
 Backend/Dsp.cpp Backend/Dsp.h
 Backend/F0EstimatorYin.cpp Backend/F0EstimatorYin.h
-Backend/GeometricGlottis.cpp Backend/Geometricglottis.h
+Backend/GeometricGlottis.cpp Backend/GeometricGlottis.h
 Backend/Geometry.cpp Backend/Geometry.h
 Backend/GesturalScore.cpp Backend/GesturalScore.h
 Backend/Glottis.cpp Backend/Glottis.h
@@ -99,5 +114,13 @@ VocalTractPicture.cpp VocalTractPicture.h
 VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
 
-target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES})
+
+# Add the target libraries for Linux
+IF(UNIX)
+  target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES}
+   ${OPENAL_LIBRARY}
+   ${OPENGL_LIBRARIES})
+ELSE(UNIX)
+  target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES})
+ENDIF(UNIX)
 

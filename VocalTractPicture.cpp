@@ -571,7 +571,7 @@ void VocalTractPicture::display()
     glDisable(GL_LIGHTING);
     glEnable(GL_POINT_SMOOTH);
     
-    glPointSize(8.0);
+    glPointSize(8.0 * GetContentScaleFactor());
 
     parameterToControlPoint(CP_TONGUE_CENTER);
     parameterToControlPoint(CP_TONGUE_TIP);

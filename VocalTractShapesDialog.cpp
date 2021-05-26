@@ -289,11 +289,11 @@ void VocalTractShapesDialog::initWidgets()
   // Set the top-level-sizer for this window.
   // ****************************************************************
 
-  scrolledWindow->SetSizer(topLevelSizer);
+  scrolledWindow->SetSizerAndFit(topLevelSizer);
   scrolledWindow->SetScrollRate(0, 10);   // Make a vertical scrollbar only
 
   this->SetSizer(scrolledWindowSizer);
-  topLevelSizer->Fit(this);
+  scrolledWindowSizer->Fit(this);
 }
 
 

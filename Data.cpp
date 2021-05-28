@@ -795,6 +795,378 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   return (int)(duration_ms + 50.0);   // 50 ms more
 }
 
+// ****************************************************************************
+/// Produce a sustained vowel based on the vocal tract shape.
+/// Returns the approx. duration of the vowel in milliseconds (plus some extra 
+/// time). 
+///
+/// Overload which takes a complex spectrum as argument.
+// ****************************************************************************
+
+int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
+  LfPulse& lfPulse, int startPos, bool isLongVowel)
+{
+  const int NUM_F0_NODES = 4;
+  const int NUM_AMP_NODES = 4;
+  const int BUFFER_LENGTH = 2048;
+  const int BUFFER_MASK = 2047;
+
+  TimeFunction ampTimeFunction;
+  TimeFunction f0TimeFunction;
+  double duration_ms;
+  Signal window(simu3d->spectrum.N);
+  Signal singlePulse;
+  Signal pulseSignal(BUFFER_LENGTH);
+    Signal velocitySignal(BUFFER_LENGTH);
+  Signal noiseSignal(BUFFER_LENGTH);
+  Signal pressureSignal(BUFFER_LENGTH);
+  ComplexSignal transferFunction(simu3d->spectrum.N);
+  int i, k;
+  int nextPulsePos = 10;   // Get the first pulse shape at sample number 10
+  int pulseLength;
+  double t_s, t_ms;
+  double sum, sumN, sumC;
+  double filteredValue;
+    double areaConst(simu3d->crossSection(simu3d->idxConstriction())->area());
+  double attenuation(pow(10., -20 / 20));
+
+  ofstream sig;
+  //ofstream logf;
+  //logf.open("log.txt", ofstream::app);
+  //logf << "Start synthesis" << endl;
+
+  // Memorize the pulse params to restore them at the end of the function
+  LfPulse origLfPulse = lfPulse;
+
+  // ****************************************************************
+  // Init the time functions for F0 and glottal pulse amplitude.
+  // ****************************************************************
+
+  if (isLongVowel)
+  {
+    duration_ms = 650.0;
+    double max = lfPulse.F0;
+
+    TimeFunction::Node f0[NUM_F0_NODES] =
+    {
+      {0.0,   1. * max},
+      {300.0, 1.00 * max},
+      {450.0, 1. * max},
+      {600.0, 1. * max}
+    };
+
+    TimeFunction::Node amp[NUM_AMP_NODES] =
+    {
+      {0.0,   0.0},
+      {50.0,  500.0},
+      {550.0, 500.0},
+      {600.0, 0.0}
+    };
+
+    ampTimeFunction.setNodes(amp, NUM_AMP_NODES);
+    f0TimeFunction.setNodes(f0, NUM_F0_NODES);
+  }
+  else
+  {
+    duration_ms = 350.0;
+    double max = lfPulse.F0;
+
+    TimeFunction::Node f0[NUM_F0_NODES] =
+    {
+      {0.0,   0.9 * max},
+      {125.0, 1.0 * max},
+      {126.0, 1.0 * max},
+      {300.0, 0.82 * max}
+    };
+    TimeFunction::Node amp[NUM_AMP_NODES] =
+    {
+      {0.0,   0.0},
+      {20.0,  500.0},
+      {200.0, 450.0},
+      {300.0, 0.0}
+    };
+
+    ampTimeFunction.setNodes(amp, NUM_AMP_NODES);
+    f0TimeFunction.setNodes(f0, NUM_F0_NODES);
+  }
+
+  // The length in samples
+
+  int length = (int)((duration_ms / 1000.0) * (double)SAMPLING_RATE);
+
+  // Init the low-pass filter
+
+  const double NUM_LOWPASS_POLES = 6;
+  IirFilter filter;
+  filter.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
+    IirFilter filterNoise;
+    filterNoise.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
+  IirFilter filterNoiseSrc;
+  filterNoiseSrc.createChebyshev(500./ (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
+
+  // ****************************************************************
+  // Calc. the vocal tract impulse responses.
+  // ****************************************************************
+
+  const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
+  const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
+  Signal impulseResponse(IMPULSE_RESPONSE_LENGTH);
+  Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
+  Signal impulseResponseSrcNoise(IMPULSE_RESPONSE_LENGTH);
+
+    //logf << "IMPULSE_RESPONSE_LENGTH " << IMPULSE_RESPONSE_LENGTH << endl;
+
+  tlModel->getImpulseResponseWindow(&window, IMPULSE_RESPONSE_LENGTH);
+  
+  // impulse response of glottis->outside transfer function
+  transferFunction = simu3d->spectrum;
+  complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
+  for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
+  {
+    impulseResponse.x[i] = transferFunction.re[i] * window.x[i];
+  }
+  // Reduce amplitude with increasing F0.
+  impulseResponse *= 80.0 / lfPulse.F0;
+
+  // impulse response of noise source -> outside transfer function
+  transferFunction = simu3d->spectrumNoise;
+  complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
+  for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
+  {
+    impulseResponseNoise.x[i] = transferFunction.re[i] * window.x[i];
+  }
+
+  // impulse response of glottis -> constriction transfer function
+  transferFunction = simu3d->spectrumConst;
+  complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
+  for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
+  {
+    impulseResponseSrcNoise.x[i] = transferFunction.re[i] * window.x[i];
+  }
+    // Reduce amplitude with increasing F0.
+    impulseResponseSrcNoise *= 80.0 / lfPulse.F0;
+
+  //sig.open("imp.txt");
+  //for (int i(0); i < impulseResponse.N; i++)
+  //{
+  //  sig << impulseResponse.getValue(i) << endl;
+  //}
+  //sig.close();
+
+    //logf << "impulse response computed" << endl;
+
+  // ****************************************************************
+  // Calc. the speech signal samples.
+  // ****************************************************************
+
+  // Generate noise source
+  TdsModel::NoiseSource noiseSource;
+  noiseSource.isFirstOrder = false;
+  noiseSource.cutoffFreq = 5000.;
+  //noiseSource.targetAmp1kHz = 1.;
+  
+    sig.open("sig.txt");
+  for (i = 0; i < length; i++)
+  {
+    t_s = (double)i / (double)SAMPLING_RATE;
+    t_ms = t_s * 1000.0;
+
+        noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms);
+    tdsModel->calcNoiseSample(&noiseSource, 0.001);
+    noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
+    tdsModel->incrementPosition();
+
+    // **************************************************************
+    // Is a new glottal pulse starting?
+    // **************************************************************
+
+    if (i == nextPulsePos)
+    {
+      // Get the pulse amplitude and F0.
+
+      lfPulse.AMP = ampTimeFunction.getValue(t_ms);
+      lfPulse.F0 = f0TimeFunction.getValue(t_ms);
+
+      // Simulate "flutter".
+
+      lfPulse.F0 += 0.5 * (lfPulse.F0 / 100.0) * (sin(2.0 * M_PI * 12.7 * t_s) + sin(2.0 * M_PI * 7.1 * t_s) + sin(2.0 * M_PI * 4.7 * t_s));
+
+      // Get and set the new glottal pulse.
+
+      pulseLength = (int)((double)SAMPLING_RATE / lfPulse.F0);
+      lfPulse.getPulse(singlePulse, pulseLength, false);
+      for (k = 0; k < pulseLength; k++)
+      {
+        pulseSignal.x[(i + k) & BUFFER_MASK] = singlePulse.getValue(k);
+      }
+
+      nextPulsePos += pulseLength;
+    }
+
+    // **************************************************************
+    // Do the convolution.
+    // **************************************************************
+
+        //logf << "Convolute " << i << endl;
+
+    sum = 0.0; sumN = 0.0; sumC = 0.0;
+    for (k = 0; k < IMPULSE_RESPONSE_LENGTH; k++)
+    {
+      sum += impulseResponse.x[k] * pulseSignal.x[(i - k) & BUFFER_MASK];
+      
+      sumC += impulseResponseSrcNoise.x[k] * pulseSignal.x[(i - k) & BUFFER_MASK];
+    }
+
+    // low pass filter the volume velocity at the constriction
+    filteredValue = filterNoiseSrc.getOutputSample(sumC);
+        // keep only positive values
+        if (filteredValue > 0)
+        {
+            filteredValue /= areaConst;
+            filteredValue = pow(filteredValue, 3)/pow(100000000, 2);
+        }
+        else
+        {
+            filteredValue = 0.;
+        }
+
+        velocitySignal.x[i & BUFFER_MASK] = filteredValue;
+
+        // convolute noise signal multiplying by the power of the sound source
+        // computed from the velocity 
+        for (k = 0; k < IMPULSE_RESPONSE_LENGTH; k++)
+        {
+            sumN += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK]
+                * velocitySignal.x[(i - k) & BUFFER_MASK];
+        }
+
+        sig << pulseSignal.x[(i)& BUFFER_MASK] << "  " << noiseSource.sample << "  "
+      << sum << "  " << sumN << "  " << filteredValue << "  " 
+            << filteredValue * sumN;
+
+    pressureSignal.x[i & BUFFER_MASK] = sum*0.00002;
+
+    filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
+    track[MAIN_TRACK]->setValue(startPos + i, filteredValue);
+
+    noiseSignal.x[i & BUFFER_MASK] = sumN * 0.00002;
+    filteredValue = 2000.0 * filterNoise.getOutputSample(noiseSignal.getValue(i));
+    track[EXTRA_TRACK]->setValue(startPos + i, filteredValue);
+
+        sig << "  " << ampTimeFunction.getValue(t_ms) << endl;
+  }
+    sig.close();
+
+  // normalize the amplitudes of the noise and glottal pulse tracks
+  normalizeAudioAmplitude(MAIN_TRACK);
+  normalizeAudioAmplitude(EXTRA_TRACK);
+
+  // add the noise with a n attenuation
+  for (int i(0); i < length; i++)
+  {
+    track[MAIN_TRACK]->setValue(startPos + i, track[MAIN_TRACK]->x[startPos + i]
+      + track[EXTRA_TRACK]->x[startPos + i] * attenuation);
+  }
+  
+
+  // Restore the pulse params
+
+  lfPulse = origLfPulse;
+
+  //logf.close();
+  return (int)(duration_ms + 50.0);   // 50 ms more
+}
+
+// ****************************************************************************
+/// Produce a noise source sound based on the vocal tract shape.
+/// Returns the approx. duration of the vowel in milliseconds (plus some extra 
+/// time). 
+// ****************************************************************************
+
+int Data::synthesizeNoiseSource(Acoustic3dSimulation* simu3d, int startPos)
+{
+    const int NUM_AMP_NODES = 4;
+    const int BUFFER_LENGTH = 2048;
+    const int BUFFER_MASK = 2047;
+    TimeFunction ampTimeFunction;
+    ComplexSignal transferFunction(simu3d->spectrumNoise.N);
+    const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
+    const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
+    Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
+    Signal noiseSignal(BUFFER_LENGTH);
+    Signal pressureSignal(BUFFER_LENGTH);
+  Signal window(simu3d->spectrumNoise.N / 2);
+    IirFilter filter;
+    double duration_ms = 650.0, t_ms, sum, filteredValue;
+
+    ofstream sig;
+
+    // ****************************************************************
+    // Set amplitude variations
+    // ****************************************************************
+
+    TimeFunction::Node amp[NUM_AMP_NODES] =
+    {
+      {0.0,   0.0},
+      {40.0,  500.0},
+      {400.0, 450.0},
+      {600.0, 0.0}
+    };
+
+    ampTimeFunction.setNodes(amp, NUM_AMP_NODES);
+
+    // ****************************************************************
+    // Calc. impulse response
+    // ****************************************************************
+
+    transferFunction = simu3d->spectrumNoise;
+    complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
+  tlModel->getImpulseResponseWindow(&window, IMPULSE_RESPONSE_LENGTH);
+    for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
+    {
+        impulseResponseNoise.x[i] = transferFunction.re[i]*window.x[i];
+    }
+
+    // ****************************************************************
+    // Generate noise 
+    // ****************************************************************
+    
+    TdsModel::NoiseSource noiseSource;
+    noiseSource.isFirstOrder = false;
+    noiseSource.cutoffFreq = 5000.;
+
+  const double NUM_LOWPASS_POLES = 6;
+  filter.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
+
+    int length = (int)((duration_ms / 1000.0) * (double)SAMPLING_RATE);
+
+    //sig.open("noise.txt");
+    for (int i(0); i < length; i++)
+    {
+        t_ms = 1000. * (double)i / (double)SAMPLING_RATE;
+
+        noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms) / 2.;
+        tdsModel->calcNoiseSample(&noiseSource, 0.001);
+        noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
+        tdsModel->incrementPosition();
+
+        sum = 0.0;
+        for (int k(0); k < IMPULSE_RESPONSE_LENGTH; k++)
+        {
+            sum += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK];
+        }
+
+        pressureSignal.x[i & BUFFER_MASK] = sum * 0.2;
+
+        filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
+        track[MAIN_TRACK]->setValue(startPos + i, filteredValue);
+
+        //sig << track[MAIN_TRACK]->getValue(startPos + i) << endl;
+    }
+    //sig.close();
+
+    return (int)(duration_ms + 50.0);   // 50 ms more
+}
 
 // ****************************************************************************
 /// Calculates the user spectrum that is obtained from the signal in the main
@@ -1385,6 +1757,85 @@ bool Data::exportTransferFunctionsFromScore(const wxString &fileName)
   updateTlModelGeometry(vocalTract);
 
   VocalTractDialog *vocalTractDialog = VocalTractDialog::getInstance(NULL);
+  vocalTractDialog->Refresh();
+  vocalTractDialog->Update();
+
+  return true;
+}
+
+// ****************************************************************************
+// Export the cross-sections in text files for every regular 
+// time steps in the gestural score
+// ****************************************************************************
+
+bool Data::exportCrossSectionsFromScore(const wxString& folderName)
+{
+  const int VIDEO_FRAME_RATE = 1000;
+  double duration_s = gesturalScore->getDuration_pt() / (double)SAMPLING_RATE;
+  int numFrames = (int)(duration_s * VIDEO_FRAME_RATE);
+  int i;
+  int frameIndex;
+  double time_s;
+  double oldVocalTractParams[VocalTract::NUM_PARAMS];
+  double vocalTractParams[VocalTract::NUM_PARAMS];
+  double glottisParams[256];
+
+  // ****************************************************************
+  // Keep in mind the current vocal tract state.
+  // ****************************************************************
+
+  for (i = 0; i < VocalTract::NUM_PARAMS; i++)
+  {
+    oldVocalTractParams[i] = vocalTract->param[i].x;
+  }
+
+  // ****************************************************************
+  // Extract the cross-sections as text file for ich time step
+  // ****************************************************************
+
+  for (frameIndex = 0; frameIndex < numFrames; frameIndex++)
+  {
+    wxPrintf("frame #: %d\n", frameIndex);
+
+    // Calculate the vocal tract shape at the current frame.
+
+    time_s = (double)frameIndex / (double)VIDEO_FRAME_RATE;
+    gesturalScore->getParams(time_s, vocalTractParams, glottisParams);
+
+    for (i = 0; i < VocalTract::NUM_PARAMS; i++)
+    {
+      vocalTract->param[i].x = vocalTractParams[i];
+    }
+    vocalTract->calculateAll();
+
+    // export cross-sections of the current frame
+    wxString frameFileName = folderName;
+    wxChar pathSeparator = wxFileName::GetPathSeparator();
+    if (frameFileName.EndsWith(&pathSeparator) == false)
+    {
+      frameFileName += pathSeparator;
+    }
+    frameFileName += "vt" + wxString::Format("%03d", frameIndex) + ".txt";
+    std::string fileName(frameFileName.mb_str());
+
+    if (vocalTract->exportCrossSections(fileName) == false)
+    {
+      wxMessageBox("Failed to export cross section file.", "Error");
+      break;
+    }
+  }
+
+  // ****************************************************************
+  // Restore the old vocal tract state.
+  // ****************************************************************
+
+  for (i = 0; i < VocalTract::NUM_PARAMS; i++)
+  {
+    vocalTract->param[i].x = oldVocalTractParams[i];
+  }
+  vocalTract->calculateAll();
+
+  VocalTractDialog* vocalTractDialog = VocalTractDialog::getInstance(NULL);
   vocalTractDialog->Refresh();
   vocalTractDialog->Update();
 
@@ -2529,7 +2980,7 @@ bool Data::getVowelFormants(VocalTract *tract, double &F1_Hz, double &F2_Hz, dou
 // ****************************************************************************
 
 bool Data::getConsonantFormants(VocalTract *tract, const wxString &contextVowel, 
-	double releaseArea_cm2,	double &F1_Hz, double &F2_Hz, double &F3_Hz)
+  double releaseArea_cm2,  double &F1_Hz, double &F2_Hz, double &F3_Hz)
 {
   int i;
   double consonantParams[VocalTract::NUM_PARAMS];
@@ -3153,7 +3604,9 @@ bool Data::loadSpeaker(const wxString &fileName)
   // ****************************************************************
 
   vector<XmlError> xmlErrors;
-  XmlNode *rootNode = xmlParseFile(fileName.ToStdString(), "speaker", &xmlErrors);
+  wxString fNameWx(wxT("Téléchargement"));
+  std::string fName(fileName.ToStdString(wxMBConvUTF8()));
+  XmlNode *rootNode = xmlParseFile(fileName.ToStdString(wxMBConvUTF8()), "speaker", &xmlErrors);
   if (rootNode == NULL)
   {
     xmlPrintErrors(xmlErrors);

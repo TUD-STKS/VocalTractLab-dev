@@ -222,8 +222,8 @@ void Graph::paintAbscissa(wxDC &dc)
   double d;
   wxString st;
   wxString unitString;
-  int charWidth = dc.GetCharWidth();
-  int charHeight = dc.GetCharHeight();
+  int charWidth = 10;//dc.GetCharWidth();
+  int charHeight = 10;//dc.GetCharHeight();
   int w, h;
 
   int graphX, graphY, graphW, graphH;

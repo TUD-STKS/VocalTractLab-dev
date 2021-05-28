@@ -1,6 +1,6 @@
 #include "Acoustic3dPage.h"
 #include "ParamSimu3DDialog.h"
-#include "../Backend/SoundLib.h"
+#include "Backend/SoundLib.h"
 
 #include <stdio.h>
 #include <math.h>

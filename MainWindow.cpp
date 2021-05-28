@@ -78,6 +78,7 @@ static const int IDM_CHANGE_GESTURAL_SCORE_TIME_CONSTANTS = 2518;
 
 static const int IDM_EXPORT_AREA_FUNCTION   = 1230;
 static const int IDM_EXPORT_CROSS_SECTIONS = 1231;
+static const int IDM_EXPORT_VOCAL_TRACT_TO_STL = 1232;
 static const int IDM_EXPORT_VT_MODEL_SVG = 1232;
 static const int IDM_EXPORT_WIREFRAME_MODEL_SVG = 1233;
 static const int IDM_EXPORT_VT_MODEL_OBJ    = 1234;
@@ -87,6 +88,7 @@ static const int IDM_EXPORT_SECONDARY_SPECTRUM = 1237;
 static const int IDM_EXPORT_EMA_TRAJECTORIES = 1238;
 static const int IDM_EXPORT_VIDEO_FRAMES     = 1239;
 static const int IDM_EXPORT_TRANSFER_FUNCTIONS_FROM_SCORE = 1241;
+static const int IDM_EXPORT_CROSS_SECTIONS_FROM_SCORE = 1242;
 
 static const int IDM_SHOW_VOCAL_TRACT_DIALOG  = 1250;
 static const int IDM_SHOW_VOCAL_TRACT_SHAPES  = 1251;
@@ -170,6 +172,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 
   EVT_MENU(IDM_EXPORT_AREA_FUNCTION, MainWindow::OnExportAreaFunction)
   EVT_MENU(IDM_EXPORT_CROSS_SECTIONS, MainWindow::OnExportCrossSections)
+  EVT_MENU(IDM_EXPORT_VOCAL_TRACT_TO_STL, MainWindow::OnExportVocalTractToSTL)																		  
 
   EVT_MENU(IDM_EXPORT_VT_MODEL_SVG, MainWindow::OnExportModelSvg)
   EVT_MENU(IDM_EXPORT_WIREFRAME_MODEL_SVG, MainWindow::OnExportWireframeModelSvg)
@@ -180,6 +183,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(IDM_EXPORT_EMA_TRAJECTORIES, MainWindow::OnExportEmaTrajectories)
   EVT_MENU(IDM_EXPORT_VIDEO_FRAMES, MainWindow::OnExportVocalTractVideoFrames)
   EVT_MENU(IDM_EXPORT_TRANSFER_FUNCTIONS_FROM_SCORE, MainWindow::OnExportTransferFunctionsFromScore)
+  EVT_MENU(IDM_EXPORT_CROSS_SECTIONS_FROM_SCORE, MainWindow::OnExportCrossSectionsFromScore)
 
   EVT_MENU(IDM_SHOW_VOCAL_TRACT_DIALOG, MainWindow::OnShowVocalTractDialog)
   EVT_MENU(IDM_SHOW_VOCAL_TRACT_SHAPES, MainWindow::OnShowVocalTractShapes)
@@ -251,6 +255,7 @@ MainWindow::MainWindow()
   audioFileName = wxFileName("");
   exportFileName = wxFileName("");
   data = Data::getInstance();
+  simu3d = Acoustic3dSimulation::getInstance();
 
   // ****************************************************************
   // Do some unit testing.
@@ -396,6 +401,7 @@ void MainWindow::initWidgets()
   menu = new wxMenu();
   menu->Append(IDM_EXPORT_AREA_FUNCTION, "Area function");
   menu->Append(IDM_EXPORT_CROSS_SECTIONS, "Cross sections");
+  menu->Append(IDM_EXPORT_VOCAL_TRACT_TO_STL, "Vocal tract geometry in STL");																		 
   menu->Append(IDM_EXPORT_VT_CONTOUR_SVG, "2D vocal tract contour (SVG)");
   menu->Append(IDM_EXPORT_WIREFRAME_MODEL_SVG, "3D wireframe vocal tract (SVG)");
   menu->Append(IDM_EXPORT_VT_MODEL_OBJ, "3D vocal tract shape (OBJ)");
@@ -404,6 +410,8 @@ void MainWindow::initWidgets()
   menu->Append(IDM_EXPORT_EMA_TRAJECTORIES, "EMA trajectories from gestural score");
   menu->Append(IDM_EXPORT_VIDEO_FRAMES, "Vocal tract video frames from ges. score");
   menu->Append(IDM_EXPORT_TRANSFER_FUNCTIONS_FROM_SCORE, "Transfer functions from gestural score");
+  menu->Append(IDM_EXPORT_CROSS_SECTIONS_FROM_SCORE, "Cross sections from gestural score");
+
 
   menuBar->Append(menu, "Export");
 
@@ -491,11 +499,13 @@ void MainWindow::initWidgets()
   vocalTractPage = new VocalTractPage(notebook, VocalTractDialog::getInstance(this)->getVocalTractPicture());
   tdsPage = new TdsPage(notebook);
   gesturalScorePage = new GesturalScorePage(notebook);
+  acoustic3dPage = new Acoustic3dPage(notebook, VocalTractDialog::getInstance(this)->getVocalTractPicture());																											 
 
   notebook->AddPage((wxPanel*)signalPage, "Signals", false);
   notebook->AddPage((wxPanel*)vocalTractPage, "Vocal tract", true);
   notebook->AddPage((wxPanel*)tdsPage, "Time domain simulation", false);
   notebook->AddPage((wxPanel*)gesturalScorePage, "Gestural score", false);
+  notebook->AddPage((wxPanel*)acoustic3dPage, "3D acoustic simulation", false);																		   
 
   // ****************************************************************
   // Update all widgets.
@@ -1770,6 +1780,24 @@ void MainWindow::OnExportCrossSections(wxCommandEvent &event)
 // ****************************************************************************
 // ****************************************************************************
 
+void MainWindow::OnExportVocalTractToSTL(wxCommandEvent& event)
+{
+	wxFileDialog dialog(this, "save geometry under stl format",
+		exportFileName.GetPath(), exportFileName.GetFullName(),
+		"vocal tract geometry (*.stl)|*.stl", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+	if (dialog.ShowModal() == wxID_OK)
+	{
+		exportFileName = wxFileName(dialog.GetPath());
+		if (data->vocalTract->exportVocalTractToSTL(exportFileName.GetFullPath().ToStdString()) == false)
+		{
+			wxMessageBox("failed to export vocal tract geometry.", "error");
+		}
+	}
+}
+
+// ****************************************************************************
+// ****************************************************************************
 void MainWindow::OnExportModelSvg(wxCommandEvent &event)
 {
 
@@ -1937,6 +1965,20 @@ void MainWindow::OnExportTransferFunctionsFromScore(wxCommandEvent &event)
     data->spectrumFileName = name;
     data->exportTransferFunctionsFromScore(name);
   }
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void MainWindow::OnExportCrossSectionsFromScore(wxCommandEvent& event)
+{
+	wxDirDialog dialog(this, "Select a folder for the cross-sections files");
+	dialog.SetPath(data->videoFramesFolder);
+	if (dialog.ShowModal() == wxID_OK)
+	{
+		data->csFilesFolder = dialog.GetPath();
+		data->exportCrossSectionsFromScore(dialog.GetPath());
+	}
 }
 
 

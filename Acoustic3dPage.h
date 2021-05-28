@@ -7,7 +7,7 @@
 #include <wx/laywin.h>
 #include <wx/progdlg.h>
 #include "Data.h"
-#include "../Backend/Acoustic3dSimulation.h"
+#include "Backend/Acoustic3dSimulation.h"
 #include "VocalTractPicture.h"
 #include "VocalTractShapesDialog.h"
 #include "AreaFunctionPicture.h"

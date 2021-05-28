@@ -29,6 +29,7 @@
 #include "VocalTractPage.h"
 #include "TdsPage.h"
 #include "GesturalScorePage.h"
+#include "Acoustic3dPage.h"						   
 
 #include "VocalTractShapesDialog.h"
 #include "PhoneticParamsDialog.h"
@@ -79,6 +80,7 @@ public:
   VocalTractPage *vocalTractPage;
   TdsPage *tdsPage;
   GesturalScorePage *gesturalScorePage;
+  Acoustic3dPage *acoustic3dPage;								 
 
   wxToolBar *toolBar;
   wxMenuBar *menuBar;
@@ -90,6 +92,7 @@ public:
   wxFileName audioFileName;
   wxFileName exportFileName;
   Data *data;
+  Acoustic3dSimulation* simu3d;
 
   // **************************************************************************
   // Private functions.
@@ -138,6 +141,7 @@ private:
   
   void OnExportAreaFunction(wxCommandEvent &event);
   void OnExportCrossSections(wxCommandEvent &event);
+  void OnExportVocalTractToSTL(wxCommandEvent& event);													  
   void OnExportModelSvg(wxCommandEvent &event);
   void OnExportWireframeModelSvg(wxCommandEvent &event);
   void OnExportModelObj(wxCommandEvent &event);
@@ -147,6 +151,7 @@ private:
   void OnExportEmaTrajectories(wxCommandEvent &event);
   void OnExportVocalTractVideoFrames(wxCommandEvent &event);
   void OnExportTransferFunctionsFromScore(wxCommandEvent &event);
+  void OnExportCrossSectionsFromScore(wxCommandEvent& event);
 
   void OnShowVocalTractDialog(wxCommandEvent &event);
   void OnShowVocalTractShapes(wxCommandEvent &event);

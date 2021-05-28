@@ -30,6 +30,7 @@
 
 class ColorScale
 {
+    typedef int(*ColorMap)[256][3];
   // ****************************************************************
   // Public functions.
   // ****************************************************************
@@ -38,6 +39,7 @@ public:
   static void rgbToHsv(const double r, const double g, const double b, double &h, double &s, double &v);
   static void hsvToRgb(const double h, const double s, const double v, double &r, double &g, double &b);
   static void getYellowBlueScale(int numColors, wxColor scale[]);
+  static ColorMap getColorMap();							
 
   static void test();
 

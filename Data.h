@@ -51,6 +51,7 @@
 #include "Backend/GesturalScore.h"
 #include "Backend/SegmentSequence.h"
 #include "Backend/AnatomyParams.h"
+#include "Backend/Acoustic3dSimulation.h"
 
 #include "Graph.h"
 #include "ColorScale.h"
@@ -234,6 +235,7 @@ public:
   bool normalizeAmplitude;      // After the synthesis
   int synthesisSpeed_percent;
   wxString videoFramesFolder;
+  wxString csFilesFolder;
   wxString equationSetsFolder;
   Graph *tdsPressureTimeGraph;
   Graph *tdsFlowTimeGraph;
@@ -372,6 +374,8 @@ public:
   static int selectTrack(wxWindow *parent, const wxString &message, int defaultSelection = MAIN_TRACK);
   int synthesizeVowelFormantLf(LfPulse &lfPulse, int startPos, bool isLongVowel);
   int synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bool isLongVowel);
+  int synthesizeVowelLf(Acoustic3dSimulation* simu3d, LfPulse& lfPulse, int startPos, bool isLongVowel);
+  int synthesizeNoiseSource(Acoustic3dSimulation* simu3d, int startPos);
 
   void calcUserSpectrum();
   bool calcRadiatedNoiseSpectrum(double noiseSourcePos_cm, double noiseFilterCutoffFreq,
@@ -380,6 +384,7 @@ public:
   bool exportEmaTrajectories(const wxString &fileName);
   bool exportVocalTractVideoFrames(const wxString &folderName);
   bool exportTransferFunctionsFromScore(const wxString &fileName);
+  bool exportCrossSectionsFromScore(const wxString& folderName);
   void calcTongueRootData();
   
   void optimizeFormantsVowel(wxWindow *updateParent, VocalTract *tract, 

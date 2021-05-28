@@ -11,15 +11,22 @@ include_directories(
 	)
 
 # Request the required wxWidgets libs
+if (MSVC)
+set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.5)
+endif()
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 
 # Include the wxWidgets use file to initialize various settings
 include(${wxWidgets_USE_FILE})
 
 # Request the required CGAL lib
+if (MSVC)
+set(BOOST_ROOT C:/boost_1_71_0)
+endif()
 find_package(CGAL)
 
 # Request the required Eigen lib
+set(Eigen3_DIR C:/eigen-3.3.9)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 if (MSVC)

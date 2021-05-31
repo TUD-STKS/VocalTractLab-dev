@@ -35,7 +35,6 @@ public:
 
   void createConsole();
 
-  wxLocale locale;
 };
 
 DECLARE_APP(Application)

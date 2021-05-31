@@ -50,9 +50,7 @@ bool Application::OnInit()
 	// the terminal is to redirect stderr to a log file.
 	auto f = freopen( "stderr.log", "w", stderr );
   #endif
-  // Initialize the locale to the current system defaults
-  // (important to correctly deal with special characters in file paths)
-  locale.Init();
+
   createConsole();
 
   wxPrintf("=== Console output for VocalTractLab 2.3 (built %s) ===\n\n", __DATE__);

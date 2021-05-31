@@ -1,12 +1,11 @@
-﻿# CMakeList.txt : CMake project for VocalTractLabGui, include source and define
+﻿# CMakeList.txt : CMake project for VocalTractLab, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
 
-project ("VocalTractLabGui")
-
-add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+project ("VocalTractLab")
+set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
+add_definitions(-D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 
 # Request the required wxWidgets libs
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)

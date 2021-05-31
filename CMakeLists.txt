@@ -5,11 +5,6 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("VocalTractLabGui")
 
-include_directories(
-	Sources/Backend
-	Sources/Frontend
-	)
-
 # Request the required wxWidgets libs
 if (MSVC)
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.5)
@@ -31,7 +26,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 if (MSVC)
 add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG -D CGAL_NO_GMP)
 elseif(UNIX)
 add_definitions(-D
 _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG -D HAVE_OPENAL)
@@ -50,7 +45,8 @@ file(GLOB all_SRCS
 )
 
 add_executable(
-  VocalTractLab ${all_SRCS}
+  VocalTractLab WIN32 
+   ${all_SRCS}
 )
 
 if (MSVC)

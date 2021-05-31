@@ -3153,7 +3153,8 @@ bool Data::loadSpeaker(const wxString &fileName)
   // ****************************************************************
 
   vector<XmlError> xmlErrors;
-  XmlNode *rootNode = xmlParseFile(fileName.ToStdString(), "speaker", &xmlErrors);
+  auto str = std::string(fileName.ToUTF8());
+  XmlNode *rootNode = xmlParseFile(std::string(fileName.ToUTF8()), "speaker", &xmlErrors);
   if (rootNode == NULL)
   {
     xmlPrintErrors(xmlErrors);
@@ -3207,7 +3208,7 @@ bool Data::loadSpeaker(const wxString &fileName)
 
   try
   {
-    vocalTract->readFromXml(fileName.ToStdString());
+    vocalTract->readFromXml(std::string(fileName.ToUTF8()));
     vocalTract->calculateAll();
   }
   catch (std::string st)

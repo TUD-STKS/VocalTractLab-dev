@@ -27,6 +27,7 @@ using namespace std;
 
 // Left side controls
 
+static const int IDB_RUN_TEST = 5999;
 static const int IDB_RUN_STATIC_SIMULATION = 6000;
 static const int IDB_COMPUTE_MODES = 6001;
 static const int IDB_SHAPES_DIALOG = 6002;
@@ -54,6 +55,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
 
 	// Left side controls
 
+  EVT_BUTTON(IDB_RUN_TEST, Acoustic3dPage::OnRunTest)
 	EVT_BUTTON(IDB_SHAPES_DIALOG, Acoustic3dPage::OnShapesDialog)
 	EVT_BUTTON(IDB_IMPORT_GEOMETRY, Acoustic3dPage::OnImportGeometry)
 	EVT_BUTTON(IDB_PARAM_SIMU_DIALOG, Acoustic3dPage::OnParamSimuDialog)
@@ -135,6 +137,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
 	wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
 
+  button = new wxButton(this, IDB_RUN_TEST, "Run test");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
 	button = new wxButton(this, IDB_RUN_STATIC_SIMULATION, "Run static simulation");
 	leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
@@ -142,15 +147,6 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 	leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
 	leftSizer->AddSpacer(10);
-
-	// ****************************************************************
-
-	//topLevelSizer->Add(leftSizer, 0, wxALL, 5);
-	//topLevelSizer->AddSpacer(10);
-
-	// ****************************************************************
-
-	//leftSizer = new wxBoxSizer(wxVERTICAL);
 	
 	button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
 	leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -292,6 +288,15 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 		picAreaFunction->Update();
 		picPropModes->Update();
 	}
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnRunTest(wxCommandEvent& event)
+{
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->runTest();
 }
 
 // ****************************************************************************

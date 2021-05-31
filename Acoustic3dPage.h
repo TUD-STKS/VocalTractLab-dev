@@ -53,6 +53,7 @@ private:
 
 	// Event handers for controls at the left side
 
+  void OnRunTest(wxCommandEvent& event);
 	void OnRunStaticSimulation(wxCommandEvent& event);
 	void OnParamSimuDialog(wxCommandEvent& event);
 	void OnShapesDialog(wxCommandEvent& event);

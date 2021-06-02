@@ -1,11 +1,12 @@
 ﻿# CMakeList.txt : CMake project for VocalTractLab, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.16)
 
-project ("VocalTractLab")
+project ("VocalTractLabGui")
+if (MSVC)
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
-add_definitions(-D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+endif()
 
 # Request the required wxWidgets libs
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
@@ -15,7 +16,7 @@ include(${wxWidgets_USE_FILE})
 
 if (MSVC)
 add_definitions(-D
-_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
+_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 # Add source to this project's executable.
 add_executable (VocalTractLab WIN32
 Backend/AnatomyParams.cpp Backend/AnatomyParams.h
@@ -100,7 +101,7 @@ VocalTractPage.cpp VocalTractPage.h
 VocalTractPicture.cpp VocalTractPicture.h
 VocalTractShapesDialog.cpp VocalTractShapesDialog.h
 )
-
+set_property(TARGET VocalTractLab PROPERTY VS_DPI_AWARE "PerMonitor")
 target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES} )
 endif()
 

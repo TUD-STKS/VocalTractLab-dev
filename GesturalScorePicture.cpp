@@ -904,7 +904,7 @@ void GesturalScorePicture::cutString(wxDC &dc, wxString &st, int maxWidth_px)
     {
         break;
     }
-  	for (int i = 1; st.size() - i >= 0 && i < 4; ++i)
+  	for (int i = 1; (i <= st.size())  && i < 4; ++i)
   	{
         st[st.size() - i] = '.';
   	}

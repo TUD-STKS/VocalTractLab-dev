@@ -63,7 +63,7 @@ void PropModesPicture::draw(wxDC& dc)
 	dc.Clear();
 
 	// check if the modes have been computed
-	if (m_simu3d->sectionNumber()<=1)
+	if (m_simu3d->sectionNumber() == 0)
 	{
 		dc.SetPen(*wxBLACK_PEN);
 		dc.SetBackgroundMode(wxTRANSPARENT);
@@ -331,7 +331,7 @@ void PropModesPicture::draw(wxDC& dc)
 
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
-			//log << "map initialization " << elapsed_seconds.count() << endl;
+			//log << "map initialization "  << endl;
 			//start = std::chrono::system_clock::now();
 
 			// create stream to write modes informations
@@ -392,7 +392,6 @@ void PropModesPicture::draw(wxDC& dc)
 					max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
 						sqrt(pow(vecTri[1].x - vecTri[2].x, 2) + pow(vecTri[1].y - vecTri[2].y, 2))));
 				numPtSide = (int)ceil(maxDist * zoom) + 1;
-
 
 				for (int i(0); i < numPtSide; i++)
 				{

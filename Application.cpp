@@ -29,6 +29,8 @@
 #include <io.h>
 #endif
 
+#include <clocale>
+#include <locale>
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -51,6 +53,10 @@ bool Application::OnInit()
 	auto f = freopen( "stderr.log", "w", stderr );
   #endif
 
+  // Set the current locale to UTF-8 so "special" characters are
+  // handled correctly across platforms
+  std::setlocale(LC_ALL, "C.UTF-8");
+  
   createConsole();
 
   wxPrintf("=== Console output for VocalTractLab 2.3 (built %s) ===\n\n", __DATE__);

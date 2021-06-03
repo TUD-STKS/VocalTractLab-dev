@@ -3153,7 +3153,7 @@ bool Data::loadSpeaker(const wxString &fileName)
   // ****************************************************************
 
   vector<XmlError> xmlErrors;
-  XmlNode *rootNode = xmlParseFile(std::string(fileName.ToStdString()), "speaker", &xmlErrors);
+  XmlNode *rootNode = xmlParseFile(fileName.ToStdString(), "speaker", &xmlErrors);
   if (rootNode == NULL)
   {
     xmlPrintErrors(xmlErrors);

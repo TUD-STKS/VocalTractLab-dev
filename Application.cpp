@@ -56,7 +56,7 @@ bool Application::OnInit()
 	freopen( "stderr.log", "w", stderr );
   #endif
 
-  // Set the current locale to UTF-8 so "special" characters are
+  // Set the current locale to UTF-8 so "special" characters (e.g. ä, é) are 
   // handled correctly across platforms
   std::setlocale(LC_ALL, "C.UTF-8");
   

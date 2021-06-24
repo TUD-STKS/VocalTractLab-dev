@@ -296,7 +296,7 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTest(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest();
+  simu3d->runTest(ELEPHANT_TRUNK);
 }
 
 // ****************************************************************************

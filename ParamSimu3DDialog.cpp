@@ -186,7 +186,7 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMeshDensity = new wxTextCtrl(this, IDE_MESH_DENSITY, "", wxDefaultPosition,
-        wxSize(40, -1), wxTE_PROCESS_ENTER);
+        wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMeshDensity, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
@@ -220,7 +220,7 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxCutOnFreq = new wxTextCtrl(this, IDE_MAX_CUT_ON, "", wxDefaultPosition,
-        wxSize(60, -1), wxTE_PROCESS_ENTER);
+        wxSize(80, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxCutOnFreq, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
@@ -237,7 +237,7 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxSimFreq = new wxTextCtrl(this, IDE_MAX_SIM_FREQ, "", wxDefaultPosition,
-        wxSize(60, -1), wxTE_PROCESS_ENTER);
+        wxSize(80, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxSimFreq, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
@@ -254,7 +254,7 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtNumIntegrationStep = new wxTextCtrl(this, IDE_NUM_INTEGRATION, "", wxDefaultPosition,
-        wxSize(40, -1), wxTE_PROCESS_ENTER);
+        wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtNumIntegrationStep, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
@@ -326,7 +326,7 @@ void ParamSimu3DDialog::initWidgets()
 	lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
 	txtPercLoss = new wxTextCtrl(this, IDE_PERCENT_LOSSES, "", wxDefaultPosition,
-		wxSize(40, -1), wxTE_PROCESS_ENTER);
+		wxSize(60, -1), wxTE_PROCESS_ENTER);
 	lineSizer->Add(txtPercLoss, 0, wxALL | wxALIGN_CENTER, 3);
 
 	topLevelSizer->Add(lineSizer);

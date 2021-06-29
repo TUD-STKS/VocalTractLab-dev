@@ -21,61 +21,64 @@ class Acoustic3dPage : public wxPanel
 // ****************************************************************
 
 public:
-	Acoustic3dPage(wxWindow* parent, VocalTractPicture *picVocalTract);
-	void updateWidgets();
-	
+  Acoustic3dPage(wxWindow* parent, VocalTractPicture *picVocalTract);
+  void updateWidgets();
+  
 // ****************************************************************
 // Private data.
 // ****************************************************************
 private:
 
-	Data *data;
-	Acoustic3dSimulation *simu3d;
-	wxSplitterWindow *splitter;
-	AreaFunctionPicture *picAreaFunction;
-	PropModesPicture *picPropModes;
-	//wxGenericProgressDialog *progressDialog;
+  Data *data;
+  Acoustic3dSimulation *simu3d;
+  wxSplitterWindow *splitter;
+  AreaFunctionPicture *picAreaFunction;
+  PropModesPicture *picPropModes;
+  //wxGenericProgressDialog *progressDialog;
 
-	// propagation modes controls
+  // propagation modes controls
 
-	wxCheckBox* chkShowMesh;
-	wxCheckBox* chkShowMode;
-	wxCheckBox* chkShowF;
+  wxCheckBox* chkShowMesh;
+  wxCheckBox* chkShowMode;
+  wxCheckBox* chkShowF;
 
 // ****************************************************************
 // Private functions.
 // ****************************************************************
 private:
 
-	void initVars();
-	void initWidgets(VocalTractPicture* picVocalTract);
-	void OnUpdateRequest(wxCommandEvent& event);
+  void initVars();
+  void initWidgets(VocalTractPicture* picVocalTract);
+  void OnUpdateRequest(wxCommandEvent& event);
 
-	// Event handers for controls at the left side
+  // Event handers for controls at the left side
 
-  void OnRunTest(wxCommandEvent& event);
-	void OnRunStaticSimulation(wxCommandEvent& event);
-	void OnParamSimuDialog(wxCommandEvent& event);
-	void OnShapesDialog(wxCommandEvent& event);
-	void OnImportGeometry(wxCommandEvent& event);
-	void OnPlayLongVowel(wxCommandEvent& event);
-	void OnPlayLongVowel();
-	void OnPlayNoiseSource(wxCommandEvent& event);
-	void OnComputeModes(wxCommandEvent& event);
+  //void OnRunTest(wxCommandEvent& event);
+  void OnRunTestMatrixE(wxCommandEvent& event);
+  void OnRunTestDiscontinuity(wxCommandEvent& event);
+  void OnRunTestElephant(wxCommandEvent& event);
+  void OnRunStaticSimulation(wxCommandEvent& event);
+  void OnParamSimuDialog(wxCommandEvent& event);
+  void OnShapesDialog(wxCommandEvent& event);
+  void OnImportGeometry(wxCommandEvent& event);
+  void OnPlayLongVowel(wxCommandEvent& event);
+  void OnPlayLongVowel();
+  void OnPlayNoiseSource(wxCommandEvent& event);
+  void OnComputeModes(wxCommandEvent& event);
 
-	// event handlers for main panel control
+  // event handlers for main panel control
 
-	void OnShowLowerOrderMode(wxCommandEvent& event);
-	void OnShowMesh(wxCommandEvent& event);
-	void OnShowMode(wxCommandEvent& event);
-	void OnShowF(wxCommandEvent& event);
-	void OnShowHigherOrderMode(wxCommandEvent& event);
+  void OnShowLowerOrderMode(wxCommandEvent& event);
+  void OnShowMesh(wxCommandEvent& event);
+  void OnShowMode(wxCommandEvent& event);
+  void OnShowF(wxCommandEvent& event);
+  void OnShowHigherOrderMode(wxCommandEvent& event);
 
 // ****************************************************************************
  // Declare the event table right at the end
  // ****************************************************************************
 
-	DECLARE_EVENT_TABLE()
+  DECLARE_EVENT_TABLE()
 
 };
 #endif

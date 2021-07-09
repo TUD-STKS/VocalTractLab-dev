@@ -27,6 +27,7 @@ using namespace std;
 
 // Left side controls
 
+static const int IDB_RUN_RAD_IMP = 5996;
 static const int IDB_RUN_TEST_MATRIX_E = 5997;
 static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
 static const int IDB_RUN_TEST_ELEPHANT = 5999;
@@ -43,7 +44,7 @@ static const int IDB_PLAY_NOISE_SOURCE = 6006;
 static const int IDB_SHOW_LOWER_ORDER_MODE = 6010;
 static const int IDB_SHOW_MESH = 6011;
 static const int IDB_SHOW_MODE = 6012;
-static const int IDB_SHOW_F = 6013;
+//static const int IDB_SHOW_F = 6013;
 static const int IDB_SHOW_HIGHER_ORDER_MODE = 6014;
 
 // ****************************************************************************
@@ -58,6 +59,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   // Left side controls
 
   //EVT_BUTTON(IDB_RUN_TEST, Acoustic3dPage::OnRunTest)
+  EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
   EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
   EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
   EVT_BUTTON(IDB_RUN_TEST_ELEPHANT, Acoustic3dPage::OnRunTestElephant)
@@ -74,7 +76,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
   EVT_CHECKBOX(IDB_SHOW_MODE, Acoustic3dPage::OnShowMode)
-  EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
+  //EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
   EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowHigherOrderMode)
 
 END_EVENT_TABLE()
@@ -105,7 +107,7 @@ void Acoustic3dPage::updateWidgets()
   // display selected options for mode picture
   chkShowMesh->SetValue(picPropModes->meshSelected());
   chkShowMode->SetValue(picPropModes->modeSelected());
-  chkShowF->SetValue(picPropModes->fSelected());
+  //chkShowF->SetValue(picPropModes->fSelected());
 
   picAreaFunction->Refresh();
   picPropModes->Refresh();
@@ -141,6 +143,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 // ****************************************************************
 
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
+
+  button = new wxButton(this, IDB_RUN_RAD_IMP, "Run test scale rad imped");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_RUN_TEST_MATRIX_E, "Run test matrix E");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -242,8 +247,8 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   chkShowMode = new wxCheckBox(topPanel, IDB_SHOW_MODE, "Modes");
   sizer->Add(chkShowMode, 0, wxALL, 2);
 
-  chkShowF = new wxCheckBox(topPanel, IDB_SHOW_F, "F");
-  sizer->Add(chkShowF, 0, wxALL, 2);
+  //chkShowF = new wxCheckBox(topPanel, IDB_SHOW_F, "F");
+  //sizer->Add(chkShowF, 0, wxALL, 2);
 
   button = new wxButton(topPanel, IDB_SHOW_HIGHER_ORDER_MODE, ">", wxDefaultPosition, wxSize(25, 25));
   sizer->Add(button, 0, wxALL, 5);
@@ -312,6 +317,18 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 //  picAreaFunction->Update();
 //  picPropModes->Update();
 //}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnRunTestRadImp(wxCommandEvent& event)
+{
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->runTest(SCALE_RAD_IMP);
+  updateWidgets();
+  picAreaFunction->Update();
+  picPropModes->Update();
+}
 
 // ****************************************************************************
 // ****************************************************************************
@@ -591,7 +608,7 @@ void Acoustic3dPage::OnShowMesh(wxCommandEvent& event)
 {
   picPropModes->showMesh();
   chkShowMode->SetValue(picPropModes->modeSelected());
-  chkShowF->SetValue(picPropModes->fSelected());
+  //chkShowF->SetValue(picPropModes->fSelected());
 }
 
 // ****************************************************************************
@@ -600,15 +617,17 @@ void Acoustic3dPage::OnShowMode(wxCommandEvent& event)
 {
   picPropModes->showMode();
   chkShowMesh->SetValue(picPropModes->meshSelected());
-  chkShowF->SetValue(picPropModes->fSelected());
+  //chkShowF->SetValue(picPropModes->fSelected());
 }
 
-void Acoustic3dPage::OnShowF(wxCommandEvent& event)
-{
-  picPropModes->showF();
-  chkShowMesh->SetValue(picPropModes->meshSelected());
-  chkShowMode->SetValue(picPropModes->modeSelected());
-}
+// ****************************************************************************
+
+//void Acoustic3dPage::OnShowF(wxCommandEvent& event)
+//{
+//  picPropModes->showF();
+//  chkShowMesh->SetValue(picPropModes->meshSelected());
+//  chkShowMode->SetValue(picPropModes->modeSelected());
+//}
 
 // ****************************************************************************
 

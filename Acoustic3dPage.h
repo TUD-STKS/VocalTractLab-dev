@@ -40,7 +40,7 @@ private:
 
   wxCheckBox* chkShowMesh;
   wxCheckBox* chkShowMode;
-  wxCheckBox* chkShowF;
+  //wxCheckBox* chkShowF;
 
 // ****************************************************************
 // Private functions.
@@ -54,6 +54,7 @@ private:
   // Event handers for controls at the left side
 
   //void OnRunTest(wxCommandEvent& event);
+  void OnRunTestRadImp(wxCommandEvent& event);
   void OnRunTestMatrixE(wxCommandEvent& event);
   void OnRunTestDiscontinuity(wxCommandEvent& event);
   void OnRunTestElephant(wxCommandEvent& event);
@@ -71,7 +72,7 @@ private:
   void OnShowLowerOrderMode(wxCommandEvent& event);
   void OnShowMesh(wxCommandEvent& event);
   void OnShowMode(wxCommandEvent& event);
-  void OnShowF(wxCommandEvent& event);
+  //void OnShowF(wxCommandEvent& event);
   void OnShowHigherOrderMode(wxCommandEvent& event);
 
 // ****************************************************************************

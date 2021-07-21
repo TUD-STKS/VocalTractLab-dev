@@ -388,7 +388,7 @@ void ParamSimu3DDialog::OnMeshDensityEnter(wxCommandEvent& event)
 {
     double x = 0.0;
     wxString st = txtMeshDensity->GetValue();
-    if ((st.ToDouble(&x)) && (x >= 1.0) && (x <= 20.0))
+    if ((st.ToDouble(&x)) && (x >= 1.0) && (x <= 50.0))
     {
         m_meshDensity = x;
     }

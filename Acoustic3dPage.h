@@ -54,6 +54,7 @@ private:
   // Event handers for controls at the left side
 
   //void OnRunTest(wxCommandEvent& event);
+  void OnRunTestJunction(wxCommandEvent& event);
   void OnRunTestRadImp(wxCommandEvent& event);
   void OnRunTestMatrixE(wxCommandEvent& event);
   void OnRunTestDiscontinuity(wxCommandEvent& event);

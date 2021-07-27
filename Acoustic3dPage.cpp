@@ -27,6 +27,7 @@ using namespace std;
 
 // Left side controls
 
+static const int IDB_RUN_TEST_JUNCTION = 5995;
 static const int IDB_RUN_RAD_IMP = 5996;
 static const int IDB_RUN_TEST_MATRIX_E = 5997;
 static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
@@ -59,6 +60,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   // Left side controls
 
   //EVT_BUTTON(IDB_RUN_TEST, Acoustic3dPage::OnRunTest)
+  EVT_BUTTON(IDB_RUN_TEST_JUNCTION, Acoustic3dPage::OnRunTestJunction)
   EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
   EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
   EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
@@ -143,6 +145,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 // ****************************************************************
 
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
+
+  button = new wxButton(this, IDB_RUN_TEST_JUNCTION, "Run test junction");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_RUN_RAD_IMP, "Run test scale rad imped");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -317,6 +322,18 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 //  picAreaFunction->Update();
 //  picPropModes->Update();
 //}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
+{
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->runTest(JUNCTION);
+  updateWidgets();
+  picAreaFunction->Update();
+  picPropModes->Update();
+}
 
 // ****************************************************************************
 // ****************************************************************************

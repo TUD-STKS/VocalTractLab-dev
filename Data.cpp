@@ -3604,9 +3604,7 @@ bool Data::loadSpeaker(const wxString &fileName)
   // ****************************************************************
 
   vector<XmlError> xmlErrors;
-  wxString fNameWx(wxT("Téléchargement"));
-  std::string fName(fileName.ToStdString(wxMBConvUTF8()));
-  XmlNode *rootNode = xmlParseFile(fileName.ToStdString(wxMBConvUTF8()), "speaker", &xmlErrors);
+  XmlNode* rootNode = xmlParseFile(fileName.ToStdString(), "speaker", &xmlErrors);
   if (rootNode == NULL)
   {
     xmlPrintErrors(xmlErrors);

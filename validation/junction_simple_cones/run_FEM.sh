@@ -1,0 +1,2 @@
+dolfin-convert junction_simple_cones_0_002.msh junction_simple_cones_0_002.xml
+python3 junction_simple_cones.py

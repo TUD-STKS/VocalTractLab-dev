@@ -1,5 +1,7 @@
 % compare FEM and MM for the elephant trunk test case
 
+ftSize = 14;
+
 load elephant_radbig_coarse_out_3D.mat
 Hrb = H;
 load elephant_rad_out_3D.mat
@@ -26,17 +28,22 @@ legend('FEM rad Big', 'FEM rad small', 'MM', 'location', 'southeast')
 %% zero pressure at the opening
 
 load elephant_p0_out_3D.mat
+Hp0_orig = H;
+load elephant_p0_stabilized_out_3D.mat
 load elephant_ac_press_MM_p0.txt
 
 fac = input_area*(10^5);
 
 figure
 hold on
-plot(f, 20*log10(abs(H)))
-plot(elephant_ac_press_MM_p0(:,1), 20*log10(fac*elephant_ac_press_MM_p0(:,2)))
+plot(f, 20*log10(abs(Hp0_orig)), 'k', 'linewidth', 2)
+plot(f, 20*log10(abs(H)), 'r', 'linewidth', 2)
+plot(elephant_ac_press_MM_p0(:,1), 20*log10(fac*elephant_ac_press_MM_p0(:,2)), 'b', 'linewidth', 2)
 
 xlim([0 10000])
-ylim([60 130])
+ylim([70 140])
 xlabel('f (Hz)')
 ylabel('|H| (dB)')
-legend('FEM', 'MM')
+h = legend('FEM original','FEM stabilized', 'MM', 'location', 'southeast');
+set(h, 'fontsize', ftSize);
+set(gca, 'fontsize', ftSize);

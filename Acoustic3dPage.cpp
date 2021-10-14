@@ -329,10 +329,18 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest(JUNCTION);
+  // load geometry configuration file
+  wxFileName fileName;
+  wxString name = wxFileSelector("Load geometry description file", fileName.GetPath(),
+    fileName.GetFullName(), ".csv", "Geometry file (*.csv)|*.csv",
+    wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
+
+  if (!name.empty()){
+  simu3d->runTest(JUNCTION, name.ToStdString());
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();
+  }
 }
 
 // ****************************************************************************
@@ -341,7 +349,8 @@ void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTestRadImp(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest(SCALE_RAD_IMP);
+  string fileName("file");
+  simu3d->runTest(SCALE_RAD_IMP, fileName);
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();
@@ -353,7 +362,8 @@ void Acoustic3dPage::OnRunTestRadImp(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest(MATRIX_E);
+  string fileName("file");
+  simu3d->runTest(MATRIX_E, fileName);
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();
@@ -365,7 +375,8 @@ void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTestDiscontinuity(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest(DISCONTINUITY);
+  string fileName("file");
+  simu3d->runTest(DISCONTINUITY, fileName);
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();
@@ -377,7 +388,8 @@ void Acoustic3dPage::OnRunTestDiscontinuity(wxCommandEvent& event)
 void Acoustic3dPage::OnRunTestElephant(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  simu3d->runTest(ELEPHANT_TRUNK);
+  string fileName("file");
+  simu3d->runTest(ELEPHANT_TRUNK, fileName);
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();

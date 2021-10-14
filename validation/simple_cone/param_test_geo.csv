@@ -14,5 +14,5 @@
 0.7854;0.7854;
 # end admittance, wall impedance
 1.00;0.005;
-# index frequence extraction field
-129;
+# frequence extraction field
+1435;

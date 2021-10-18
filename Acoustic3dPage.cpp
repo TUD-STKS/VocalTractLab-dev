@@ -336,7 +336,8 @@ void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
     wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
 
   if (!name.empty()){
-  simu3d->runTest(JUNCTION, name.ToStdString());
+  //simu3d->runTest(JUNCTION, name.ToStdString());
+  simu3d->cylinderConcatenationSimulation(name.ToStdString());
   updateWidgets();
   picAreaFunction->Update();
   picPropModes->Update();

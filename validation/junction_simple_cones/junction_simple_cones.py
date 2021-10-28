@@ -83,6 +83,8 @@ aglottis = assemble(1.0*ds(1))
 print("alips = {}; aglottis = {}".format(alips, aglottis))
 
 # initialisation
+absp = []
+phasep = []
 absu = []
 phaseu = []
 ii = 0
@@ -124,10 +126,12 @@ for freq in frequencies:
     abs_u_lips = abs(p_lips/Z_lips)
     phase_u_lips = cmath.phase(p_lips/Z_lips)
 
+    absp.append(abs(p_lips))
+    phasep.append(cmath.phase(p_lips))
     absu.append(abs_u_lips)
     phaseu.append(phase_u_lips)
 
-    np.savetxt('tfFEM.txt', np.transpose(np.vstack([frequencies[:ii], np.array(absu), np.array(phaseu)])))
+    np.savetxt('tfFEM.txt', np.transpose(np.vstack([frequencies[:ii], np.array(absu), np.array(phaseu), np.array(absp), np.array(phasep)])))
 
 # save solution to vtk file
 vtkFile = File('simple_tube.pvd')

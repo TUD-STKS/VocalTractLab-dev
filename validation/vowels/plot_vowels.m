@@ -1,18 +1,15 @@
 
 area = 0.8;
-%corrFac = (10^5*area);
 corrFac = (10^5);
 
 vowels = {'a', 'u', 'i'};
-corrVarArea = [1 1 1;1 1 1;10^(-5.7/20) 10^(2.6/20) 10^(-5.4/20)];
-%corrVarArea = ones(3,3);
 types = {'_st', '', '_a'};
 typesSave = {'_straight', '_curved', '_curved_var_area'};
 load a_m.txt
 freqs = a_m(:,1);
 nFreqs = length(freqs);
 
-lineSize = 3;
+lineSize = 1;
 ftSize = 14;
 colors = {'r', 'k', 'b', [0.2 0.6 0.4]};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
@@ -30,7 +27,7 @@ for v = 1:3
       eval(sprintf('phase_MM(:,%d) = %s(:,3);', t, name));
       nameSave = [vowels{v} '_m' typesSave{t}];
       eval(sprintf('%s(:,1) = freqs;', nameSave));
-      eval(sprintf('%s(:,2) = mod_MM(:,%d) * corrFac * corrVarArea(t, v);', nameSave, t));
+      eval(sprintf('%s(:,2) = mod_MM(:,%d) * corrFac;', nameSave, t));
       eval(sprintf('%s(:,3) = phase_MM(:,%d);', nameSave, t));
       stringSave = [stringSave ',''' nameSave ''' ']; 
     end
@@ -45,7 +42,7 @@ for v = 1:3
   hold on
   plot(f, 20*log10(abs(H)), 'linewidth', lineSize, 'color', colors{1})
   for t = 1:3
-    plot(freqs, 20*log10(corrFac * corrVarArea(t, v) * mod_MM(:,t)), ...
+    plot(freqs, 20*log10(corrFac * mod_MM(:,t)), ...
       'linewidth', lineSize, 'color', colors{t+1})
   end
 

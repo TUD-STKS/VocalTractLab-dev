@@ -2,6 +2,8 @@
 load p.txt
 load q.txt
 load Y.txt
+load cx.txt
+load cy.txt
 
 % load FEM simulation
 load extracted_field\p_center_line_real_2500.csv
@@ -18,13 +20,13 @@ p_fem = pre + 1i*pim;
 x_fem = xi;
 
 
-x = [repmat(8.5*(0:99)/99, 51, 1) repmat(8.5 + 8.5*(0:99)/99, 51, 1)];
-y = [(((2 - (0:99)/99)')*(2*(0:50)/50 - 1))' (((2 - (0:99)/99)')*(2*(0:50)/50 - 1))'];
+% x = [repmat(8.5*(0:99)/99, 51, 1) repmat(8.5 + 8.5*(0:99)/99, 51, 1)];
+% y = [(((2 - (0:99)/99)')*(2*(0:50)/50 - 1))' (((2 - (0:99)/99)')*(2*(0:50)/50 - 1))'];
 
 figure,
-surf(x, y, p')
+surf(cx, cy, p)
 
 figure
 hold on
 plot(x_fem, abs(p_fem))
-plot(x(25,:)/100, 10*p(:,25)')
+plot(cx(:,25)/100, 10*p(:,25))

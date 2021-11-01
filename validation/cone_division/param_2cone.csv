@@ -1,0 +1,18 @@
+# number of modes 
+6;6;
+# radius
+3.;5.;
+# contour shift
+0.0;0.0;
+# scaling in
+0.33333; 0.599999;
+# scaling out
+1.; 1.;
+# lengths
+4.; 4.;
+# curvature angles
+0.7854;0.7854;
+# end admittance, wall impedance
+1.;0.005;
+# frequence extraction field
+2500;

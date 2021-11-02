@@ -11,7 +11,7 @@
 # lengths
 4.; 4.;
 # curvature angles
-0.7854;0.7854;
+0.3927;0.3927;
 # end admittance, wall impedance
 1.;0.005;
 # frequence extraction field

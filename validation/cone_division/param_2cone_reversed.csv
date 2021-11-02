@@ -7,12 +7,12 @@
 # scaling in
 1.; 1.;
 # scaling out
-0.600001; 0.33333;
+0.5999999; 0.33333;
 # lengths
 4.; 4.;
 # curvature angles
 0.7854;0.7854;
 # end admittance, wall impedance
-0.111111;0.005;
+1.;0.005;
 # frequence extraction field
 2500;

@@ -53,7 +53,6 @@ private:
 
   // Event handers for controls at the left side
 
-  //void OnRunTest(wxCommandEvent& event);
   void OnRunTestJunction(wxCommandEvent& event);
   void OnRunTestRadImp(wxCommandEvent& event);
   void OnRunTestMatrixE(wxCommandEvent& event);
@@ -67,6 +66,7 @@ private:
   void OnPlayLongVowel();
   void OnPlayNoiseSource(wxCommandEvent& event);
   void OnComputeModes(wxCommandEvent& event);
+  void OnComputeAcousticField(wxCommandEvent& event);
 
   // event handlers for main panel control
 

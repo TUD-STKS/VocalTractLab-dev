@@ -39,6 +39,7 @@ static const int IDB_IMPORT_GEOMETRY = 6003;
 static const int IDB_PARAM_SIMU_DIALOG = 6004;
 static const int IDB_PLAY_LONG_VOWEL = 6005;
 static const int IDB_PLAY_NOISE_SOURCE = 6006;
+static const int IDB_COMPUTE_ACOUSTIC_FIELD = 6007;
 
 // Main panel controls
 
@@ -59,7 +60,6 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
 
   // Left side controls
 
-  //EVT_BUTTON(IDB_RUN_TEST, Acoustic3dPage::OnRunTest)
   EVT_BUTTON(IDB_RUN_TEST_JUNCTION, Acoustic3dPage::OnRunTestJunction)
   EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
   EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
@@ -72,6 +72,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
+  EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
 
   // Main panel controls
 
@@ -165,6 +166,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(10);
@@ -314,18 +318,6 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-//void Acoustic3dPage::OnRunTest(wxCommandEvent& event)
-//{
-//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-//  simu3d->runTest(ELEPHANT_TRUNK);
-//  updateWidgets();
-//  picAreaFunction->Update();
-//  picPropModes->Update();
-//}
-
-// ****************************************************************************
-// ****************************************************************************
-
 void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
 {
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
@@ -426,14 +418,6 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
   VocalTract* tract = data->vocalTract;
   
-  //if (simu3d->isGeometryImported())
-  //{
-  //  simu3d->createCSWithIntermediateCSFromCSVFile(false);
-  //}
-  //else
-  //{
-  //  simu3d->createCSWithIntermediateCSGeneral(tract, true);
-  //}
   simu3d->createCrossSections(tract, true);
   log << "Geometry succesfully imported" << endl;
 
@@ -455,37 +439,6 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
     prop.close();
   }
 
-  //// extract the minima and maxima of the contours
-  //log << "Start extract min/max" << endl;
-  //ofstream cont("cont.txt");
-  //double minCs, maxCs;
-  //Polygon_2 contour;
-  //int cnt(0);
-
-  //for (int i(0); i < simu3d->numCrossSections() - 1; i++)
-  //{
-  //  log << "length " << simu3d->crossSection(i)->length() << endl;
-  //  if ((i == 0) || (simu3d->crossSection(i)->length() > 0.))
-  //  {
-  //    contour = simu3d->crossSection(i)->contour();
-  //    auto it = contour.vertices_begin();
-
-  //    minCs = maxCs = it->y();
-  //    for (; it != contour.vertices_end(); it++)
-  //    {
-  //      minCs = min(minCs, it->y());
-  //      maxCs = max(maxCs, it->y());
-  //    }
-  //    cont << tract->centerLine[cnt].point.x << "  "
-  //      << tract->centerLine[cnt].point.y << "  "
-  //      << tract->centerLine[cnt].normal.x << "  "
-  //      << tract->centerLine[cnt].normal.y << "  "
-  //      << minCs << "  " << maxCs << endl;
-  //  cnt++;
-  //  }
-  //}
-  //cont.close();
-
   simu3d->computeMeshAndModes();
 
   // update pictures
@@ -495,6 +448,24 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
 
   log.close();
 }
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
+{
+  Data* data = Data::getInstance();
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  VocalTract* tract = data->vocalTract;
+
+  simu3d->computeAcousticField(tract);
+
+  // update pictures
+  updateWidgets();
+  picAreaFunction->Update();
+  picPropModes->Update();
+}
+
 
 // ****************************************************************************
 // ****************************************************************************

@@ -38,6 +38,14 @@ private:
     wxStaticText* txtNbFreqs;
 	wxTextCtrl* txtPercLoss;
 
+  // for acoustic field computation
+  wxTextCtrl* txtFreqComputeField;
+  wxTextCtrl* txtResolutionField;
+  wxTextCtrl* txtBboxMinX;
+  wxTextCtrl* txtBboxMinY;
+  wxTextCtrl* txtBboxMaxX;
+  wxTextCtrl* txtBboxMaxY;
+
 	wxCheckBox* chkFdepLosses;
     wxCheckBox* chkWallLosses;
     wxCheckBox* chkStraight;
@@ -73,6 +81,13 @@ private:
 	void OnSecConstrictionEnter(wxCommandEvent& event);
     void OnExpSpectrumLgthEnter(wxCommandEvent& event);
 	void OnPercentLosses(wxCommandEvent& event);
+  void OnFreqComputeField(wxCommandEvent& event);
+  void OnResolutionField(wxCommandEvent& event);
+  void OnBboxMinX(wxCommandEvent& event);
+  void OnBboxMinY(wxCommandEvent& event);
+  void OnBboxMaxX(wxCommandEvent& event);
+  void OnBboxMaxY(wxCommandEvent& event);
+
 
 	void OnChkFdepLosses(wxCommandEvent& event);
     void OnChkWallLosses(wxCommandEvent& event);

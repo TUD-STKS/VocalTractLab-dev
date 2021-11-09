@@ -15,14 +15,20 @@ static const int IDE_SEC_NOISE_SOURCE   = 4005;
 static const int IDE_SEC_CONSTRICTION	= 4006;
 static const int IDE_EXP_SPECTRUM_LGTH  = 4007;
 static const int IDE_PERCENT_LOSSES		= 4008;
+static const int IDE_FREQ_COMPUTE_FIELD = 4009;
+static const int IDE_RESOLUTION_FIELD = 4010;
+static const int IDE_BBOX_MIN_X       = 4011;
+static const int IDE_BBOX_MIN_Y       = 4012;
+static const int IDE_BBOX_MAX_X       = 4013;
+static const int IDE_BBOX_MAX_Y       = 4014;
 
-static const int IDB_CHK_FDEP_LOSSES	= 4009;
-static const int IDB_CHK_WALL_LOSSES    = 4010;
+static const int IDB_CHK_FDEP_LOSSES	= 5001;
+static const int IDB_CHK_WALL_LOSSES    = 5002;
 
-static const int IDB_CHK_STRAIGHT       = 4011;
-static const int IDB_CHK_MAGNUS			= 4012;
-static const int IDB_CHK_CURV			= 4013;
-static const int IDB_CHK_VAR_AREA		= 4014;
+static const int IDB_CHK_STRAIGHT       = 5003;
+static const int IDB_CHK_MAGNUS			= 5004;
+static const int IDB_CHK_CURV			= 5005;
+static const int IDB_CHK_VAR_AREA		= 5006;
 
 // ****************************************************************************
 // The event table.
@@ -38,6 +44,13 @@ EVT_TEXT_ENTER(IDE_SEC_NOISE_SOURCE, ParamSimu3DDialog::OnSecNoiseSourceEnter)
 EVT_TEXT_ENTER(IDE_SEC_CONSTRICTION, ParamSimu3DDialog::OnSecConstrictionEnter)
 EVT_TEXT_ENTER(IDE_EXP_SPECTRUM_LGTH, ParamSimu3DDialog::OnExpSpectrumLgthEnter)
 EVT_TEXT_ENTER(IDE_PERCENT_LOSSES, ParamSimu3DDialog::OnPercentLosses)
+EVT_TEXT_ENTER(IDE_FREQ_COMPUTE_FIELD, ParamSimu3DDialog::OnFreqComputeField)
+EVT_TEXT_ENTER(IDE_RESOLUTION_FIELD, ParamSimu3DDialog::OnResolutionField)
+EVT_TEXT_ENTER(IDE_BBOX_MIN_X, ParamSimu3DDialog::OnBboxMinX)
+EVT_TEXT_ENTER(IDE_BBOX_MIN_Y, ParamSimu3DDialog::OnBboxMinY)
+EVT_TEXT_ENTER(IDE_BBOX_MAX_X, ParamSimu3DDialog::OnBboxMaxX)
+EVT_TEXT_ENTER(IDE_BBOX_MAX_Y, ParamSimu3DDialog::OnBboxMaxY)
+
 EVT_CHECKBOX(IDB_CHK_FDEP_LOSSES, ParamSimu3DDialog::OnChkFdepLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_LOSSES, ParamSimu3DDialog::OnChkWallLosses)
 EVT_CHECKBOX(IDB_CHK_STRAIGHT, ParamSimu3DDialog::OnChkStraight)
@@ -121,7 +134,26 @@ void ParamSimu3DDialog::updateWidgets()
 
 	chkVarArea->SetValue(m_simuParams.varyingArea);
 
-    simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
+  // set compute acoustic field options
+  st = wxString::Format("%1.1f", m_simuParams.freqField);
+  txtFreqComputeField->SetLabel(st);
+
+  st = wxString::Format("%d", m_simuParams.fieldResolution);
+  txtResolutionField->SetLabel(st);
+
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].x());
+  txtBboxMinX->SetLabel(st);
+
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].y());
+  txtBboxMinY->SetLabel(st);
+
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].x());
+  txtBboxMaxX->SetLabel(st);
+
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].y());
+  txtBboxMaxY->SetLabel(st);
+
+  simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams);
 }
 
@@ -372,6 +404,74 @@ void ParamSimu3DDialog::initWidgets()
     topLevelSizer->Add(lineSizer);
 
     // ****************************************************************
+    // Select the frequency and the resolution for field computation
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(20);
+
+    label = new wxStaticText(this, wxID_ANY, "Acoustic field computation options");
+    topLevelSizer->Add(label, 0, wxALL | wxALIGN_LEFT , 3);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    label = new wxStaticText(this, wxID_ANY, "Frequency ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtFreqComputeField = new wxTextCtrl(this, IDE_FREQ_COMPUTE_FIELD, "", wxDefaultPosition,
+      wxSize(50, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtFreqComputeField, 0, wxALL, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " Hz, resolution ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtResolutionField = new wxTextCtrl(this, IDE_RESOLUTION_FIELD, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtResolutionField, 0, wxALL, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " point per cm");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    topLevelSizer->Add(lineSizer);
+
+    // ****************************************************************
+    // Set the bunding box to compute the acoustic field
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(10);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    label = new wxStaticText(this, wxID_ANY, "Min X ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtBboxMinX = new wxTextCtrl(this, IDE_BBOX_MIN_X, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtBboxMinX, 0, wxALL, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " min Y ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtBboxMinY = new wxTextCtrl(this, IDE_BBOX_MIN_Y, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtBboxMinY, 0, wxALL, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " max X ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtBboxMaxX = new wxTextCtrl(this, IDE_BBOX_MAX_X, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtBboxMaxX, 0, wxALL, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " max Y ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtBboxMaxY = new wxTextCtrl(this, IDE_BBOX_MAX_Y, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
+
+    topLevelSizer->Add(lineSizer);
+
+    // ****************************************************************
     // Set the top-level-sizer for this window.
     // ****************************************************************
 
@@ -513,6 +613,90 @@ void ParamSimu3DDialog::OnPercentLosses(wxCommandEvent& event)
 	}
 
 	updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnFreqComputeField(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtFreqComputeField->GetValue();
+  if ((st.ToDouble(&x)) && (x >= 1.) && (x <= 20000.))
+  {
+    m_simuParams.freqField = x;
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnResolutionField(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtResolutionField->GetValue();
+  if ((st.ToDouble(&x)) && (x >= 1.) && (x <= 500.))
+  {
+    m_simuParams.fieldResolution = (int)x;
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMinX->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[0] = Point(x, m_simuParams.bboxField[0].y());
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMinY->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[0] = Point(m_simuParams.bboxField[0].x(), x);
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMaxX->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[1] = Point(x, m_simuParams.bboxField[1].y());
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMaxY->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[1] = Point(m_simuParams.bboxField[1].x(), x);
+  }
+  updateWidgets();
 }
 
 // ****************************************************************************

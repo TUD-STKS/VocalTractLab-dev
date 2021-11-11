@@ -499,6 +499,7 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
     wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
 
   simu3d->setGeometryImported(true);
+  simu3d->setContourInterpolationMethod(FROM_FILE);
   simu3d->setGeometryFile(name.ToStdString());
 }
 

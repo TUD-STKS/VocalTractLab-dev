@@ -107,7 +107,7 @@ void FormantOptimizationDialog::initWidgets()
   wxFlexGridSizer *gridSizer = new wxFlexGridSizer(6, 5, 5);  // num cols
   for (i=0; i < VocalTract::NUM_PARAMS; i++)
   {
-    chkParamFixed[i] = new wxCheckBox(this, wxID_ANY, wxString(vocalTract->param[i].abbr));
+    chkParamFixed[i] = new wxCheckBox(this, wxID_ANY, wxString(vocalTract->param[i].name));
     gridSizer->Add(chkParamFixed[i]); //, wxALL, 3);
   }
   topLevelSizer->Add(gridSizer, 0, wxALL, 3);

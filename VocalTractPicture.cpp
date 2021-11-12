@@ -3328,62 +3328,62 @@ wxString VocalTractPicture::getToolTipText(int controlPointIndex)
   if (controlPointIndex == CP_VELUM)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::VS].abbr.c_str(), tract->param[VocalTract::VS].x, 
-      tract->param[VocalTract::VO].abbr.c_str(), tract->param[VocalTract::VO].x);
+      tract->param[VocalTract::VS].name.c_str(), tract->param[VocalTract::VS].x, 
+      tract->param[VocalTract::VO].name.c_str(), tract->param[VocalTract::VO].x);
   }
   else
   if (controlPointIndex == CP_HYOID)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::HX].abbr.c_str(), tract->param[VocalTract::HX].x,
-      tract->param[VocalTract::HY].abbr.c_str(), tract->param[VocalTract::HY].x);
+      tract->param[VocalTract::HX].name.c_str(), tract->param[VocalTract::HX].x,
+      tract->param[VocalTract::HY].name.c_str(), tract->param[VocalTract::HY].x);
   }
   else
   if (controlPointIndex == CP_JAW)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::JA].abbr.c_str(), tract->param[VocalTract::JA].x,
-      tract->param[VocalTract::JX].abbr.c_str(), tract->param[VocalTract::JX].x);
+      tract->param[VocalTract::JA].name.c_str(), tract->param[VocalTract::JA].x,
+      tract->param[VocalTract::JX].name.c_str(), tract->param[VocalTract::JX].x);
   }
   else
   if (controlPointIndex == CP_LIP_CORNER)
   {
     st = wxString::Format("%s=%2.2f", 
-      tract->param[VocalTract::LP].abbr.c_str(), tract->param[VocalTract::LP].x);
+      tract->param[VocalTract::LP].name.c_str(), tract->param[VocalTract::LP].x);
   }
   else
   if (controlPointIndex == CP_LIP_DISTANCE)
   {
     st = wxString::Format("%s=%2.2f", 
-      tract->param[VocalTract::LD].abbr.c_str(), tract->param[VocalTract::LD].x);
+      tract->param[VocalTract::LD].name.c_str(), tract->param[VocalTract::LD].x);
   }
   else
   if (controlPointIndex == CP_TONGUE_CENTER)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::TCX].abbr.c_str(), tract->param[VocalTract::TCX].x,
-      tract->param[VocalTract::TCY].abbr.c_str(), tract->param[VocalTract::TCY].x);
+      tract->param[VocalTract::TCX].name.c_str(), tract->param[VocalTract::TCX].x,
+      tract->param[VocalTract::TCY].name.c_str(), tract->param[VocalTract::TCY].x);
   }
   else
   if (controlPointIndex == CP_TONGUE_TIP)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::TTX].abbr.c_str(), tract->param[VocalTract::TTX].x,
-      tract->param[VocalTract::TTY].abbr.c_str(), tract->param[VocalTract::TTY].x);
+      tract->param[VocalTract::TTX].name.c_str(), tract->param[VocalTract::TTX].x,
+      tract->param[VocalTract::TTY].name.c_str(), tract->param[VocalTract::TTY].x);
   }
   else
   if (controlPointIndex == CP_TONGUE_BLADE)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::TBX].abbr.c_str(), tract->param[VocalTract::TBX].x,
-      tract->param[VocalTract::TBY].abbr.c_str(), tract->param[VocalTract::TBY].x);
+      tract->param[VocalTract::TBX].name.c_str(), tract->param[VocalTract::TBX].x,
+      tract->param[VocalTract::TBY].name.c_str(), tract->param[VocalTract::TBY].x);
   }
   else
   if (controlPointIndex == CP_TONGUE_BACK)
   {
     st = wxString::Format("%s=%2.2f\n%s=%2.2f", 
-      tract->param[VocalTract::TRX].abbr.c_str(), tract->param[VocalTract::TRX].x,
-      tract->param[VocalTract::TRY].abbr.c_str(), tract->param[VocalTract::TRY].x);
+      tract->param[VocalTract::TRX].name.c_str(), tract->param[VocalTract::TRX].x,
+      tract->param[VocalTract::TRY].name.c_str(), tract->param[VocalTract::TRY].x);
   }
 
   return st;

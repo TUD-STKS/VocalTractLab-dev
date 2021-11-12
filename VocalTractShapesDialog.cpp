@@ -170,7 +170,6 @@ VocalTractShapesDialog::VocalTractShapesDialog(wxWindow *parent) :
   outputShapeVars( getSelectedShape() );
 }
 
-
 // ****************************************************************************
 /// Init the widgets of this dialog.
 // ****************************************************************************
@@ -236,7 +235,7 @@ void VocalTractShapesDialog::initWidgets()
       varSizer->Add(label);
     }
 
-    st = wxString(tract->param[i].name) + " (" + wxString(tract->param[i].abbr) + ")";
+    st = wxString(tract->param[i].description) + " (" + wxString(tract->param[i].name) + ")";
     label = new wxStaticText(scrolledWindow, wxID_ANY, st);
     varSizer->Add(label);
 

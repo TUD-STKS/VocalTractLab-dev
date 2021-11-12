@@ -199,7 +199,7 @@ void GlottisPanel::initWidgets()
 
   for (i=0; i < (int)glottis->derivedParam.size(); i++)
   {
-    label = new wxStaticText(this, wxID_ANY, glottis->derivedParam[i].name);
+    label = new wxStaticText(this, wxID_ANY, glottis->derivedParam[i].description);
     derivedParamSizer->Add(label, 0, wxALL, 2);
 
     labDerivedParam[i] = new wxStaticText(this, IDL_DERIVED_PARAM_0 + i, "xx");
@@ -217,7 +217,7 @@ void GlottisPanel::initWidgets()
 
   for (i=0; i < (int)glottis->controlParam.size(); i++)
   {
-    label = new wxStaticText(this, wxID_ANY, glottis->controlParam[i].name);
+    label = new wxStaticText(this, wxID_ANY, glottis->controlParam[i].description);
     controlParamSizer->Add(label, 0, wxALL, 5);
 
     scrControlParam[i] = new wxScrollBar(this, IDS_CONTROL_PARAM_0 + i);
@@ -261,7 +261,7 @@ void GlottisPanel::initWidgets()
   for (i=0; i < (int)glottis->staticParam.size(); i++)
   {
     st = wxString::Format("%s (%2.1f ... %2.1f %s)", 
-      glottis->staticParam[i].name.c_str(),
+      glottis->staticParam[i].description.c_str(),
       glottis->staticParam[i].min*glottis->staticParam[i].factor,
       glottis->staticParam[i].max*glottis->staticParam[i].factor,
       glottis->staticParam[i].userUnit.c_str());

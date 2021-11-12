@@ -738,11 +738,11 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
     {
       if (i < VocalTract::NUM_PARAMS)
       {
-        label = wxString( data->vocalTract->param[i].abbr );
+        label = wxString( data->vocalTract->param[i].name );
       }
       else
       {
-        label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].name;
+        label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].description;
       }
 
       cutString(dc, label, Data::LEFT_SCORE_MARGIN);

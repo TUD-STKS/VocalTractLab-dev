@@ -307,7 +307,7 @@ void Data::init(const wxString &arg0)
   // initialized).
   // ****************************************************************
 
-  speakerFileName = programPath + "JD2.speaker";
+  speakerFileName = programPath + "JD3.speaker";
   loadSpeaker(speakerFileName);
 
   // ****************************************************************

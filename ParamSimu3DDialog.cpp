@@ -82,59 +82,64 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
 
 void ParamSimu3DDialog::updateWidgets()
 {
-    wxString st;
+  ofstream log("log.txt", ofstream::app);
+  log << "Update param simu 3D dialog" << endl;
 
-    st = wxString::Format("%2.1f", m_meshDensity);
-    txtMeshDensity->SetValue(st);
+  wxString st;
 
-    //st = wxString::Format("%d", m_modeNumber);
-    //txtModeNumber->SetValue(st);
+  st = wxString::Format("%2.1f", m_meshDensity);
+  txtMeshDensity->SetValue(st);
 
-    st = wxString::Format("%6.f", m_maxCutOnFreq);
-    txtMaxCutOnFreq->SetValue(st);
+  //st = wxString::Format("%d", m_modeNumber);
+  //txtModeNumber->SetValue(st);
 
-    st = wxString::Format("%5.f", m_simuParams.maxComputedFreq);
-    txtMaxSimFreq->SetValue(st);
+  st = wxString::Format("%6.f", m_maxCutOnFreq);
+  txtMaxCutOnFreq->SetValue(st);
 
-    st = wxString::Format("%d", m_simuParams.numIntegrationStep);
-    txtNumIntegrationStep->SetValue(st);
+  st = wxString::Format("%5.f", m_simuParams.maxComputedFreq);
+  txtMaxSimFreq->SetValue(st);
 
-    st = wxString::Format("%d", m_secNoiseSource);
-    txtSecNoiseSource->SetValue(st);
+  st = wxString::Format("%d", m_simuParams.numIntegrationStep);
+  txtNumIntegrationStep->SetValue(st);
+
+  st = wxString::Format("%d", m_secNoiseSource);
+  txtSecNoiseSource->SetValue(st);
 
 	st = wxString::Format("%d", m_secConstriction);
 	txtConstriction->SetValue(st);
 
-    st = wxString::Format("%d", m_expSpectrumLgth);
-    txtExpLgth->SetValue(st);
+  st = wxString::Format("%d", m_expSpectrumLgth);
+  txtExpLgth->SetValue(st);
 
-    st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
-        (double)(1 << (m_expSpectrumLgth - 1)));
-    txtNbFreqs->SetLabel(st);
+  st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
+      (double)(1 << (m_expSpectrumLgth - 1)));
+  txtNbFreqs->SetLabel(st);
 
 	st = wxString::Format("%1.2f", m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);
 
 	chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
 
-    chkWallLosses->SetValue(m_simuParams.wallLosses);
+  chkWallLosses->SetValue(m_simuParams.wallLosses);
 
-    switch (m_simuParams.propMethod) {
-        case MAGNUS:
-            chkStraight->SetValue(false);
-			chkMagnus->SetValue(true);
-            break;
-        case STRAIGHT_TUBES:
-            chkStraight->SetValue(true);
-			chkMagnus->SetValue(false);
-            break;
-    }
+  switch (m_simuParams.propMethod) {
+      case MAGNUS:
+          chkStraight->SetValue(false);
+    chkMagnus->SetValue(true);
+          break;
+      case STRAIGHT_TUBES:
+          chkStraight->SetValue(true);
+    chkMagnus->SetValue(false);
+          break;
+  }
 
 	chkCurv->SetValue(m_simuParams.curved);
 
 	chkVarArea->SetValue(m_simuParams.varyingArea);
 
   // set compute acoustic field options
+  log << "freq field " << m_simuParams.freqField << endl; 
+
   st = wxString::Format("%1.1f", m_simuParams.freqField);
   txtFreqComputeField->SetLabel(st);
 
@@ -155,6 +160,8 @@ void ParamSimu3DDialog::updateWidgets()
 
   simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams);
+  
+  log.close();
 }
 
 // ****************************************************************************
@@ -177,18 +184,18 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent,
 wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
-    simu3d = inSimu3d;
-    m_meshDensity = simu3d->meshDensity();
-    //m_modeNumber = simu3d->modeNumber();
-    m_maxCutOnFreq = simu3d->maxCutOnFreq();
-    m_secNoiseSource = simu3d->idxSecNoiseSource();
+  simu3d = inSimu3d;
+  m_meshDensity = simu3d->meshDensity();
+  //m_modeNumber = simu3d->modeNumber();
+  m_maxCutOnFreq = simu3d->maxCutOnFreq();
+  m_secNoiseSource = simu3d->idxSecNoiseSource();
 	m_secConstriction = simu3d->idxConstriction();
-    m_expSpectrumLgth = simu3d->spectrumLgthExponent();
+  m_expSpectrumLgth = simu3d->spectrumLgthExponent();
 	m_simuParams = simu3d->simuParams();
 
-    this->Move(100, 100);
+  this->Move(100, 100);
 
-   // ****************************************************************
+  // ****************************************************************
   // Init and update the widgets.
   // ****************************************************************
 
@@ -308,22 +315,22 @@ void ParamSimu3DDialog::initWidgets()
 
     topLevelSizer->Add(lineSizer);
 
-	// ****************************************************************
-	// Set the section of the constriction
-	// ****************************************************************
+    // ****************************************************************
+    // Set the section of the constriction
+    // ****************************************************************
 
-	topLevelSizer->AddSpacer(10);
+    topLevelSizer->AddSpacer(10);
 
-	lineSizer = new wxBoxSizer(wxHORIZONTAL);
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	label = new wxStaticText(this, wxID_ANY, "Index of constriction section: ");
-	lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    label = new wxStaticText(this, wxID_ANY, "Index of constriction section: ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-	txtConstriction = new  wxTextCtrl(this, IDE_SEC_CONSTRICTION, "", wxDefaultPosition,
-		wxSize(40, -1), wxTE_PROCESS_ENTER);
-	lineSizer->Add(txtConstriction, 0, wxALL, 3);
+    txtConstriction = new  wxTextCtrl(this, IDE_SEC_CONSTRICTION, "", wxDefaultPosition,
+      wxSize(40, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtConstriction, 0, wxALL, 3);
 
-	topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer);
 
     // ****************************************************************
     // Set the length of the spectrum

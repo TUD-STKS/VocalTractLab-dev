@@ -50,7 +50,10 @@ bool Application::OnInit()
 	// printed to the terminal. This is because of a well-known 
 	// hyper-sensitivity of GTK and thus simplest way to avoid flooding 
 	// the terminal is to redirect stderr to a log file.
-	auto f = freopen( "stderr.log", "w", stderr );
+	fstream file;
+	file.open("stderr.log", ios::out);
+	cerr.rdbuf(file.rdbuf());	
+	freopen( "stderr.log", "w", stderr );
   #endif
 
   // Set the current locale to UTF-8 so "special" characters (e.g. ä, é) are 

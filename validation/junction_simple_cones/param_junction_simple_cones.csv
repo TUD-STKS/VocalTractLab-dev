@@ -1,5 +1,5 @@
 # number of modes 
-6;6;
+32;32;
 # radius
 1.5;1.5;
 # contour shift
@@ -13,6 +13,6 @@
 # curvature angles
 0.7854;0.7854;
 # end admittance, wall impedance
-0.444444;0.005;
+1.;0.005;
 # index frequence extraction field
 2500;

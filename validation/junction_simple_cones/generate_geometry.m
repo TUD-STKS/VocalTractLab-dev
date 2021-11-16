@@ -10,8 +10,8 @@ end
 no = [0. 1.];    % normal of all segments
 
 r = [1.5, 1.5];         % radius of the segments
-scaleIn = [1/3, 0.5999999];
-scaleOut = [4/3, 4/3];
+scaleIn = [4/3, 4/3];
+scaleOut = [2/3, 2/3];
 lengths = [-4, 13];
 sep = ';';
 

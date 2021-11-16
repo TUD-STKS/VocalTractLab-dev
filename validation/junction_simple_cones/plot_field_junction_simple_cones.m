@@ -4,6 +4,9 @@ load q.txt
 load Y.txt
 load cx.txt
 load cy.txt
+load field.txt
+fx = linspace(-5, 10, size(field,2));
+fy = linspace(-10, 5, size(field, 1));
 
 % load FEM simulation
 load extracted_field\p_center_line_real_2500.csv
@@ -20,9 +23,17 @@ p_fem = pre + 1i*pim;
 x_fem = xi;
 
 figure,
-surf(cx, cy, p)
+surf(cx, cy, log10(p))
+axis equal
+shading interp
+
+figure, 
+surf(fx, fy, log10(field))
+axis equal
+shading interp
 
 figure
 hold on
 plot(x_fem, abs(p_fem))
 plot(cx(:,25)/100, 10*p(:,25))
+plot((fx+4)/100, (3/4)*10*field(300,:))

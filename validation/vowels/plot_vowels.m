@@ -15,7 +15,7 @@ colors = {'r', 'k', 'b', [0.2 0.6 0.4]};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
 
 % loop over vowels
-for v = 1:2
+for v = 1:3
   load([vowels{v} '_m_fem.mat']);  % FEM 
   mod_MM = ones(nFreqs, 3);
   phase_MM = ones(nFreqs, 3);

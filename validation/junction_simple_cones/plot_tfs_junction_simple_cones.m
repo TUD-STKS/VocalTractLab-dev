@@ -11,6 +11,7 @@
 %tf3 = tfFEM;
 load tfMM.txt;
 load tfFEM.txt
+load press.txt;
 
 ftSize = 16;
 lSize = 1;
@@ -68,12 +69,13 @@ subplot(2,1,1)
 hold on
 plot(tfFEM(:,1), 20*log10(tfFEM(:,4)), 'lineWidth', lSize)
 plot(tfMM(:,1), 20*log10(fac*tfMM(:,4)), 'lineWidth', lSize)
+plot(press(:,1), 20*log10(fac*press(:,6)), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'
 ylabel '|H| (dB)'
 
-h = legend('FEM (FeniCS)', 'MM', 'location', 'northeast',...
+h = legend('FEM (FeniCS)', 'MM', 'location', 'southeast',...
   'orientation', 'horizontal');
 legend boxoff
 set(h, 'fontSize', ftSize) 
@@ -82,6 +84,7 @@ subplot(2,1,2)
 hold on
 plot(tfFEM(:,1), tfFEM(:,5), 'lineWidth', lSize)
 plot(tfMM(:,1), tfMM(:,5), 'lineWidth', lSize)
+plot(press(:,1), press(:,7), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'

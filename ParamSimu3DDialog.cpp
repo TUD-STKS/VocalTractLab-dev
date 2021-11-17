@@ -138,25 +138,23 @@ void ParamSimu3DDialog::updateWidgets()
 	chkVarArea->SetValue(m_simuParams.varyingArea);
 
   // set compute acoustic field options
-  log << "freq field " << m_simuParams.freqField << endl; 
-
   st = wxString::Format("%1.1f", m_simuParams.freqField);
-  txtFreqComputeField->SetLabel(st);
+  txtFreqComputeField->SetValue(st);
 
   st = wxString::Format("%d", m_simuParams.fieldResolution);
-  txtResolutionField->SetLabel(st);
+  txtResolutionField->SetValue(st);
 
   st = wxString::Format("%1.1f", m_simuParams.bboxField[0].x());
-  txtBboxMinX->SetLabel(st);
+  txtBboxMinX->SetValue(st);
 
   st = wxString::Format("%1.1f", m_simuParams.bboxField[0].y());
-  txtBboxMinY->SetLabel(st);
+  txtBboxMinY->SetValue(st);
 
   st = wxString::Format("%1.1f", m_simuParams.bboxField[1].x());
-  txtBboxMaxX->SetLabel(st);
+  txtBboxMaxX->SetValue(st);
 
   st = wxString::Format("%1.1f", m_simuParams.bboxField[1].y());
-  txtBboxMaxY->SetLabel(st);
+  txtBboxMaxY->SetValue(st);
 
   simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams);
@@ -388,16 +386,16 @@ void ParamSimu3DDialog::initWidgets()
 
 	topLevelSizer->Add(lineSizer);
 
-    // ****************************************************************
-    // Select the simulation type
-    // ****************************************************************
+  // ****************************************************************
+  // Select the simulation type
+  // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+  topLevelSizer->AddSpacer(10);
 
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+  lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    chkStraight = new wxCheckBox(this, IDB_CHK_STRAIGHT, "Straight");
-    lineSizer->Add(chkStraight, 0, wxALL, 2);
+  chkStraight = new wxCheckBox(this, IDB_CHK_STRAIGHT, "Straight");
+  lineSizer->Add(chkStraight, 0, wxALL, 2);
 
 	chkMagnus = new wxCheckBox(this, IDB_CHK_MAGNUS, "Magnus");
     lineSizer->Add(chkMagnus, 0, wxALL, 2);
@@ -408,84 +406,84 @@ void ParamSimu3DDialog::initWidgets()
 	chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
 	lineSizer->Add(chkVarArea, 0, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer);
 
-    // ****************************************************************
-    // Select the frequency and the resolution for field computation
-    // ****************************************************************
+  // ****************************************************************
+  // Select the frequency and the resolution for field computation
+  // ****************************************************************
 
-    topLevelSizer->AddSpacer(20);
+  topLevelSizer->AddSpacer(20);
 
-    label = new wxStaticText(this, wxID_ANY, "Acoustic field computation options");
-    topLevelSizer->Add(label, 0, wxALL | wxALIGN_LEFT , 3);
+  label = new wxStaticText(this, wxID_ANY, "Acoustic field computation options");
+  topLevelSizer->Add(label, 0, wxALL | wxALIGN_LEFT , 3);
 
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+  lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Frequency ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, "Frequency ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtFreqComputeField = new wxTextCtrl(this, IDE_FREQ_COMPUTE_FIELD, "", wxDefaultPosition,
-      wxSize(50, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtFreqComputeField, 0, wxALL, 3);
+  txtFreqComputeField = new wxTextCtrl(this, IDE_FREQ_COMPUTE_FIELD, "", wxDefaultPosition,
+    wxSize(80, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtFreqComputeField, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " Hz, resolution ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, " Hz, resolution ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtResolutionField = new wxTextCtrl(this, IDE_RESOLUTION_FIELD, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtResolutionField, 0, wxALL, 3);
+  txtResolutionField = new wxTextCtrl(this, IDE_RESOLUTION_FIELD, "", wxDefaultPosition,
+    wxSize(50, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtResolutionField, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " point per cm");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, " point per cm");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer);
 
-    // ****************************************************************
-    // Set the bunding box to compute the acoustic field
-    // ****************************************************************
+  // ****************************************************************
+  // Set the bunding box to compute the acoustic field
+  // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+  topLevelSizer->AddSpacer(10);
 
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+  lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Min X ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, "Min X ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtBboxMinX = new wxTextCtrl(this, IDE_BBOX_MIN_X, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtBboxMinX, 0, wxALL, 3);
+  txtBboxMinX = new wxTextCtrl(this, IDE_BBOX_MIN_X, "", wxDefaultPosition,
+    wxSize(50, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtBboxMinX, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " min Y ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, " max X ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtBboxMinY = new wxTextCtrl(this, IDE_BBOX_MIN_Y, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtBboxMinY, 0, wxALL, 3);
+  txtBboxMaxX = new wxTextCtrl(this, IDE_BBOX_MAX_X, "", wxDefaultPosition,
+    wxSize(50, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtBboxMaxX, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " max X ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, " min Y ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtBboxMaxX = new wxTextCtrl(this, IDE_BBOX_MAX_X, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtBboxMaxX, 0, wxALL, 3);
+  txtBboxMinY = new wxTextCtrl(this, IDE_BBOX_MIN_Y, "", wxDefaultPosition,
+    wxSize(50, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtBboxMinY, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " max Y ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, " max Y ");
+  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtBboxMaxY = new wxTextCtrl(this, IDE_BBOX_MAX_Y, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
+  txtBboxMaxY = new wxTextCtrl(this, IDE_BBOX_MAX_Y, "", wxDefaultPosition,
+    wxSize(50, -1), wxTE_PROCESS_ENTER);
+  lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer);
 
-    // ****************************************************************
-    // Set the top-level-sizer for this window.
-    // ****************************************************************
+  // ****************************************************************
+  // Set the top-level-sizer for this window.
+  // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+  topLevelSizer->AddSpacer(10);
 
-    this->SetSizer(topLevelSizer);
-    topLevelSizer->Fit(this);
+  this->SetSizer(topLevelSizer);
+  topLevelSizer->Fit(this);
 }
 
 // ****************************************************************************

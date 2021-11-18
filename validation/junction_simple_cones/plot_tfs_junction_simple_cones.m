@@ -69,7 +69,7 @@ subplot(2,1,1)
 hold on
 plot(tfFEM(:,1), 20*log10(tfFEM(:,4)), 'lineWidth', lSize)
 plot(tfMM(:,1), 20*log10(fac*tfMM(:,4)), 'lineWidth', lSize)
-plot(press(:,1), 20*log10(fac*press(:,6)), 'lineWidth', lSize)
+plot(press(:,1), 20*log10((16/9/sqrt(pi)/1.5)*fac*press(:,6)), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'

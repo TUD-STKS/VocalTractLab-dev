@@ -36,4 +36,4 @@ figure
 hold on
 plot(x_fem, abs(p_fem))
 plot(cx(:,25)/100, 10*p(:,25))
-plot((fx+4)/100, (3/4)*10*field(500,:))
+plot((fx+4)/100, (16/9/sqrt(pi)/1.5)*10*field(300,:))

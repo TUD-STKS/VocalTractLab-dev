@@ -240,7 +240,7 @@ void VocalTractShapesDialog::initWidgets()
     label = new wxStaticText(scrolledWindow, wxID_ANY, st);
     varSizer->Add(label);
 
-    txtValue[i] = new wxTextCtrl(scrolledWindow, IDT_VALUE_0 + i, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
+    txtValue[i] = new wxTextCtrl(scrolledWindow, IDT_VALUE_0 + i, "", wxDefaultPosition, this->FromDIP(wxSize(60, -1)));
     txtValue[i]->Connect(-1, wxEVT_KILL_FOCUS, 
       wxFocusEventHandler(VocalTractShapesDialog::OnValueLostFocus), NULL, this);
     varSizer->Add(txtValue[i]);
@@ -341,7 +341,7 @@ void VocalTractShapesDialog::outputShapeVars(int selection)
       txtValue[i]->Disable();
     }
 
-    txtValue[i]->SetLabel( wxString::Format("%2.2f", s->param[i]) );
+    txtValue[i]->SetValue( wxString::Format("%2.2f", s->param[i]) );
   }
 }
 

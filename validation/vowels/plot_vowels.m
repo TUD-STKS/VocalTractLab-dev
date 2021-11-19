@@ -15,11 +15,11 @@ colors = {'r', 'k', 'b', [0.2 0.6 0.4]};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
 
 % loop over vowels
-for v = 1:3
+for v = 1:1
   load([vowels{v} '_m_fem.mat']);  % FEM 
   mod_MM = ones(nFreqs, 3);
   phase_MM = ones(nFreqs, 3);
-  for t = 2:2
+  for t = 2:3
     name = [vowels{v} '_m' types{t}];
     if exist([name '.txt'])
       load([name '.txt'])

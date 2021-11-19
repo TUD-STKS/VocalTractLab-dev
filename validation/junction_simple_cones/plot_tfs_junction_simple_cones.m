@@ -12,6 +12,7 @@
 load tfMM.txt;
 load tfFEM.txt
 load press.txt;
+load press_2.txt;
 
 ftSize = 16;
 lSize = 1;
@@ -67,18 +68,19 @@ figure
 
 subplot(2,1,1)
 hold on
-plot(tfFEM(:,1), 20*log10(tfFEM(:,4)), 'lineWidth', lSize)
+plot(tfFEM(:,1), 20*log10(tfFEM(:,4)), 'lineWidth', 2*lSize)
 plot(tfMM(:,1), 20*log10(fac*tfMM(:,4)), 'lineWidth', lSize)
 plot(press(:,1), 20*log10((16/9/sqrt(pi)/1.5)*fac*press(:,6)), 'lineWidth', lSize)
+plot(press_2(:,1), 20*log10((16/9/sqrt(pi)/1.5)*fac*press_2(:,6)), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'
 ylabel '|H| (dB)'
 
-h = legend('FEM (FeniCS)', 'MM', 'location', 'southeast',...
+h = legend('FEM (FeniCS)', 'MM ref', 'MM new', 'MM loss junc', 'location', 'southeast',...
   'orientation', 'horizontal');
 legend boxoff
-set(h, 'fontSize', ftSize) 
+% set(h, 'fontSize', ftSize) 
 
 subplot(2,1,2)
 hold on

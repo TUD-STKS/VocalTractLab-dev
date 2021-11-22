@@ -27,8 +27,9 @@ private:
     static ParamSimu3DDialog *instance;
     wxWindow* updateRequestReceiver;
 
+    wxTextCtrl* txtTemperature;
+    wxTextCtrl* txtSndSpeed;
     wxTextCtrl *txtMeshDensity;
-    //wxTextCtrl* txtModeNumber;
     wxTextCtrl* txtMaxCutOnFreq;
     wxTextCtrl* txtMaxSimFreq;
     wxTextCtrl* txtNumIntegrationStep;
@@ -46,22 +47,28 @@ private:
   wxTextCtrl* txtBboxMaxX;
   wxTextCtrl* txtBboxMaxY;
 
+  // transfer function point
+  wxTextCtrl* txtTfPointX;
+  wxTextCtrl* txtTfPointY;
+  wxTextCtrl* txtTfPointZ;
+
 	wxCheckBox* chkFdepLosses;
     wxCheckBox* chkWallLosses;
     wxCheckBox* chkStraight;
     wxCheckBox* chkMagnus;
 	wxCheckBox* chkCurv;
 	wxCheckBox* chkVarArea;
+
+  wxComboBox* lstMouthBcond;
     
-    Acoustic3dSimulation* simu3d;
-    double m_meshDensity;
-    //int m_modeNumber;
-    double m_maxCutOnFreq;
-    //int m_numIntegrationStep;
-    int m_secNoiseSource;
+  Acoustic3dSimulation* simu3d;
+  double m_meshDensity;
+  double m_maxCutOnFreq;
+  int m_secNoiseSource;
 	int m_secConstriction;
-    int m_expSpectrumLgth;
-    //int m_method;
+  int m_expSpectrumLgth;
+  vector<string> m_listMouthBcond;
+  openEndBoundaryCond m_mouthBoundaryCond;
 	struct simulationParameters m_simuParams;
 
 // **************************************************************************
@@ -69,17 +76,18 @@ private:
 // **************************************************************************
 
 private:
-    ParamSimu3DDialog(wxWindow *parent, Acoustic3dSimulation* inSimu3d);
-    void initWidgets();
+  ParamSimu3DDialog(wxWindow *parent, Acoustic3dSimulation* inSimu3d);
+  void initWidgets();
 
-    void OnMeshDensityEnter(wxCommandEvent& event);
-    //void OnModeNumberEnter(wxCommandEvent& event);
-    void OnMaxCutOnEnter(wxCommandEvent& event);
-    void OnMaxSimFreq(wxCommandEvent& event);
-    void OnNumIntegrationEnter(wxCommandEvent& event);
-    void OnSecNoiseSourceEnter(wxCommandEvent& event);
+  void OnTemperatureEnter(wxCommandEvent& event);
+  void OnSndSpeedEnter(wxCommandEvent& event);
+  void OnMeshDensityEnter(wxCommandEvent& event);
+  void OnMaxCutOnEnter(wxCommandEvent& event);
+  void OnMaxSimFreq(wxCommandEvent& event);
+  void OnNumIntegrationEnter(wxCommandEvent& event);
+  void OnSecNoiseSourceEnter(wxCommandEvent& event);
 	void OnSecConstrictionEnter(wxCommandEvent& event);
-    void OnExpSpectrumLgthEnter(wxCommandEvent& event);
+  void OnExpSpectrumLgthEnter(wxCommandEvent& event);
 	void OnPercentLosses(wxCommandEvent& event);
   void OnFreqComputeField(wxCommandEvent& event);
   void OnResolutionField(wxCommandEvent& event);
@@ -88,6 +96,10 @@ private:
   void OnBboxMaxX(wxCommandEvent& event);
   void OnBboxMaxY(wxCommandEvent& event);
 
+  void OnTfPointX(wxCommandEvent& event);
+  void OnTfPointY(wxCommandEvent& event);
+  void OnTfPointZ(wxCommandEvent& event);
+
 
 	void OnChkFdepLosses(wxCommandEvent& event);
     void OnChkWallLosses(wxCommandEvent& event);
@@ -95,6 +107,8 @@ private:
     void OnChkMagnus(wxCommandEvent& event);
 	void OnChkCurv(wxCommandEvent& event);
 	void OnChkVarArea(wxCommandEvent& event);
+
+  void OnMouthBcond(wxCommandEvent& event);
 
 // **************************************************************************
 // Declare the event table.

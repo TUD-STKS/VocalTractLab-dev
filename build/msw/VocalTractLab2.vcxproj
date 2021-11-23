@@ -105,7 +105,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\wxWidgets-3.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Backend\include;C:\wxWidgets-3.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_CRT_SECURE_NO_DEPRECATE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -115,8 +115,8 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;winmm.lib;comctl32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxpngd.lib;wxzlibd.lib;wxjpegd.lib;wxtiffd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\wxWidgets-3.1.3\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>VocalTractLabBackend.lib;opengl32.lib;glu32.lib;winmm.lib;comctl32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxpngd.lib;wxzlibd.lib;wxjpegd.lib;wxtiffd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Backend\lib\Debug;C:\wxWidgets-3.1.3\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmtd;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -154,7 +154,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\wxWidgets-3.1.3\lib\vc_x64_lib\mswu;C:\wxWidgets-3.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Backend\include;C:\wxWidgets-3.1.3\lib\vc_x64_lib\mswu;C:\wxWidgets-3.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WXMSW__;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -165,8 +165,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;comctl32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wxbase31u.lib;wxmsw31u_core.lib;wxmsw31u_gl.lib;wxpng.lib;wxzlib.lib;wxmsw31u_adv.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\wxWidgets-3.1.3\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>VocalTractLabBackend.lib;winmm.lib;comctl32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wxbase31u.lib;wxmsw31u_core.lib;wxmsw31u_gl.lib;wxpng.lib;wxzlib.lib;wxmsw31u_adv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Backend\lib\Release;C:\wxWidgets-3.1.3\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -180,175 +180,108 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnalysisResultsDialog.cpp" />
-    <ClCompile Include="AnalysisSettingsDialog.cpp" />
-    <ClCompile Include="AnatomyParamsDialog.cpp" />
-    <ClCompile Include="AnnotationDialog.cpp" />
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="AreaFunctionPicture.cpp" />
-    <ClCompile Include="Backend\AnatomyParams.cpp" />
-    <ClCompile Include="Backend\Dsp.cpp" />
-    <ClCompile Include="Backend\F0EstimatorYin.cpp" />
-    <ClCompile Include="Backend\GeometricGlottis.cpp" />
-    <ClCompile Include="Backend\Geometry.cpp" />
-    <ClCompile Include="Backend\GesturalScore.cpp" />
-    <ClCompile Include="Backend\Glottis.cpp" />
-    <ClCompile Include="Backend\IirFilter.cpp" />
-    <ClCompile Include="Backend\ImpulseExcitation.cpp" />
-    <ClCompile Include="Backend\LfPulse.cpp" />
-    <ClCompile Include="Backend\Matrix2x2.cpp" />
-    <ClCompile Include="Backend\PoleZeroPlan.cpp" />
-    <ClCompile Include="Backend\Sampa.cpp" />
-    <ClCompile Include="Backend\SegmentSequence.cpp" />
-    <ClCompile Include="Backend\Signal.cpp" />
-    <ClCompile Include="Backend\SoundLib.cpp" />
-    <ClCompile Include="Backend\Splines.cpp" />
-    <ClCompile Include="Backend\StaticPhone.cpp" />
-    <ClCompile Include="Backend\Surface.cpp" />
-    <ClCompile Include="Backend\Synthesizer.cpp" />
-    <ClCompile Include="Backend\TdsModel.cpp" />
-    <ClCompile Include="Backend\TimeFunction.cpp" />
-    <ClCompile Include="Backend\TlModel.cpp" />
-    <ClCompile Include="Backend\TriangularGlottis.cpp" />
-    <ClCompile Include="Backend\Tube.cpp" />
-    <ClCompile Include="Backend\TwoMassModel.cpp" />
-    <ClCompile Include="Backend\VocalTract.cpp" />
-    <ClCompile Include="Backend\VocalTractLabApi.cpp" />
-    <ClCompile Include="Backend\VoiceQualityEstimator.cpp" />
-    <ClCompile Include="Backend\VowelLf.cpp" />
-    <ClCompile Include="Backend\XmlHelper.cpp" />
-    <ClCompile Include="Backend\XmlNode.cpp" />
-    <ClCompile Include="BasicPicture.cpp" />
-    <ClCompile Include="ColorScale.cpp" />
-    <ClCompile Include="CrossSectionPicture.cpp" />
-    <ClCompile Include="Data.cpp" />
-    <ClCompile Include="EmaConfigDialog.cpp" />
-    <ClCompile Include="FdsOptionsDialog.cpp" />
-    <ClCompile Include="FormantOptimizationDialog.cpp" />
-    <ClCompile Include="GesturalScorePage.cpp" />
-    <ClCompile Include="GesturalScorePicture.cpp" />
-    <ClCompile Include="GlottisDialog.cpp" />
-    <ClCompile Include="GlottisPanel.cpp" />
-    <ClCompile Include="GlottisPicture.cpp" />
-    <ClCompile Include="Graph.cpp" />
-    <ClCompile Include="LfPulseDialog.cpp" />
-    <ClCompile Include="LfPulsePicture.cpp" />
-    <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="PhoneticParamsDialog.cpp" />
-    <ClCompile Include="PoleZeroDialog.cpp" />
-    <ClCompile Include="PoleZeroPlot.cpp" />
-    <ClCompile Include="SignalComparisonPicture.cpp" />
-    <ClCompile Include="SignalPage.cpp" />
-    <ClCompile Include="SignalPicture.cpp" />
-    <ClCompile Include="SilentMessageBox.cpp" />
-    <ClCompile Include="SimpleSpectrumPicture.cpp" />
-    <ClCompile Include="SpectrogramPicture.cpp" />
-    <ClCompile Include="SpectrogramPlot.cpp" />
-    <ClCompile Include="SpectrumOptionsDialog.cpp" />
-    <ClCompile Include="SpectrumPicture.cpp" />
-    <ClCompile Include="SynthesisThread.cpp" />
-    <ClCompile Include="TdsOptionsDialog.cpp" />
-    <ClCompile Include="TdsPage.cpp" />
-    <ClCompile Include="TdsSpatialSignalPicture.cpp" />
-    <ClCompile Include="TdsTimeSignalPicture.cpp" />
-    <ClCompile Include="TdsTubePicture.cpp" />
-    <ClCompile Include="TimeAxisPicture.cpp" />
-    <ClCompile Include="TransitionDialog.cpp" />
-    <ClCompile Include="VocalTractDialog.cpp" />
-    <ClCompile Include="VocalTractPage.cpp" />
-    <ClCompile Include="VocalTractPicture.cpp" />
-    <ClCompile Include="VocalTractShapesDialog.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AnalysisResultsDialog.h" />
-    <ClInclude Include="AnalysisSettingsDialog.h" />
-    <ClInclude Include="AnatomyParamsDialog.h" />
-    <ClInclude Include="AnnotationDialog.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="AreaFunctionPicture.h" />
-    <ClInclude Include="Backend\AnatomyParams.h" />
-    <ClInclude Include="Backend\AudioFile.h" />
-    <ClInclude Include="Backend\Constants.h" />
-    <ClInclude Include="Backend\Dsp.h" />
-    <ClInclude Include="Backend\F0EstimatorYin.h" />
-    <ClInclude Include="Backend\GeometricGlottis.h" />
-    <ClInclude Include="Backend\Geometry.h" />
-    <ClInclude Include="Backend\GesturalScore.h" />
-    <ClInclude Include="Backend\Glottis.h" />
-    <ClInclude Include="Backend\IirFilter.h" />
-    <ClInclude Include="Backend\ImpulseExcitation.h" />
-    <ClInclude Include="Backend\LfPulse.h" />
-    <ClInclude Include="Backend\Matrix2x2.h" />
-    <ClInclude Include="Backend\PoleZeroPlan.h" />
-    <ClInclude Include="Backend\Sampa.h" />
-    <ClInclude Include="Backend\SegmentSequence.h" />
-    <ClInclude Include="Backend\Signal.h" />
-    <ClInclude Include="Backend\SoundLib.h" />
-    <ClInclude Include="Backend\Splines.h" />
-    <ClInclude Include="Backend\StaticPhone.h" />
-    <ClInclude Include="Backend\Surface.h" />
-    <ClInclude Include="Backend\Synthesizer.h" />
-    <ClInclude Include="Backend\TdsModel.h" />
-    <ClInclude Include="Backend\TimeFunction.h" />
-    <ClInclude Include="Backend\TlModel.h" />
-    <ClInclude Include="Backend\TriangularGlottis.h" />
-    <ClInclude Include="Backend\Tube.h" />
-    <ClInclude Include="Backend\TubeSequence.h" />
-    <ClInclude Include="Backend\TwoMassModel.h" />
-    <ClInclude Include="Backend\VocalTract.h" />
-    <ClInclude Include="Backend\VocalTractLabApi.h" />
-    <ClInclude Include="Backend\VoiceQualityEstimator.h" />
-    <ClInclude Include="Backend\VowelLf.h" />
-    <ClInclude Include="Backend\XmlHelper.h" />
-    <ClInclude Include="Backend\XmlNode.h" />
-    <ClInclude Include="BasicPicture.h" />
-    <ClInclude Include="ColorScale.h" />
-    <ClInclude Include="CrossSectionPicture.h" />
-    <ClInclude Include="Data.h" />
-    <ClInclude Include="EmaConfigDialog.h" />
-    <ClInclude Include="FdsOptionsDialog.h" />
-    <ClInclude Include="FormantOptimizationDialog.h" />
-    <ClInclude Include="GesturalScorePage.h" />
-    <ClInclude Include="GesturalScorePicture.h" />
-    <ClInclude Include="GlottisDialog.h" />
-    <ClInclude Include="GlottisPanel.h" />
-    <ClInclude Include="GlottisPicture.h" />
-    <ClInclude Include="Graph.h" />
-    <ClInclude Include="IconsXpm.h" />
-    <ClInclude Include="LfPulseDialog.h" />
-    <ClInclude Include="LfPulsePicture.h" />
-    <ClInclude Include="MainWindow.h" />
-    <ClInclude Include="PhoneticParamsDialog.h" />
-    <ClInclude Include="PoleZeroDialog.h" />
-    <ClInclude Include="PoleZeroPlot.h" />
-    <ClInclude Include="SignalComparisonPicture.h" />
-    <ClInclude Include="SignalPage.h" />
-    <ClInclude Include="SignalPicture.h" />
-    <ClInclude Include="SilentMessageBox.h" />
-    <ClInclude Include="SimpleSpectrumPicture.h" />
+    <ClInclude Include="..\..\src\AnalysisResultsDialog.h" />
+    <ClInclude Include="..\..\src\AnalysisSettingsDialog.h" />
+    <ClInclude Include="..\..\src\AnatomyParamsDialog.h" />
+    <ClInclude Include="..\..\src\AnnotationDialog.h" />
+    <ClInclude Include="..\..\src\Application.h" />
+    <ClInclude Include="..\..\src\AreaFunctionPicture.h" />
+    <ClInclude Include="..\..\src\BasicPicture.h" />
+    <ClInclude Include="..\..\src\ColorScale.h" />
+    <ClInclude Include="..\..\src\CrossSectionPicture.h" />
+    <ClInclude Include="..\..\src\Data.h" />
+    <ClInclude Include="..\..\src\EmaConfigDialog.h" />
+    <ClInclude Include="..\..\src\FdsOptionsDialog.h" />
+    <ClInclude Include="..\..\src\FormantOptimizationDialog.h" />
+    <ClInclude Include="..\..\src\GesturalScorePage.h" />
+    <ClInclude Include="..\..\src\GesturalScorePicture.h" />
+    <ClInclude Include="..\..\src\GlottisDialog.h" />
+    <ClInclude Include="..\..\src\GlottisPanel.h" />
+    <ClInclude Include="..\..\src\GlottisPicture.h" />
+    <ClInclude Include="..\..\src\Graph.h" />
+    <ClInclude Include="..\..\src\IconsXpm.h" />
+    <ClInclude Include="..\..\src\LfPulseDialog.h" />
+    <ClInclude Include="..\..\src\LfPulsePicture.h" />
+    <ClInclude Include="..\..\src\MainWindow.h" />
+    <ClInclude Include="..\..\src\PhoneticParamsDialog.h" />
+    <ClInclude Include="..\..\src\PoleZeroDialog.h" />
+    <ClInclude Include="..\..\src\PoleZeroPlot.h" />
+    <ClInclude Include="..\..\src\SignalComparisonPicture.h" />
+    <ClInclude Include="..\..\src\SignalPage.h" />
+    <ClInclude Include="..\..\src\SignalPicture.h" />
+    <ClInclude Include="..\..\src\SilentMessageBox.h" />
+    <ClInclude Include="..\..\src\SimpleSpectrumPicture.h" />
+    <ClInclude Include="..\..\src\SpectrogramPicture.h" />
+    <ClInclude Include="..\..\src\SpectrogramPlot.h" />
+    <ClInclude Include="..\..\src\SpectrumOptionsDialog.h" />
+    <ClInclude Include="..\..\src\SpectrumPicture.h" />
+    <ClInclude Include="..\..\src\SynthesisThread.h" />
+    <ClInclude Include="..\..\src\TdsOptionsDialog.h" />
+    <ClInclude Include="..\..\src\TdsPage.h" />
+    <ClInclude Include="..\..\src\TdsSpatialSignalPicture.h" />
+    <ClInclude Include="..\..\src\TdsTimeSignalPicture.h" />
+    <ClInclude Include="..\..\src\TdsTubePicture.h" />
+    <ClInclude Include="..\..\src\TimeAxisPicture.h" />
+    <ClInclude Include="..\..\src\TransitionDialog.h" />
+    <ClInclude Include="..\..\src\VocalTractDialog.h" />
+    <ClInclude Include="..\..\src\VocalTractPage.h" />
+    <ClInclude Include="..\..\src\VocalTractPicture.h" />
+    <ClInclude Include="..\..\src\VocalTractShapesDialog.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SpectrogramPicture.h" />
-    <ClInclude Include="SpectrogramPlot.h" />
-    <ClInclude Include="SpectrumOptionsDialog.h" />
-    <ClInclude Include="SpectrumPicture.h" />
-    <ClInclude Include="SynthesisThread.h" />
-    <ClInclude Include="TdsOptionsDialog.h" />
-    <ClInclude Include="TdsPage.h" />
-    <ClInclude Include="TdsSpatialSignalPicture.h" />
-    <ClInclude Include="TdsTimeSignalPicture.h" />
-    <ClInclude Include="TdsTubePicture.h" />
-    <ClInclude Include="TimeAxisPicture.h" />
-    <ClInclude Include="TransitionDialog.h" />
-    <ClInclude Include="VocalTractDialog.h" />
-    <ClInclude Include="VocalTractPage.h" />
-    <ClInclude Include="VocalTractPicture.h" />
-    <ClInclude Include="VocalTractShapesDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VocalTractLab2.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VocalTractLab2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\AnalysisResultsDialog.cpp" />
+    <ClCompile Include="..\..\src\AnalysisSettingsDialog.cpp" />
+    <ClCompile Include="..\..\src\AnatomyParamsDialog.cpp" />
+    <ClCompile Include="..\..\src\AnnotationDialog.cpp" />
+    <ClCompile Include="..\..\src\Application.cpp" />
+    <ClCompile Include="..\..\src\AreaFunctionPicture.cpp" />
+    <ClCompile Include="..\..\src\BasicPicture.cpp" />
+    <ClCompile Include="..\..\src\ColorScale.cpp" />
+    <ClCompile Include="..\..\src\CrossSectionPicture.cpp" />
+    <ClCompile Include="..\..\src\Data.cpp" />
+    <ClCompile Include="..\..\src\EmaConfigDialog.cpp" />
+    <ClCompile Include="..\..\src\FdsOptionsDialog.cpp" />
+    <ClCompile Include="..\..\src\FormantOptimizationDialog.cpp" />
+    <ClCompile Include="..\..\src\GesturalScorePage.cpp" />
+    <ClCompile Include="..\..\src\GesturalScorePicture.cpp" />
+    <ClCompile Include="..\..\src\GlottisDialog.cpp" />
+    <ClCompile Include="..\..\src\GlottisPanel.cpp" />
+    <ClCompile Include="..\..\src\GlottisPicture.cpp" />
+    <ClCompile Include="..\..\src\Graph.cpp" />
+    <ClCompile Include="..\..\src\LfPulseDialog.cpp" />
+    <ClCompile Include="..\..\src\LfPulsePicture.cpp" />
+    <ClCompile Include="..\..\src\MainWindow.cpp" />
+    <ClCompile Include="..\..\src\PhoneticParamsDialog.cpp" />
+    <ClCompile Include="..\..\src\PoleZeroDialog.cpp" />
+    <ClCompile Include="..\..\src\PoleZeroPlot.cpp" />
+    <ClCompile Include="..\..\src\SignalComparisonPicture.cpp" />
+    <ClCompile Include="..\..\src\SignalPage.cpp" />
+    <ClCompile Include="..\..\src\SignalPicture.cpp" />
+    <ClCompile Include="..\..\src\SilentMessageBox.cpp" />
+    <ClCompile Include="..\..\src\SimpleSpectrumPicture.cpp" />
+    <ClCompile Include="..\..\src\SpectrogramPicture.cpp" />
+    <ClCompile Include="..\..\src\SpectrogramPlot.cpp" />
+    <ClCompile Include="..\..\src\SpectrumOptionsDialog.cpp" />
+    <ClCompile Include="..\..\src\SpectrumPicture.cpp" />
+    <ClCompile Include="..\..\src\SynthesisThread.cpp" />
+    <ClCompile Include="..\..\src\TdsOptionsDialog.cpp" />
+    <ClCompile Include="..\..\src\TdsPage.cpp" />
+    <ClCompile Include="..\..\src\TdsSpatialSignalPicture.cpp" />
+    <ClCompile Include="..\..\src\TdsTimeSignalPicture.cpp" />
+    <ClCompile Include="..\..\src\TdsTubePicture.cpp" />
+    <ClCompile Include="..\..\src\TimeAxisPicture.cpp" />
+    <ClCompile Include="..\..\src\TransitionDialog.cpp" />
+    <ClCompile Include="..\..\src\VocalTractDialog.cpp" />
+    <ClCompile Include="..\..\src\VocalTractPage.cpp" />
+    <ClCompile Include="..\..\src\VocalTractPicture.cpp" />
+    <ClCompile Include="..\..\src\VocalTractShapesDialog.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

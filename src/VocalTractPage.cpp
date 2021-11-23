@@ -37,7 +37,6 @@
 #include "TransitionDialog.h"
 #include "Backend/SoundLib.h"
 #include "Backend/Synthesizer.h"
-#include "Backend/VocalTractLabApi.h"
 #include "Backend/Dsp.h"
 #include "Backend/Synthesizer.h"
 

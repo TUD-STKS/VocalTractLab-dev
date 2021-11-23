@@ -40,7 +40,7 @@ pres = Function(V)
 print("DOF = {}".format(V.dim()))
 
 # get the coordinates of the point in the center of the exit
-point = [0.17, 0., 0.]
+point = [0.08, 0., 0.]
 V_dofs = V.tabulate_dof_coordinates().reshape(-1, mesh.geometry().dim())
 V_len = len(V.split()) # number of function spaces
 tol = 2.3
@@ -72,7 +72,7 @@ rho = Constant(1.115771)
 # boundary condition values
 vreal_in = Constant(-1.0) # inward normal vector
 vimag_in = Constant(0.0)
-zreal_w = Constant(c*rho/0.005) # taken from Fleischer et al. (2018), PLOS ONE
+zreal_w = Constant(c*rho/0.01) # taken from Fleischer et al. (2018), PLOS ONE
 zimag_w = Constant(0.0)
 zreal_lips = 1./100.;
 zimag_lips = 0.0;

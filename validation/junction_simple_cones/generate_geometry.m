@@ -12,7 +12,7 @@ no = [0. 1.];    % normal of all segments
 r = [1.5, 1.5];         % radius of the segments
 scaleIn = [4/3, 4/3];
 scaleOut = [2/3, 2/3];
-lengths = [-4, 13];
+lengths = [0, 8];
 sep = ';';
 
 fileName = 'junction_cone.csv';

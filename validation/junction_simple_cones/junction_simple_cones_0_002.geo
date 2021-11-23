@@ -1,7 +1,7 @@
 ms = DefineNumber[0.002, Name "mesh size"];
 radius1 =  DefineNumber[0.01, Name "radius1"];
 radius2 =  DefineNumber[0.02, Name "radius2"];
-length =  DefineNumber[0.085, Name "length"];
+length =  DefineNumber[0.04, Name "length"];
 
 ///////////////////////////
 // Define points

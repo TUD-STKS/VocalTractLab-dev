@@ -30,6 +30,8 @@ static const int IDE_TF_POINT_X       = 4015;
 static const int IDE_TF_POINT_Y       = 4016;
 static const int IDE_TF_POINT_Z       = 4017;
 
+static const int IDE_WALL_ADMIT       = 4018;
+
 static const int IDB_CHK_FDEP_LOSSES	= 5001;
 static const int IDB_CHK_WALL_LOSSES    = 5002;
 
@@ -37,6 +39,8 @@ static const int IDB_CHK_STRAIGHT       = 5003;
 static const int IDB_CHK_MAGNUS			= 5004;
 static const int IDB_CHK_CURV			= 5005;
 static const int IDB_CHK_VAR_AREA		= 5006;
+
+static const int IDB_COMPUTE_RAD_FIELD = 5007;
 
 static const int IDL_MOUTH_BCOND = 6000;
 
@@ -66,12 +70,15 @@ EVT_TEXT_ENTER(IDE_TF_POINT_X, ParamSimu3DDialog::OnTfPointX)
 EVT_TEXT_ENTER(IDE_TF_POINT_X, ParamSimu3DDialog::OnTfPointY)
 EVT_TEXT_ENTER(IDE_TF_POINT_X, ParamSimu3DDialog::OnTfPointZ)
 
+EVT_TEXT_ENTER(IDE_WALL_ADMIT, ParamSimu3DDialog::OnWallAdmitEnter)
+
 EVT_CHECKBOX(IDB_CHK_FDEP_LOSSES, ParamSimu3DDialog::OnChkFdepLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_LOSSES, ParamSimu3DDialog::OnChkWallLosses)
 EVT_CHECKBOX(IDB_CHK_STRAIGHT, ParamSimu3DDialog::OnChkStraight)
 EVT_CHECKBOX(IDB_CHK_MAGNUS, ParamSimu3DDialog::OnChkMagnus)
 EVT_CHECKBOX(IDB_CHK_CURV, ParamSimu3DDialog::OnChkCurv)
 EVT_CHECKBOX(IDB_CHK_VAR_AREA, ParamSimu3DDialog::OnChkVarArea)
+EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 END_EVENT_TABLE()
@@ -202,6 +209,11 @@ void ParamSimu3DDialog::updateWidgets()
     lstMouthBcond->SetValue(m_listMouthBcond[1]);
     break;
   }
+
+  st = wxString::Format("%1.4f", real(m_simuParams.thermalBndSpecAdm));
+  txtWallAdmit->SetValue(st);
+
+  chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
@@ -390,6 +402,13 @@ void ParamSimu3DDialog::initWidgets()
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstMouthBcond, 0, wxALL, 3);
 
+    label = new wxStaticText(this, wxID_ANY, " admittance ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtWallAdmit = new wxTextCtrl(this, IDE_WALL_ADMIT, "", wxDefaultPosition,
+      wxSize(60, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtWallAdmit, 0, wxALL, 3);
+
     topLevelSizer->Add(lineSizer);
 
 
@@ -573,7 +592,7 @@ void ParamSimu3DDialog::initWidgets()
   topLevelSizer->Add(lineSizer);
 
   // ****************************************************************
-  // Set the bunding box to compute the acoustic field
+  // Set the bounding box to compute the acoustic field
   // ****************************************************************
 
   topLevelSizer->AddSpacer(10);
@@ -607,6 +626,20 @@ void ParamSimu3DDialog::initWidgets()
   txtBboxMaxY = new wxTextCtrl(this, IDE_BBOX_MAX_Y, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
   lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
+
+  topLevelSizer->Add(lineSizer);
+
+  // ****************************************************************
+  // Set if the radiated field must be computed or not
+  // ****************************************************************
+
+  topLevelSizer->AddSpacer(10);
+
+  lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  chkComputeRad = new wxCheckBox(this, IDB_COMPUTE_RAD_FIELD,
+    "Compute radiated field");
+  lineSizer->Add(chkComputeRad, 0, wxALL, 2);
 
   topLevelSizer->Add(lineSizer);
 
@@ -909,6 +942,20 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
+void ParamSimu3DDialog::OnWallAdmitEnter(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtWallAdmit->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -10000000.) && (x <= 10000000.))
+  {
+    m_simuParams.thermalBndSpecAdm = complex<double>(x, 0.);
+  }
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
 void ParamSimu3DDialog::OnChkFdepLosses(wxCommandEvent& event)
 {
 	m_simuParams.freqDepLosses = !m_simuParams.freqDepLosses;
@@ -967,8 +1014,16 @@ void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
 	m_simuParams.varyingArea = !m_simuParams.varyingArea;
-	//chkVarArea->SetValue(m_simuParams.varyingArea);
 	updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnChkComputeRad(wxCommandEvent& event)
+{
+  m_simuParams.computeRadiatedField = !m_simuParams.computeRadiatedField;
+  updateWidgets();
 }
 
 // ****************************************************************************

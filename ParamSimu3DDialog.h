@@ -52,12 +52,15 @@ private:
   wxTextCtrl* txtTfPointY;
   wxTextCtrl* txtTfPointZ;
 
+  wxTextCtrl* txtWallAdmit;
+
 	wxCheckBox* chkFdepLosses;
     wxCheckBox* chkWallLosses;
     wxCheckBox* chkStraight;
     wxCheckBox* chkMagnus;
 	wxCheckBox* chkCurv;
 	wxCheckBox* chkVarArea;
+  wxCheckBox* chkComputeRad;
 
   wxComboBox* lstMouthBcond;
     
@@ -100,6 +103,7 @@ private:
   void OnTfPointY(wxCommandEvent& event);
   void OnTfPointZ(wxCommandEvent& event);
 
+  void OnWallAdmitEnter(wxCommandEvent& event);
 
 	void OnChkFdepLosses(wxCommandEvent& event);
     void OnChkWallLosses(wxCommandEvent& event);
@@ -107,6 +111,7 @@ private:
     void OnChkMagnus(wxCommandEvent& event);
 	void OnChkCurv(wxCommandEvent& event);
 	void OnChkVarArea(wxCommandEvent& event);
+  void OnChkComputeRad(wxCommandEvent& event);
 
   void OnMouthBcond(wxCommandEvent& event);
 

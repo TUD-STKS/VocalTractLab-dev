@@ -402,13 +402,6 @@ void ParamSimu3DDialog::initWidgets()
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstMouthBcond, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, " admittance ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
-
-    txtWallAdmit = new wxTextCtrl(this, IDE_WALL_ADMIT, "", wxDefaultPosition,
-      wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtWallAdmit, 0, wxALL, 3);
-
     topLevelSizer->Add(lineSizer);
 
 
@@ -444,6 +437,13 @@ void ParamSimu3DDialog::initWidgets()
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
       "Wall losses");
     lineSizer->Add(chkWallLosses, 0, wxALL, 2);
+
+    label = new wxStaticText(this, wxID_ANY, " admittance ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    txtWallAdmit = new wxTextCtrl(this, IDE_WALL_ADMIT, "", wxDefaultPosition,
+      wxSize(60, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtWallAdmit, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
 

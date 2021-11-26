@@ -21,8 +21,8 @@
 
 #include "TransitionDialog.h"
 #include "SilentMessageBox.h"
-#include "Backend/SoundLib.h"
-#include "Backend/GesturalScore.h"
+#include "SoundLib.h"
+#include "VocalTractLabBackend/GesturalScore.h"
 
 static const double MIN_ALPHA = 0.0;
 static const double MAX_ALPHA = 1.0;

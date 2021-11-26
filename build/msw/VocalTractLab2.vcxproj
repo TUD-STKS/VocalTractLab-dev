@@ -79,10 +79,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>..\..\bin\$(Configuration)\</OutDir>
     <IntDir>..\..\tmp\$(Configuration)\</IntDir>
+    <TargetName>VocalTractLab</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\bin\$(Configuration)\</OutDir>
     <IntDir>..\..\tmp\$(Configuration)\</IntDir>
+    <TargetName>VocalTractLab</TargetName>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -220,6 +222,7 @@
     <ClInclude Include="..\..\src\SignalPicture.h" />
     <ClInclude Include="..\..\src\SilentMessageBox.h" />
     <ClInclude Include="..\..\src\SimpleSpectrumPicture.h" />
+    <ClInclude Include="..\..\src\SoundLib.h" />
     <ClInclude Include="..\..\src\SpectrogramPicture.h" />
     <ClInclude Include="..\..\src\SpectrogramPlot.h" />
     <ClInclude Include="..\..\src\SpectrumOptionsDialog.h" />
@@ -275,6 +278,7 @@
     <ClCompile Include="..\..\src\SignalPicture.cpp" />
     <ClCompile Include="..\..\src\SilentMessageBox.cpp" />
     <ClCompile Include="..\..\src\SimpleSpectrumPicture.cpp" />
+    <ClCompile Include="..\..\src\SoundLib.cpp" />
     <ClCompile Include="..\..\src\SpectrogramPicture.cpp" />
     <ClCompile Include="..\..\src\SpectrogramPlot.cpp" />
     <ClCompile Include="..\..\src\SpectrumOptionsDialog.cpp" />

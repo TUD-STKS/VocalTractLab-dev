@@ -22,7 +22,7 @@
 #include "AnalysisResultsDialog.h"
 #include "SignalPicture.h"
 #include "Data.h"
-#include "Backend/Dsp.h"
+#include "VocalTractLabBackend/Dsp.h"
 
 
 // ****************************************************************************

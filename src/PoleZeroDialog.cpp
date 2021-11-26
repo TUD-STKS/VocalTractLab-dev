@@ -21,7 +21,7 @@
 
 #include "PoleZeroDialog.h"
 #include "SilentMessageBox.h"
-#include "Backend/SoundLib.h"
+#include "SoundLib.h"
 
 // ****************************************************************************
 // IDs.

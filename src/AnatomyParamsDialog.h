@@ -26,7 +26,7 @@
 #include <wx/dialog.h>
 
 #include "Data.h"
-#include "Backend/AnatomyParams.h"
+#include "VocalTractLabBackend/AnatomyParams.h"
 
 // ****************************************************************************
 /// This dialog lets the user adjust some high-level anatomy parameters

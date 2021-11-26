@@ -24,7 +24,7 @@
 
 #include "BasicPicture.h"
 #include "Graph.h"
-#include "Backend/Tube.h"
+#include "VocalTractLabBackend/Tube.h"
 
 // ****************************************************************************
 // ****************************************************************************

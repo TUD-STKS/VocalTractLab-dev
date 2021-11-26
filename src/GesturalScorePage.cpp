@@ -23,7 +23,7 @@
 #include "AnalysisResultsDialog.h"
 #include "AnnotationDialog.h"
 #include "SilentMessageBox.h"
-#include "Backend/SoundLib.h"
+#include "SoundLib.h"
 
 #include <stdio.h>
 #include <wx/config.h>

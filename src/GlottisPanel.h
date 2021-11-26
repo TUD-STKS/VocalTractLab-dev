@@ -26,7 +26,7 @@
 
 #include "Data.h"
 #include "GlottisPicture.h"
-#include "Backend/Glottis.h"
+#include "VocalTractLabBackend/Glottis.h"
 
 // ****************************************************************************
 // ****************************************************************************

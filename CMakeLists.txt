@@ -3,8 +3,12 @@
 #
 cmake_minimum_required (VERSION 3.16)
 
-project ("VocalTractLabGui")
-if (MSVC)
+project ("VocalTractLab")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+add_subdirectory("Backend")
+
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
 endif()
 
@@ -19,90 +23,57 @@ add_definitions(-D
 _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 # Add source to this project's executable.
 add_executable (VocalTractLab WIN32
-Backend/AnatomyParams.cpp Backend/AnatomyParams.h
-Backend/AudioFile.h
-Backend/Constants.h
-Backend/Dsp.cpp Backend/Dsp.h
-Backend/F0EstimatorYin.cpp Backend/F0EstimatorYin.h
-Backend/GeometricGlottis.cpp Backend/GeometricGlottis.h
-Backend/Geometry.cpp Backend/Geometry.h
-Backend/GesturalScore.cpp Backend/GesturalScore.h
-Backend/Glottis.cpp Backend/Glottis.h
-Backend/IirFilter.cpp Backend/IirFilter.h
-Backend/ImpulseExcitation.cpp Backend/ImpulseExcitation.h
-Backend/LfPulse.cpp Backend/LfPulse.h
-Backend/Matrix2x2.cpp Backend/Matrix2x2.h
-Backend/PoleZeroPlan.cpp Backend/PoleZeroPlan.h
-Backend/Sampa.cpp Backend/Sampa.h
-Backend/SegmentSequence.cpp Backend/SegmentSequence.h
-Backend/Signal.cpp Backend/Signal.h
-Backend/SoundLib.cpp Backend/SoundLib.h
-Backend/Splines.cpp Backend/Splines.h
-Backend/StaticPhone.cpp Backend/StaticPhone.h
-Backend/Surface.cpp Backend/Surface.h
-Backend/Synthesizer.cpp Backend/Synthesizer.h
-Backend/TdsModel.cpp Backend/TdsModel.h
-Backend/TimeFunction.cpp Backend/TimeFunction.h
-Backend/TlModel.cpp Backend/TlModel.h
-Backend/TriangularGlottis.cpp Backend/TriangularGlottis.h
-Backend/Tube.cpp Backend/Tube.h
-Backend/TubeSequence.h
-Backend/TwoMassModel.cpp Backend/TwoMassModel.h
-Backend/VocalTract.cpp Backend/VocalTract.h
-Backend/VoiceQualityEstimator.cpp Backend/VoiceQualityEstimator.h
-Backend/VowelLf.cpp Backend/VowelLf.h
-Backend/XmlHelper.cpp Backend/XmlHelper.h
-Backend/XmlNode.cpp Backend/XmlNode.h
-AnalysisResultsDialog.cpp AnalysisResultsDialog.h
-AnalysisSettingsDialog.cpp AnalysisSettingsDialog.h
-AnatomyParamsDialog.cpp AnatomyParamsDialog.h
-AnnotationDialog.cpp AnnotationDialog.h
-Application.cpp Application.h
-AreaFunctionPicture.cpp AreaFunctionPicture.h
-BasicPicture.cpp BasicPicture.h
-ColorScale.cpp ColorScale.h
-CrossSectionPicture.cpp CrossSectionPicture.h
-Data.cpp Data.h
-EmaConfigDialog.cpp EmaConfigDialog.h
-FdsOptionsDialog.cpp FdsOptionsDialog.h
-FormantOptimizationDialog.cpp FormantOptimizationDialog.h
-GesturalScorePage.cpp GesturalScorePage.h
-GesturalScorePicture.cpp GesturalScorePicture.h
-GlottisDialog.cpp GlottisDialog.h
-GlottisPanel.cpp GlottisPanel.h
-GlottisPicture.cpp GlottisPicture.h
-Graph.cpp Graph.h
-IconsXpm.h
-LfPulseDialog.cpp LfPulseDialog.h
-LfPulsePicture.cpp LfPulsePicture.h
-MainWindow.cpp MainWindow.h
-PhoneticParamsDialog.cpp PhoneticParamsDialog.h
-PoleZeroDialog.cpp PoleZeroDialog.h
-PoleZeroPlot.cpp PoleZeroPlot.h
-SignalComparisonPicture.cpp SignalComparisonPicture.h
-SignalPage.cpp SignalPage.h
-SignalPicture.cpp SignalPicture.h
-SilentMessageBox.cpp SilentMessageBox.h
-SimpleSpectrumPicture.cpp SimpleSpectrumPicture.h
-SpectrogramPicture.cpp SpectrogramPicture.h
-SpectrogramPlot.cpp SpectrogramPlot.h
-SpectrumOptionsDialog.cpp SpectrumOptionsDialog.h
-SpectrumPicture.cpp SpectrumPicture.h
-SynthesisThread.cpp SynthesisThread.h
-TdsOptionsDialog.cpp TdsOptionsDialog.h
-TdsPage.cpp TdsPage.h
-TdsSpatialSignalPicture.cpp TdsSpatialSignalPicture.h
-TdsTimeSignalPicture.cpp TdsTimeSignalPicture.h
-TdsTubePicture.cpp TdsTubePicture.h
-TimeAxisPicture.cpp TimeAxisPicture.h
-TransitionDialog.cpp TransitionDialog.h
-VocalTractDialog.cpp VocalTractDialog.h
-VocalTractPage.cpp VocalTractPage.h
-VocalTractPicture.cpp VocalTractPicture.h
-VocalTractShapesDialog.cpp VocalTractShapesDialog.h
+src/AnalysisResultsDialog.cpp
+src/AnalysisSettingsDialog.cpp
+src/AnatomyParamsDialog.cpp
+src/AnnotationDialog.cpp
+src/Application.cpp
+src/AreaFunctionPicture.cpp
+src/BasicPicture.cpp
+src/ColorScale.cpp
+src/CrossSectionPicture.cpp
+src/Data.cpp
+src/EmaConfigDialog.cpp
+src/FdsOptionsDialog.cpp
+src/FormantOptimizationDialog.cpp
+src/GesturalScorePage.cpp
+src/GesturalScorePicture.cpp
+src/GlottisDialog.cpp
+src/GlottisPanel.cpp
+src/GlottisPicture.cpp
+src/Graph.cpp
+src/LfPulseDialog.cpp
+src/LfPulsePicture.cpp
+src/MainWindow.cpp
+src/PhoneticParamsDialog.cpp
+src/PoleZeroDialog.cpp
+src/PoleZeroPlot.cpp
+src/SignalComparisonPicture.cpp
+src/SignalPage.cpp
+src/SignalPicture.cpp
+src/SilentMessageBox.cpp
+src/SimpleSpectrumPicture.cpp
+src/SoundLib.cpp
+src/SpectrogramPicture.cpp
+src/SpectrogramPlot.cpp
+src/SpectrumOptionsDialog.cpp
+src/SpectrumPicture.cpp
+src/SynthesisThread.cpp
+src/TdsOptionsDialog.cpp
+src/TdsPage.cpp
+src/TdsSpatialSignalPicture.cpp
+src/TdsTimeSignalPicture.cpp
+src/TdsTubePicture.cpp
+src/TimeAxisPicture.cpp
+src/TransitionDialog.cpp
+src/VocalTractDialog.cpp
+src/VocalTractPage.cpp
+src/VocalTractPicture.cpp
+src/VocalTractShapesDialog.cpp
 )
 set_property(TARGET VocalTractLab PROPERTY VS_DPI_AWARE "PerMonitor")
-target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES} )
+target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
+target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} )
 endif()
 
 if(UNIX)
@@ -114,90 +85,56 @@ find_package(OpenAL REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIRS})
 # Add source to this project's executable.
 add_executable (VocalTractLab
-Backend/AnatomyParams.cpp Backend/AnatomyParams.h
-Backend/AudioFile.h
-Backend/Constants.h
-Backend/Dsp.cpp Backend/Dsp.h
-Backend/F0EstimatorYin.cpp Backend/F0EstimatorYin.h
-Backend/GeometricGlottis.cpp Backend/GeometricGlottis.h
-Backend/Geometry.cpp Backend/Geometry.h
-Backend/GesturalScore.cpp Backend/GesturalScore.h
-Backend/Glottis.cpp Backend/Glottis.h
-Backend/IirFilter.cpp Backend/IirFilter.h
-Backend/ImpulseExcitation.cpp Backend/ImpulseExcitation.h
-Backend/LfPulse.cpp Backend/LfPulse.h
-Backend/Matrix2x2.cpp Backend/Matrix2x2.h
-Backend/PoleZeroPlan.cpp Backend/PoleZeroPlan.h
-Backend/Sampa.cpp Backend/Sampa.h
-Backend/SegmentSequence.cpp Backend/SegmentSequence.h
-Backend/Signal.cpp Backend/Signal.h
-Backend/SoundLib.cpp Backend/SoundLib.h
-Backend/Splines.cpp Backend/Splines.h
-Backend/StaticPhone.cpp Backend/StaticPhone.h
-Backend/Surface.cpp Backend/Surface.h
-Backend/Synthesizer.cpp Backend/Synthesizer.h
-Backend/TdsModel.cpp Backend/TdsModel.h
-Backend/TimeFunction.cpp Backend/TimeFunction.h
-Backend/TlModel.cpp Backend/TlModel.h
-Backend/TriangularGlottis.cpp Backend/TriangularGlottis.h
-Backend/Tube.cpp Backend/Tube.h
-Backend/TubeSequence.h
-Backend/TwoMassModel.cpp Backend/TwoMassModel.h
-Backend/VocalTract.cpp Backend/VocalTract.h
-Backend/VoiceQualityEstimator.cpp Backend/VoiceQualityEstimator.h
-Backend/VowelLf.cpp Backend/VowelLf.h
-Backend/XmlHelper.cpp Backend/XmlHelper.h
-Backend/XmlNode.cpp Backend/XmlNode.h
-AnalysisResultsDialog.cpp AnalysisResultsDialog.h
-AnalysisSettingsDialog.cpp AnalysisSettingsDialog.h
-AnatomyParamsDialog.cpp AnatomyParamsDialog.h
-AnnotationDialog.cpp AnnotationDialog.h
-Application.cpp Application.h
-AreaFunctionPicture.cpp AreaFunctionPicture.h
-BasicPicture.cpp BasicPicture.h
-ColorScale.cpp ColorScale.h
-CrossSectionPicture.cpp CrossSectionPicture.h
-Data.cpp Data.h
-EmaConfigDialog.cpp EmaConfigDialog.h
-FdsOptionsDialog.cpp FdsOptionsDialog.h
-FormantOptimizationDialog.cpp FormantOptimizationDialog.h
-GesturalScorePage.cpp GesturalScorePage.h
-GesturalScorePicture.cpp GesturalScorePicture.h
-GlottisDialog.cpp GlottisDialog.h
-GlottisPanel.cpp GlottisPanel.h
-GlottisPicture.cpp GlottisPicture.h
-Graph.cpp Graph.h
-IconsXpm.h
-LfPulseDialog.cpp LfPulseDialog.h
-LfPulsePicture.cpp LfPulsePicture.h
-MainWindow.cpp MainWindow.h
-PhoneticParamsDialog.cpp PhoneticParamsDialog.h
-PoleZeroDialog.cpp PoleZeroDialog.h
-PoleZeroPlot.cpp PoleZeroPlot.h
-SignalComparisonPicture.cpp SignalComparisonPicture.h
-SignalPage.cpp SignalPage.h
-SignalPicture.cpp SignalPicture.h
-SilentMessageBox.cpp SilentMessageBox.h
-SimpleSpectrumPicture.cpp SimpleSpectrumPicture.h
-SpectrogramPicture.cpp SpectrogramPicture.h
-SpectrogramPlot.cpp SpectrogramPlot.h
-SpectrumOptionsDialog.cpp SpectrumOptionsDialog.h
-SpectrumPicture.cpp SpectrumPicture.h
-SynthesisThread.cpp SynthesisThread.h
-TdsOptionsDialog.cpp TdsOptionsDialog.h
-TdsPage.cpp TdsPage.h
-TdsSpatialSignalPicture.cpp TdsSpatialSignalPicture.h
-TdsTimeSignalPicture.cpp TdsTimeSignalPicture.h
-TdsTubePicture.cpp TdsTubePicture.h
-TimeAxisPicture.cpp TimeAxisPicture.h
-TransitionDialog.cpp TransitionDialog.h
-VocalTractDialog.cpp VocalTractDialog.h
-VocalTractPage.cpp VocalTractPage.h
-VocalTractPicture.cpp VocalTractPicture.h
-VocalTractShapesDialog.cpp VocalTractShapesDialog.h
+src/AnalysisResultsDialog.cpp
+src/AnalysisSettingsDialog.cpp
+src/AnatomyParamsDialog.cpp
+src/AnnotationDialog.cpp
+src/Application.cpp
+src/AreaFunctionPicture.cpp
+src/BasicPicture.cpp
+src/ColorScale.cpp
+src/CrossSectionPicture.cpp
+src/Data.cpp
+src/EmaConfigDialog.cpp
+src/FdsOptionsDialog.cpp
+src/FormantOptimizationDialog.cpp
+src/GesturalScorePage.cpp
+src/GesturalScorePicture.cpp
+src/GlottisDialog.cpp
+src/GlottisPanel.cpp
+src/GlottisPicture.cpp
+src/Graph.cpp
+src/LfPulseDialog.cpp
+src/LfPulsePicture.cpp
+src/MainWindow.cpp
+src/PhoneticParamsDialog.cpp
+src/PoleZeroDialog.cpp
+src/PoleZeroPlot.cpp
+src/SignalComparisonPicture.cpp
+src/SignalPage.cpp
+src/SignalPicture.cpp
+src/SilentMessageBox.cpp
+src/SimpleSpectrumPicture.cpp
+src/SoundLib.cpp
+src/SpectrogramPicture.cpp
+src/SpectrogramPlot.cpp
+src/SpectrumOptionsDialog.cpp
+src/SpectrumPicture.cpp
+src/SynthesisThread.cpp
+src/TdsOptionsDialog.cpp
+src/TdsPage.cpp
+src/TdsSpatialSignalPicture.cpp
+src/TdsTimeSignalPicture.cpp
+src/TdsTubePicture.cpp
+src/TimeAxisPicture.cpp
+src/TransitionDialog.cpp
+src/VocalTractDialog.cpp
+src/VocalTractPage.cpp
+src/VocalTractPicture.cpp
+src/VocalTractShapesDialog.cpp
 )
-
-target_link_libraries(VocalTractLab ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} )
+target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
+target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} )
 endif()
 
 

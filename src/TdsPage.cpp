@@ -26,7 +26,7 @@
 #include <wx/statline.h>
 #include "SilentMessageBox.h"
 #include "VocalTractDialog.h"
-#include "Backend/SoundLib.h"
+#include "SoundLib.h"
 
 using namespace std;
 

@@ -15,16 +15,16 @@ colors = {'r', 'k', 'b', [0.2 0.6 0.4]};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
 
 % loop over vowels
-for v = 1:1
+for v = 1:3
   load([vowels{v} '_m_fem.mat']);  % FEM 
   mod_MM = ones(nFreqs, 3);
   phase_MM = ones(nFreqs, 3);
-  for t = 2:3
+  for t = 1:3
     name = [vowels{v} '_m' types{t}];
     if exist([name '.txt'])
       load([name '.txt'])
-      eval(sprintf('mod_MM(:,%d) = %s(:,6);', t, name));
-      eval(sprintf('phase_MM(:,%d) = %s(:,7);', t, name));
+      eval(sprintf('mod_MM(:,%d) = %s(:,2);', t, name));
+      eval(sprintf('phase_MM(:,%d) = %s(:,3);', t, name));
       nameSave = [vowels{v} '_m' typesSave{t}];
       eval(sprintf('%s(:,1) = freqs;', nameSave));
       eval(sprintf('%s(:,2) = mod_MM(:,%d) * corrFac;', nameSave, t));
@@ -57,7 +57,7 @@ for v = 1:1
   subplot(2,1,2)
   hold on
   plot(f, -angle(H), 'linewidth', lineSize, 'color', colors{1})
-  for t = 2:2
+  for t = 1:3
     plot(freqs, phase_MM(:,t), 'linewidth', lineSize, 'color', colors{t+1})
   end
 

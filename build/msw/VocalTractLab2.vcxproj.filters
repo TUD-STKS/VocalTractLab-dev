@@ -4,9 +4,6 @@
     <Filter Include="Frontend">
       <UniqueIdentifier>{a2e0d1de-0f9b-4400-a998-0a0d705a4fb6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Backend">
-      <UniqueIdentifier>{4b13d075-ac85-49c9-9e3c-1f729a97cabd}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

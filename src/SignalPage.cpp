@@ -25,7 +25,7 @@
 #include <wx/config.h>
 #include <wx/statline.h>
 #include <wx/splitter.h>
-#include "Backend/Dsp.h"
+#include "VocalTractLabBackend/Dsp.h"
 #include "SignalComparisonPicture.h"
 
 using namespace std;

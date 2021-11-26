@@ -25,7 +25,7 @@
 #include <GL/glu.h>
 #include <fstream>
 #include <sstream>
-#include "Backend/VocalTract.h"
+#include "VocalTractLabBackend/VocalTract.h"
 
 #ifndef __VOCALTRACT_PICTURE_H__
 #define __VOCALTRACT_PICTURE_H__

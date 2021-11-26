@@ -148,6 +148,9 @@
     <ClInclude Include="..\..\src\TdsTimeSignalPicture.h">
       <Filter>Frontend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\SoundLib.h">
+      <Filter>Frontend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VocalTractLab2.ico" />
@@ -292,6 +295,9 @@
       <Filter>Frontend</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\TdsTimeSignalPicture.cpp">
+      <Filter>Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SoundLib.cpp">
       <Filter>Frontend</Filter>
     </ClCompile>
   </ItemGroup>

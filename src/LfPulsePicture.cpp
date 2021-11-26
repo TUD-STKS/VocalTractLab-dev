@@ -20,7 +20,7 @@
 // ****************************************************************************
 
 #include "LfPulsePicture.h"
-#include "Backend/Signal.h"
+#include "VocalTractLabBackend/Signal.h"
 
 // ****************************************************************************
 // The event table.

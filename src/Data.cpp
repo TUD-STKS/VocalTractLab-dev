@@ -30,10 +30,10 @@
 #include "Data.h"
 #include "GlottisDialog.h"
 #include "VocalTractDialog.h"
-#include "Backend/Dsp.h"
-#include "Backend/XmlNode.h"
-#include "Backend/SoundLib.h"
-#include "Backend/Synthesizer.h"
+#include "VocalTractLabBackend/Dsp.h"
+#include "VocalTractLabBackend/XmlNode.h"
+#include "SoundLib.h"
+#include "VocalTractLabBackend/Synthesizer.h"
 
 
 // Define a custom event type to be used for command events.

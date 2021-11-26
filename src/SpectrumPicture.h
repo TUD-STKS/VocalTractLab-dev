@@ -25,7 +25,7 @@
 #include "BasicPicture.h"
 #include "VocalTractPicture.h"
 #include "Graph.h"
-#include "Backend/Signal.h"
+#include "VocalTractLabBackend/Signal.h"
 
 // ****************************************************************************
 // ****************************************************************************

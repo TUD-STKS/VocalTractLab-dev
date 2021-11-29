@@ -390,12 +390,6 @@ void VocalTractShapesDialog::updateVocalTract()
   }
   tract->calculateAll();  //<-- The parameters of the vocal tract shape may change in here due to various constraints
 
-  // Write back the limited parameters
-  for (i = 0; i < VocalTract::NUM_PARAMS; i++)
-  {
-      tract->shapes[sel].param[i] = tract->param[i].limitedX;
-  }
-  
   data->updateTlModelGeometry(tract);
 
   // Refresh the pictures of the parent window.

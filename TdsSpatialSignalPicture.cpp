@@ -29,9 +29,9 @@
 
 TdsSpatialSignalPicture::TdsSpatialSignalPicture(wxWindow *parent) : BasicPicture(parent)
 {
-  const int LEFT_MARGIN = 55;
+  const int LEFT_MARGIN = this->FromDIP(55);
   const int RIGHT_MARGIN = 0;
-  const int BOTTOM_MARGIN = 25;
+  const int BOTTOM_MARGIN = this->FromDIP(25);
   const int TOP_MARGIN = 0;
 
   Graph *graph = NULL;
@@ -219,11 +219,11 @@ void TdsSpatialSignalPicture::draw(wxDC &dc)
 
       if (isSideBranch) 
       {
-        dc.SetPen(*wxRED_PEN);
+        dc.SetPen(wxPen(*wxRED, lineWidth));
       } 
       else 
       { 
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, lineWidth));
       }
 
       dc.DrawLine(leftX, leftY[i], rightX, rightY[i]);
@@ -252,7 +252,7 @@ void TdsSpatialSignalPicture::draw(wxDC &dc)
     leftX = graph->getXPos(ts->pos + 0.5*ts->length);
     if ((leftX >= graphX) && (leftX < graphX + graphW))
     {
-      dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+      dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
       dc.DrawLine(leftX, graphY, leftX, graphY + graphH - 1);
     }
   }

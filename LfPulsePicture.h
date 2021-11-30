@@ -61,6 +61,7 @@ private:
 
 private:
   void OnMouseClick(wxMouseEvent &event);
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Declare the event table right at the end

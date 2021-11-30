@@ -29,6 +29,8 @@
 #include <io.h>
 #endif
 
+#include <clocale>
+#include <locale>
 #include <cstdio>
 #include <iostream>
 #include <fstream>
@@ -43,7 +45,23 @@ IMPLEMENT_APP(Application)
 
 bool Application::OnInit()
 {
+  #ifdef __linux__
+	// On Linux (or at least GTK), a ton of warnings are generated and 
+	// printed to the terminal. This is because of a well-known 
+	// hyper-sensitivity of GTK and thus simplest way to avoid flooding 
+	// the terminal is to redirect stderr to a log file.
+	fstream file;
+	file.open("stderr.log", ios::out);
+	cerr.rdbuf(file.rdbuf());	
+	freopen( "stderr.log", "w", stderr );
+  #endif
+
+  // Set the current locale to UTF-8 so "special" characters (e.g. ä, é) are 
+  // handled correctly across platforms
+  std::setlocale(LC_ALL, "C.UTF-8");
+  
   createConsole();
+
   wxPrintf("=== Console output for VocalTractLab 2.3 (built %s) ===\n\n", __DATE__);
 
   // Init the data class at the very beginning.
@@ -156,7 +174,15 @@ void Application::createConsole()
   //ios::sync_with_stdio();
 
 #endif
-
 }
 
 // ****************************************************************************
+
+#ifdef __linux__
+  int Application::OnExit()
+  {
+    return fclose(stderr);
+  }
+#endif
+
+

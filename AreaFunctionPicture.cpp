@@ -23,6 +23,8 @@
 #include "VocalTractDialog.h"
 #include "Data.h"
 
+#include <sstream>
+
 
 const wxBrush AreaFunctionPicture::ARTICULATOR_BRUSH[Tube::NUM_ARTICULATORS] =
 {
@@ -58,7 +60,7 @@ AreaFunctionPicture::AreaFunctionPicture(wxWindow *parent, VocalTractPicture *pi
 
   // Graph for the circumference function 
 
-  circGraph.init(this, 35, 5, 0, 25);
+  circGraph.init(this, this->FromDIP(35), this->FromDIP(5), 0, this->FromDIP(25));
   circGraph.initAbscissa(PQ_LENGTH, 0.0, 1.0, 
     0.0, 0.0, 0.0, 
     20.0, 20.0, 20.0,
@@ -73,7 +75,7 @@ AreaFunctionPicture::AreaFunctionPicture(wxWindow *parent, VocalTractPicture *pi
 
   // Graph for the area function
 
-  areaGraph.init(this, 40, 5, 0, 25);
+  areaGraph.init(this, this->FromDIP(40), this->FromDIP(5), 0, this->FromDIP(25));
   areaGraph.initAbscissa(PQ_LENGTH, 0.0, 1.0, 
     0.0, 0.0, 0.0, 
     20.0, 20.0, 20.0,
@@ -197,11 +199,11 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos( TlModel::getCircumference(ts->area_cm2) ); 
       }
 
-      dc.SetPen(*wxLIGHT_GREY_PEN);
+      dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
       dc.SetBrush(*wxLIGHT_GREY_BRUSH);
       dc.DrawRectangle(x[0], y, x[1]-x[0]+1, graphY+graphH-y);
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -225,11 +227,11 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos(TlModel::getCircumference(ts->area_cm2)); 
       }
       
-      dc.SetPen(*wxLIGHT_GREY_PEN);
+      dc.SetPen(wxPen(*wxLIGHT_GREY, lineWidth));
       dc.SetBrush(*wxLIGHT_GREY_BRUSH);
       dc.DrawRectangle(x[0], y, x[1]-x[0]+1, graphY+graphH-y);
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -260,7 +262,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y = graph->getYPos(TlModel::getCircumference(ts->area_cm2));
       }
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       if (i > 0) 
       { 
         dc.DrawLine(x[0], lastY, x[0], y); 
@@ -300,7 +302,7 @@ void AreaFunctionPicture::draw(wxDC &dc)
         y[1] = graph->getYPos(tract->crossSection[i + 1].circ);
       }
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       dc.DrawLine(x[0], y[0], x[1], y[1]);
 
       // Determine the area at the cutting position
@@ -320,9 +322,9 @@ void AreaFunctionPicture::draw(wxDC &dc)
   x[0] = graph->getXPos(picVocalTract->cutPlanePos_cm);
   if ((x[0] >= graphX) && (x[0] < graphX + graphW))
   {
-    wxPen pen(wxColor(0, 0, 0), 1, wxPENSTYLE_DOT);
+    wxPen pen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH);
     dc.SetPen(pen);
-    dc.DrawLine(x[0], graphY+58, x[0], graphY+graphH-1);
+    dc.DrawLine(x[0], graphY+this->FromDIP(58), x[0], graphY+graphH-1);
   }
 
   // ****************************************************************
@@ -348,53 +350,75 @@ void AreaFunctionPicture::draw(wxDC &dc)
   if (showText)
   {
     wxString st;
+    int offsetX{ this->FromDIP(50) };
+    int offsetY{ this->FromDIP(4) };
+    int col1Width{ 0 };  // Width of the widest line in the first column
+    int gutterWidth{ this->FromDIP(5) };  // Space between the two columns of text
+    
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-    st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
-    dc.DrawText(st, 50, 4);
+  	// Create the multi-line string for the first column and find the width of the widest line
+    std::stringstream col1;
+
+  	st = wxString::Format("Length: %2.2f cm", tract->centerLineLength);
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+  	col1 << st << std::endl;
 
     st = wxString::Format("Velum area: %2.3f cm^2", tract->nasalPortArea_cm2);
-    dc.DrawText(st, 50, 24);
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     st = wxString::Format("Curr. area: %2.3f cm^2", currentArea);
-    dc.DrawText(st, 50, 44);
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     st = wxString::Format("Min. area: %2.3f cm^2 at %2.1f cm", absMinArea_cm2, absMinAreaPos_cm);
-    dc.DrawText(st, 50, 64);
+    col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+    col1 << st << std::endl;
 
     if (showArticulators)
     {
-      st = wxString::Format("Tongue tip sides: %2.2f", tract->param[VocalTract::TS3].x);
-      dc.DrawText(st, 50, 84);
+        st = wxString::Format("Tongue tip sides: %2.2f", tract->param[VocalTract::TS3].x);
+        col1Width = std::max(col1Width, dc.GetTextExtent(st).GetWidth());
+        col1 << st << std::endl;
     }
 
+    // Draw the first column
+    dc.DrawText(col1.str(), offsetX, offsetY);
+  	
+    // Create the multi-line string for the second column
+    std::stringstream col2;
     if (picVocalTract->showCenterLine)
     {
-      st = wxString::Format("Slice pos.: %2.2f cm", picVocalTract->cutPlanePos_cm);
-      dc.DrawText(st, 220, 4);
+        st = wxString::Format("Slice pos.: %2.2f cm", picVocalTract->cutPlanePos_cm);
+        col2 << st << std::endl;
     }
-
+  	
     st = wxString::Format("Velum pos.: %2.2f cm", tract->nasalPortPos_cm);
-    dc.DrawText(st, 220, 24);
-
+    col2 << st << std::endl;
+    
     st = wxString::Format("Teeth pos.: %2.2f cm", tract->incisorPos_cm);
-    dc.DrawText(st, 220, 44);
+    col2 << st << std::endl;
+
+     // Draw the second column
+    dc.DrawText(col2.str(), offsetX + col1Width + gutterWidth, offsetY);
+    
 
     // Draw the teeth position
     x[0] = graph->getXPos(tract->incisorPos_cm);
     if ((x[0] >= graphX) && (x[0]+1 < graphX + graphW))
     {
-      dc.DrawLine(x[0], graphY+graphH-10, x[0], graphY+graphH-1);
-      dc.DrawLine(x[0]+1, graphY+graphH-10, x[0]+1, graphY+graphH-1);
+      dc.DrawLine(x[0], graphY+graphH-this->FromDIP(10), x[0], graphY+graphH-1);
+      dc.DrawLine(x[0]+1, graphY+graphH-this->FromDIP(10), x[0]+1, graphY+graphH-1);
     }
 
-    // Draw the reccommended minimum area for vowels as a horizontal dashed line.
+    // Draw the recommended minimum area for vowels as a horizontal dashed line.
     if (showAreas)
     {
       y = graph->getYPos(Data::MIN_ADVISED_VOWEL_AREA_CM2);
-      dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+      dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
       dc.DrawLine(graphX, y, graphX + graphW - 1, y);
     }
 

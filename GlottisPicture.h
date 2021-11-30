@@ -64,6 +64,7 @@ private:
   int originU;
   int originV;
   double viewFactor;
+  int lineWidth{ this->FromDIP(1) };
 
   // **************************************************************************
   // Private functions.

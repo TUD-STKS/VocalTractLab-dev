@@ -179,6 +179,11 @@ public:
   double getAbsXValue(int xPos);
   double getAbsYValue(int yPos);
 
+  wxFont getFont();
+  	
+  void setFont(const wxFont& newFont);
+	
+
   // **************************************************************************
   // Private data.
   // **************************************************************************
@@ -189,7 +194,12 @@ private:
   // Margins of the graph to the edge of the picture
   int leftMargin, rightMargin, bottomMargin, topMargin;
   wxWindow *control;
-
+  // Width of the pen used for drawing
+  int lineWidth{ wxWindow::FromDIP(1, nullptr) };
+  // A grey that is lighter than wxLIGHT_GREY for drawing more subtle background lines
+  wxColor veryLightGrey{ 220, 220, 220 };
+  wxFont font{ 9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };
+	
   // **************************************************************************
   // Private functions.
   // **************************************************************************

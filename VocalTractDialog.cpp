@@ -285,7 +285,7 @@ void VocalTractDialog::initWidgets()
   openGlArgs.PlatformDefaults().Defaults().RGBA().DoubleBuffer().Depth(24).EndList(); // Depth(32) causes display error. Possible bug?
   picVocalTract = new VocalTractPicture(this, data->vocalTract, openGlArgs, this);
   
-  picVocalTract->SetMinSize( wxSize(300, 300) );
+  picVocalTract->SetMinSize(this->FromDIP(wxSize(300, 300) ));
 
   picVocalTract->showControlPoints = true;
   picVocalTract->showCenterLine = false;
@@ -297,7 +297,8 @@ void VocalTractDialog::initWidgets()
   // ****************************************************************
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
-  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, wxSize(20, 20));
+  showHideControlsButton = new wxButton(this, IDB_SHOW_HIDE_CONTROLS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  showHideControlsButton->SetMinSize(wxSize(showHideControlsButton->GetSize().GetHeight(), showHideControlsButton->GetSize().GetHeight()));
   sizer->Add(showHideControlsButton, 0, wxALL, 2);
 
   line = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
@@ -340,10 +341,8 @@ void VocalTractDialog::initWidgets()
   {
     scrTongueSide[i] = new wxScrollBar(controlPanel, IDS_TONGUE_SIDE_ELEVATION_0 + i);
     scrTongueSide[i]->SetScrollbar(0, 1, NUM_SCROLLBAR_STEPS, 1);
-    labTongueSide[i] = new wxStaticText(controlPanel, wxID_ANY, "0", wxDefaultPosition, wxSize(50, -1));
+    labTongueSide[i] = new wxStaticText(controlPanel, wxID_ANY, "0", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
   }
-
-  label = new wxStaticText(controlPanel, wxID_ANY, "");   // A dummy label
 
   // The columns with the scroll bars are stretchable.
   gridSizer->AddGrowableCol(0, 1);
@@ -351,15 +350,15 @@ void VocalTractDialog::initWidgets()
 
   gridSizer->Add(scrTongueSide[0], 1, wxGROW); 
   gridSizer->Add(labTongueSide[0]);
-  gridSizer->Add(label);
+  gridSizer->Add(new wxStaticText(controlPanel, wxID_ANY, "")); // A dummy label
 
   gridSizer->Add(scrTongueSide[1], 1, wxGROW); 
   gridSizer->Add(labTongueSide[1]);
-  gridSizer->Add(label);
+  gridSizer->Add(new wxStaticText(controlPanel, wxID_ANY, "")); // A dummy label
 
   gridSizer->Add(scrTongueSide[2], 1, wxGROW); 
   gridSizer->Add(labTongueSide[2]);
-  gridSizer->Add(label);
+  gridSizer->Add(new wxStaticText(controlPanel, wxID_ANY, "")); // A dummy label
 
   controlSizer->Add(gridSizer, 0, wxGROW);
 
@@ -457,7 +456,7 @@ void VocalTractDialog::initWidgets()
   this->SetMinSize(minSizeWithControls);
 
   // Set the size to start up with.
-  picVocalTract->SetMinSize(wxSize(400, 400));
+  picVocalTract->SetMinSize(this->FromDIP(wxSize(400, 400)));
   topLevelSizer->Fit(this);
 }
 

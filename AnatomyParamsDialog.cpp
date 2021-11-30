@@ -159,7 +159,7 @@ void AnatomyParamsDialog::initWidgets()
 
   // ****************************************************************
 
-  scrAge = new wxScrollBar(this, IDS_AGE, wxDefaultPosition, wxSize(300, -1));
+  scrAge = new wxScrollBar(this, IDS_AGE, wxDefaultPosition, this->FromDIP(wxSize(300, -1)));
   scrAge->SetScrollbar(0, 1, 12*20, 1, false);    // Step size is in month.
   upperSizer->Add(scrAge, 0, wxALL, 5);
 
@@ -201,11 +201,11 @@ void AnatomyParamsDialog::initWidgets()
 
     sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    scrParam[i] = new wxScrollBar(this, IDS_PARAM0 + i, wxDefaultPosition, wxSize(250, -1));
+    scrParam[i] = new wxScrollBar(this, IDS_PARAM0 + i, wxDefaultPosition, this->FromDIP(wxSize(250, -1)));
     scrParam[i]->SetScrollbar(0, 1, 101, 1, false);
     sizer->Add(scrParam[i], 0);
 
-    labParam[i] = new wxStaticText(this, wxID_ANY, "x", wxDefaultPosition, wxSize(50, -1));
+    labParam[i] = new wxStaticText(this, wxID_ANY, "x", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
     sizer->Add(labParam[i], 0, wxALIGN_CENTER | wxLEFT, 10);
 
     lowerSizer->Add(sizer, 0, wxALL, 3);

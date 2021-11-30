@@ -181,7 +181,6 @@ double GesturalScorePicture::getVertOffset_percent()
 
 void GesturalScorePicture::paintGesturalScore(wxDC &dc)
 {
-  const int LEFT_MARGIN = Data::LEFT_SCORE_MARGIN;
   const int N = GesturalScore::NUM_GESTURE_TYPES;
   int i, k;
   int y, h;
@@ -224,13 +223,15 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   {
     y = gestureRowY[i];
     h = gestureRowH[i];
+    label = gs->gestures[i].name;
+  	// Only draw the label if it is visible
     if ((y+h >= 0) && (y < windowHeight))
     {
-      label = gs->gestures[i].name;
-      dc.DrawText(label, 5, y);
+      dc.DrawText(label, this->FromDIP(5), y);
     }
   }
-
+  int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
+	
   // ****************************************************************
   // Draw the actual gesture boxes.
   // ****************************************************************
@@ -268,11 +269,11 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
         leftX = data->gsTimeAxisGraph->getXPos(startTime_s);
         rightX = data->gsTimeAxisGraph->getXPos(startTime_s + duration_s);
 
-        if ((leftX < windowWidth) && (rightX >= Data::LEFT_SCORE_MARGIN))
+        if ((leftX < windowWidth) && (rightX >= LEFT_MARGIN))
         {
-          if (leftX < Data::LEFT_SCORE_MARGIN)
+          if (leftX < LEFT_MARGIN)
           {
-            leftX = Data::LEFT_SCORE_MARGIN;
+            leftX = LEFT_MARGIN;
           }
           if (rightX >= windowWidth)
           {
@@ -314,12 +315,12 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
             double x0, y0, x1, y1;
 
             getTargetLineCoord(
-              i, Data::LEFT_SCORE_MARGIN, windowWidth-1,
+              i, LEFT_MARGIN, windowWidth-1,
               startTime_s, gesture->dVal, 
               startTime_s + duration_s, gesture->dVal + gesture->duration_s*gesture->slope,
               x0, y0, x1, y1);
 
-            dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+            dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
             dc.DrawLine((int)x0, (int)y0, (int)x1, (int)y1);
           }
         }
@@ -332,7 +333,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
       // the gesture values.
       // ************************************************************
 
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(wxPen(*wxBLACK, lineWidth));
       dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
       startTime_s = 0.0;
@@ -349,16 +350,16 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
         leftX = data->gsTimeAxisGraph->getXPos(startTime_s);
         rightX = data->gsTimeAxisGraph->getXPos(startTime_s + duration_s);
 
-        if ((leftX >= Data::LEFT_SCORE_MARGIN) && (leftX < windowWidth))
+        if ((leftX >= LEFT_MARGIN) && (leftX < windowWidth))
         {
           dc.DrawLine(leftX, upperY, leftX, lowerY);
         }
 
         // Print the gesture value
 
-        if (leftX < Data::LEFT_SCORE_MARGIN)
+        if (leftX < LEFT_MARGIN)
         {
-          leftX = Data::LEFT_SCORE_MARGIN;
+          leftX = LEFT_MARGIN;
         }
 
         if ((gesture->neutral == false) && (leftX < rightX))
@@ -388,7 +389,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
       // Draw the final line.
       leftX = data->gsTimeAxisGraph->getXPos(startTime_s);
 
-      if ((leftX >= Data::LEFT_SCORE_MARGIN) && (leftX < windowWidth))
+      if ((leftX >= LEFT_MARGIN) && (leftX < windowWidth))
       {
         dc.DrawLine(leftX, upperY, leftX, lowerY);
       }
@@ -423,8 +424,8 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   y = gestureRowY[i] + gestureRowH[i] - 1 - 
     (int)(gestureRowH[i]*(0.0 - minVal[i]) / valRange[i]);
 
-  dc.SetPen( wxPen(wxColor(150, 150, 150)) );
-  dc.DrawLine(Data::LEFT_SCORE_MARGIN, y, windowWidth-1, y);
+  dc.SetPen( wxPen(wxColor(150, 150, 150), lineWidth));
+  dc.DrawLine(LEFT_MARGIN, y, windowWidth-1, y);
 
   // ****************************************************************
 
@@ -435,11 +436,13 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   int index;
   double pos_s;
 
-  dc.SetPen(*wxBLACK_PEN);
-
   // Run through all pixels from left to right.
 
-  for (x=Data::LEFT_SCORE_MARGIN; x < windowWidth; x++)
+  // Drawing a list of points is MUCH faster than drawing each individual line
+  // We therefore gather each sequence of lines in a vector and then draw all of them at the end
+  std::vector<std::vector<wxPoint>> lines(N);
+	
+  for (x=LEFT_MARGIN; x < windowWidth; x++)
   {
     pos_s = data->gsTimeAxisGraph->getAbsXValue(x);
 
@@ -472,23 +475,29 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
           y = gestureRowY[i] + gestureRowH[i] - 1;
         }
 
-        if (x > Data::LEFT_SCORE_MARGIN)
+        if (x > LEFT_MARGIN)
         {
-          dc.DrawLine(x-1, prevY[i], x, y);
+          lines[i].emplace_back(x, y);
         }
-
-        prevY[i] = y;
       }
     }
 
   }
 
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
+  for (const auto& line : lines)
+  {
+	  if (!line.empty())
+	  {
+    		dc.DrawLines(line.size(), &line[0]);
+	  }
+  }	
 
   // ****************************************************************
   // Draw black lines separating the rows.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   for (i=0; i < N; i++)
   {
@@ -515,7 +524,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   x = data->gsTimeAxisGraph->getXPos( data->gesturalScoreMark_s );
   if ((x >= graphX) && (x < graphX + graphW))
   {
-    dc.SetPen(*wxRED_PEN);
+    dc.SetPen(wxPen(*wxRED, lineWidth));
     dc.DrawLine(x, 0, x, windowHeight);
   }
 }
@@ -527,7 +536,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
 
 void GesturalScorePicture::paintMotorProgram(wxDC &dc)
 {
-  const int LEFT_MARGIN = Data::LEFT_SCORE_MARGIN;
+  int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
   int N = getNumControlParams();
   int i, k;
   int x, y;
@@ -607,7 +616,7 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
   int targetY;
 
   // Draw with a black dotted pen
-  dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+  dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
 
   // ****************************************************************
   // Run through all target sequences.
@@ -650,17 +659,17 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
         targetY = y + h - 1 - (int)(h*(target->value - minVal[i]) / valRange[i]);
 
         // Draw a vertical line at the end of the target interval.
-        if ((rightX >= Data::LEFT_SCORE_MARGIN) && (rightX < windowWidth))
+        if ((rightX >= LEFT_MARGIN) && (rightX < windowWidth))
         {
           dc.DrawLine(rightX, y, rightX, y+h-1);
         }
 
         // Draw the horizontal target line.
-        if ((rightX >= Data::LEFT_SCORE_MARGIN) && (leftX < windowWidth))
+        if ((rightX >= LEFT_MARGIN) && (leftX < windowWidth))
         {
-          if (leftX < Data::LEFT_SCORE_MARGIN)
+          if (leftX < LEFT_MARGIN)
           {
-            leftX = Data::LEFT_SCORE_MARGIN;
+            leftX = LEFT_MARGIN;
           }
           if (rightX >= windowWidth)
           {
@@ -682,11 +691,11 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
   double params[MAX_PARAMS];
   int prevY[MAX_PARAMS] = { 0 };
 
-  dc.SetPen(*wxBLACK_PEN);
-
   // Run through all pixels from left to right.
-
-  for (x=Data::LEFT_SCORE_MARGIN; x < windowWidth; x++)
+  // Drawing a list of points is MUCH faster than drawing each individual line
+  // We therefore gather each sequence of lines in a vector and then draw all of them at the end
+  std::vector<std::vector<wxPoint>> lines(N);
+  for (x=LEFT_MARGIN; x < windowWidth; x++)
   {
     pos_s = data->gsTimeAxisGraph->getAbsXValue(x);
 
@@ -711,15 +720,19 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
           y = paramRowY[i] + paramRowH[i] - 1;
         }
 
-        if (x > Data::LEFT_SCORE_MARGIN)
+        if (x > LEFT_MARGIN)
         {
-          dc.DrawLine(x-1, prevY[i], x, y);
+          lines[i].emplace_back(x, y);
         }
-
-        prevY[i] = y;
       }
     }
   }
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
+  for (const auto& line : lines)
+  {
+      dc.DrawLines(line.size(), &line[0]);
+  }
+
 
 
   // ****************************************************************
@@ -745,8 +758,8 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
         label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].description;
       }
 
-      cutString(dc, label, Data::LEFT_SCORE_MARGIN);
-      dc.DrawText(label, 5, y);
+      cutString(dc, label, LEFT_MARGIN - FromDIP(10));
+      dc.DrawText(label, FromDIP(5), y);
     }
   }
 
@@ -754,7 +767,7 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
   // Draw black lines separating the rows.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   for (i=0; i < N; i++)
   {
@@ -781,7 +794,7 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
   x = data->gsTimeAxisGraph->getXPos( data->gesturalScoreMark_s );
   if ((x >= graphX) && (x < graphX + graphW))
   {
-    dc.SetPen(*wxRED_PEN);
+    dc.SetPen(wxPen(*wxRED, lineWidth));
     dc.DrawLine(x, 0, x, windowHeight);
   }
 }
@@ -881,28 +894,21 @@ void GesturalScorePicture::calcParamRowCoord()
 
 void GesturalScorePicture::cutString(wxDC &dc, wxString &st, int maxWidth_px)
 {
-  int charWidth = dc.GetCharWidth();
-  int maxChars = maxWidth_px / charWidth;
-
-  if ((int)st.length() > maxChars)
+  while(dc.GetTextExtent(st).GetWidth() > maxWidth_px)
   {
-    st.Truncate(maxChars);
-    if (maxChars > 3)
-    {
-      st[maxChars-1] = '.';
-      st[maxChars-2] = '.';
-      st[maxChars-3] = '.';
-    }
+  	if(st.size() > 0)
+  	{
+        st.Truncate(st.size() - 1);
+  	}
     else
     {
-      int i;
-      for (i=0; i < maxChars; i++)
-      {
-        st[i] = '.';
-      }
+        break;
     }
+  	for (int i = 1; (i <= st.size())  && i < 4; ++i)
+  	{
+        st[st.size() - i] = '.';
+  	}
   }
-
 }
 
 
@@ -929,7 +935,7 @@ void GesturalScorePicture::getUnderlyingGesture(int localX, int localY,
   isOnBorder = false;
   isOnTarget = false;
 
-  if (mx < Data::LEFT_SCORE_MARGIN)
+  if (mx < Data::getInstance()->LEFT_SCORE_MARGIN)
   {
     return;    
   }
@@ -982,7 +988,7 @@ void GesturalScorePicture::getUnderlyingGesture(int localX, int localY,
             this->GetSize(&windowWidth, &windowHeight);
 
             getTargetLineCoord(
-              i, Data::LEFT_SCORE_MARGIN, windowWidth-1,
+              i, Data::getInstance()->LEFT_SCORE_MARGIN, windowWidth-1,
               startTime_s, gesture->dVal, 
               endTime_s, gesture->dVal + gesture->duration_s*gesture->slope,
               x0, y0, x1, y1);
@@ -1332,7 +1338,7 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
 
   const int N = GesturalScore::NUM_GESTURE_TYPES;
 
-  if ((mx <= Data::LEFT_SCORE_MARGIN) || (my < gestureRowY[0]) || 
+  if ((mx <= Data::getInstance()->LEFT_SCORE_MARGIN) || (my < gestureRowY[0]) ||
       (my >= gestureRowY[N-1] + gestureRowH[N-1]))
   {
     lastMx = mx;

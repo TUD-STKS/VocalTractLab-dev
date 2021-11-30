@@ -29,7 +29,12 @@ class Application : public wxApp
 {
 public:
 	virtual bool OnInit();
+#ifdef __linux__
+	virtual int OnExit();
+#endif
+
   void createConsole();
+
 };
 
 DECLARE_APP(Application)

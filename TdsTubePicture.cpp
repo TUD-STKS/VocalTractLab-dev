@@ -51,9 +51,9 @@ TdsTubePicture::TdsTubePicture(wxWindow *parent, wxWindow *updateEventReceiver) 
 {
   this->updateEventReceiver = updateEventReceiver;
 
-  const int LEFT_MARGIN = 55;
+  const int LEFT_MARGIN = this->FromDIP(55);
   const int RIGHT_MARGIN = 0;
-  const int BOTTOM_MARGIN = 25;
+  const int BOTTOM_MARGIN = this->FromDIP(25);
   const int TOP_MARGIN = 0;
 
   graph.init(this, LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN);
@@ -282,7 +282,7 @@ void TdsTubePicture::draw(wxDC &dc)
         rectH = 2*r;
 
         dc.SetBrush(color);
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, lineWidth));
         dc.DrawEllipse(rectX, rectY, rectW, rectH);
       }
       else
@@ -329,7 +329,7 @@ void TdsTubePicture::draw(wxDC &dc)
         }
 
         dc.SetBrush(color);
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, lineWidth));
         dc.DrawRectangle(rectX, rectY, rectW, rectH); 
 
         // **********************************************************
@@ -339,16 +339,16 @@ void TdsTubePicture::draw(wxDC &dc)
         if (model->tubeSection[i].dipoleSource.targetAmp1kHz > 0.0)
         {
           int centerX = leftX;
-          int centerY = 8;
-          int radius = 7;
+          int centerY = this->FromDIP(8);
+          int radius = this->FromDIP(7);
 
           dc.SetBrush( wxColor(255, 100, 100) );
-          dc.SetPen(*wxBLACK_PEN);
+          dc.SetPen(wxPen(*wxBLACK, lineWidth));
           dc.DrawCircle(centerX, centerY, radius);
-          dc.DrawLine(centerX - radius - 5, centerY, centerX - radius, centerY);
-          dc.DrawLine(centerX + radius, centerY, centerX + radius + 5, centerY);
+          dc.DrawLine(centerX - radius - this->FromDIP(5), centerY, centerX - radius, centerY);
+          dc.DrawLine(centerX + radius, centerY, centerX + radius + this->FromDIP(5), centerY);
 
-          dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+          dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
           dc.DrawLine(centerX, centerY + radius, centerX, zeroY);
         }
 
@@ -395,14 +395,14 @@ void TdsTubePicture::draw(wxDC &dc)
     rightX = graph.getXPos(tube.section[cons->lastSection]->pos_cm + tube.section[cons->lastSection]->length_cm);
     y = graph.getYPos(0.0);
 
-    dc.SetPen( wxColor(255, 100, 100) );    // red pen
+    dc.SetPen( wxPen(wxColor(255, 100, 100), lineWidth) );    // red pen
 
     dc.DrawLine(leftX, y + 1, rightX, y + 1);
     dc.DrawLine(leftX, y + 2, rightX, y + 2);
     dc.DrawLine(leftX, y + 3, rightX, y + 3);
     dc.DrawLine(leftX, y + 4, rightX, y + 4);
     dc.DrawLine(leftX, y + 5, rightX, y + 5);
-    dc.SetPen( *wxBLACK );    // black pen
+    dc.SetPen( wxPen(*wxBLACK, lineWidth) );    // black pen
     dc.DrawLine(leftX, y + 6, rightX, y + 6);
     
     // Left and right black borders
@@ -418,17 +418,17 @@ void TdsTubePicture::draw(wxDC &dc)
   int teethY = graph.getYPos(0.0);
 
   wxPoint triangle[3];
-  triangle[0].x = teethX-8;
-  triangle[0].y = teethY+8;
+  triangle[0].x = teethX - this->FromDIP(8);
+  triangle[0].y = teethY + this->FromDIP(8);
 
   triangle[1].x = teethX;
   triangle[1].y = teethY;
 
-  triangle[2].x = teethX+8;
-  triangle[2].y = teethY+8;
+  triangle[2].x = teethX + this->FromDIP(8);
+  triangle[2].y = teethY + this->FromDIP(8);
 
   dc.SetBrush( wxColor(255, 255, 128) );
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.DrawPolygon(3, triangle);
 
   // *********************************************************************
@@ -454,7 +454,7 @@ void TdsTubePicture::draw(wxDC &dc)
         y = graphY + graphH - 1;
       }
 
-      dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+      dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
       dc.DrawLine(leftX, y, leftX, zeroY);
     }
   }
@@ -466,7 +466,7 @@ void TdsTubePicture::draw(wxDC &dc)
   wxString st = wxString::Format("Selected section: %i", data->userProbeSection);
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
-  dc.DrawText(st, graphX+5, 0);
+  dc.DrawText(st, graphX+this->FromDIP(5), 0);
 
 }
 

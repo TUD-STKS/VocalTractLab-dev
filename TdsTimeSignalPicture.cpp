@@ -33,9 +33,9 @@ TdsTimeSignalPicture::TdsTimeSignalPicture(wxWindow *parent) : BasicPicture(pare
   // Init. the scales.
   // ****************************************************************
 
-  const int LEFT_MARGIN = 80;
+  const int LEFT_MARGIN = this->FromDIP(80);
   const int RIGHT_MARGIN = 0;
-  const int BOTTOM_MARGIN = 25;
+  const int BOTTOM_MARGIN = this->FromDIP(25);
   const int TOP_MARGIN = 0;
 
   Graph *graph = NULL;
@@ -166,7 +166,7 @@ void TdsTimeSignalPicture::draw(wxDC &dc)
   {
     index = Data::NUM_TDS_SCALE_COLORS - 1 - ((Data::NUM_TDS_SCALE_COLORS*i) / graphH);
     c = data->tdsScaleColor[index];
-    dc.SetPen( wxPen(c) );
+    dc.SetPen( wxPen(c, lineWidth) );
     dc.DrawLine(0, graphY+i, 15, graphY+i);
   }
 
@@ -200,8 +200,8 @@ void TdsTimeSignalPicture::draw(wxDC &dc)
   {
     buffer = data->userProbeVelocity;
   }
-
-  dc.SetPen(*wxBLACK_PEN);
+  
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   for (i=0; i < graphW; i++)
   {

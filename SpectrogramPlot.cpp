@@ -336,11 +336,11 @@ void SpectrogramPlot::drawCurve(
 
   if (dashed)
   {
-    dc.SetPen(wxPen(color, 1, wxPENSTYLE_DOT_DASH)); // orig: wxSHORT_DASH
+    dc.SetPen(wxPen(color, dc.LogicalToDeviceXRel(1), wxPENSTYLE_DOT_DASH));
   }
   else
   {
-    dc.SetPen( wxPen(color) );
+    dc.SetPen( wxPen(color, dc.LogicalToDeviceXRel(1)) );
   }
 
   if (numPoints > 1)

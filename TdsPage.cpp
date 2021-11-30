@@ -272,7 +272,7 @@ void TdsPage::initWidgets()
   sizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   ctrlSynthesisSpeed = new wxSpinCtrl(this, IDC_SYNTHESIS_SPEED, "", wxDefaultPosition,
-    wxSize(50, 20), wxSP_ARROW_KEYS, 1, 100, 1);
+    wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1);
   sizer->Add(ctrlSynthesisSpeed, 0, wxALL, 3);
 
   // ********************************************
@@ -414,18 +414,22 @@ void TdsPage::initWidgets()
 
   sizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_ACOUSTIC_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   sizer->AddStretchSpacer();
 
-  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_ACOUSTIC_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   middleSizer->Add(sizer, 0, wxGROW);
@@ -442,18 +446,22 @@ void TdsPage::initWidgets()
 
   sizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_AREA_UPPER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   sizer->AddStretchSpacer();
 
-  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
-  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxSize(25, 25));
+  button = new wxButton(this, IDB_AREA_LOWER_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxALL, 3);
 
   bottomSizer->Add(sizer, 0, wxGROW);
@@ -471,11 +479,11 @@ void TdsPage::initWidgets()
   sizer->Add(label, 0, wxALL | wxGROW, 2);
   
   scrTime = new wxScrollBar(this, IDS_TIME, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL);
-  scrTime->SetMinSize( wxSize(60, 20) );
+  scrTime->SetMinSize(this->FromDIP(wxSize(60, 20) ));
   scrTime->SetScrollbar(0, 1, 100, 1);
   sizer->Add(scrTime, 1, wxGROW);
 
-  labTime = new wxStaticText(this, wxID_ANY, "0 ms", wxDefaultPosition, wxSize(80, 16));
+  labTime = new wxStaticText(this, wxID_ANY, "0 ms", wxDefaultPosition, this->FromDIP(wxSize(80, 16)));
   sizer->Add(labTime, 0, wxALL | wxGROW, 2);
 
   rightSizer->Add(sizer, 0, wxGROW | wxALL, 3);

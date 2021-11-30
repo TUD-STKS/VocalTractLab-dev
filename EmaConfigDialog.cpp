@@ -118,7 +118,7 @@ void EmaConfigDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, "EMA points:");
   leftSizer->Add(label, 0, wxALL, 3);
 
-  lstEmaPoints = new wxListBox(this, IDL_EMA_POINTS, wxDefaultPosition, wxSize(-1, 180),
+  lstEmaPoints = new wxListBox(this, IDL_EMA_POINTS, wxDefaultPosition, this->FromDIP(wxSize(-1, 180)),
     wxArrayString(), wxLB_SINGLE | wxLB_ALWAYS_SB);
   leftSizer->Add(lstEmaPoints, 0, wxGROW | wxALL, 3);
 
@@ -141,7 +141,7 @@ void EmaConfigDialog::initWidgets()
 
   lstSurfaces = new wxComboBox(this, IDL_SURFACES, wxEmptyString, wxDefaultPosition, 
     wxDefaultSize, VocalTract::NUM_EMA_SURFACES, surfaceChoices, wxTE_PROCESS_ENTER | wxCB_READONLY);
-  lstSurfaces->SetMinSize( wxSize(120, -1) );
+  lstSurfaces->SetMinSize(this->FromDIP(wxSize(120, -1) ));
   rightSizer->Add(lstSurfaces, 1, wxGROW);
 
   rightSizer->AddSpacer(10);

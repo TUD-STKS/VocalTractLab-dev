@@ -206,7 +206,7 @@ void VocalTractShapesDialog::initWidgets()
   topLevelSizer->Add(middleSizer, 0, wxGROW);
 
   // Do not use wxLB_SORT; we want an unsorted list !
-  lstShapes = new wxListBox(scrolledWindow, IDL_SHAPES, wxDefaultPosition, wxSize(190, -1), 0, NULL, 0);
+  lstShapes = new wxListBox(scrolledWindow, IDL_SHAPES, wxDefaultPosition, this->FromDIP(wxSize(190, -1)), 0, NULL, 0);
   lstShapes->Connect(wxID_ANY, wxEVT_KEY_DOWN, wxKeyEventHandler(VocalTractShapesDialog::OnListKeyDown), NULL, this);
   lstShapes->SetToolTip("Press <SPACE> to play the shape sound.");
   middleSizer->Add(lstShapes, 1, wxGROW | wxALL, 8);
@@ -229,9 +229,9 @@ void VocalTractShapesDialog::initWidgets()
     if (i == VocalTract::TS1)
     {
       // Add a row of small empty dummy labels
-      label = new wxStaticText(scrolledWindow, wxID_ANY, "", wxDefaultPosition, wxSize(5, 5));
+      label = new wxStaticText(scrolledWindow, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(5, 5)));
       varSizer->Add(label);
-      label = new wxStaticText(scrolledWindow, wxID_ANY, "", wxDefaultPosition, wxSize(5, 5));
+      label = new wxStaticText(scrolledWindow, wxID_ANY, "", wxDefaultPosition, this->FromDIP(wxSize(5, 5)));
       varSizer->Add(label);
     }
 
@@ -239,7 +239,7 @@ void VocalTractShapesDialog::initWidgets()
     label = new wxStaticText(scrolledWindow, wxID_ANY, st);
     varSizer->Add(label);
 
-    txtValue[i] = new wxTextCtrl(scrolledWindow, IDT_VALUE_0 + i, "", wxDefaultPosition, wxSize(50, -1));
+    txtValue[i] = new wxTextCtrl(scrolledWindow, IDT_VALUE_0 + i, "", wxDefaultPosition, this->FromDIP(wxSize(50, -1)));
     txtValue[i]->Connect(-1, wxEVT_KILL_FOCUS, 
       wxFocusEventHandler(VocalTractShapesDialog::OnValueLostFocus), NULL, this);
     varSizer->Add(txtValue[i]);
@@ -288,11 +288,11 @@ void VocalTractShapesDialog::initWidgets()
   // Set the top-level-sizer for this window.
   // ****************************************************************
 
-  scrolledWindow->SetSizer(topLevelSizer);
+  scrolledWindow->SetSizerAndFit(topLevelSizer);
   scrolledWindow->SetScrollRate(0, 10);   // Make a vertical scrollbar only
 
   this->SetSizer(scrolledWindowSizer);
-  topLevelSizer->Fit(this);
+  scrolledWindowSizer->Fit(this);
 }
 
 

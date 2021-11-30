@@ -57,6 +57,12 @@ private:
   bool moveLeftBorder;
   bool moveRightBorder;
   wxWindow *updateParent;
+  int lineWidth{ this->FromDIP(1) };
+  const wxPen trackPen[Data::NUM_TRACKS] = {
+  wxPen(*wxBLACK, lineWidth),
+  wxPen(wxColor(0, 190, 0), lineWidth),
+  wxPen(*wxBLACK, lineWidth),
+  };
 
   // **************************************************************************
   // Private functions.

@@ -34,7 +34,8 @@ TimeAxisPicture::TimeAxisPicture(wxWindow *parent) : BasicPicture(parent)
   // ****************************************************************
 
   graph = Data::getInstance()->gsTimeAxisGraph;
-  graph->init(this, Data::LEFT_SCORE_MARGIN, 0, 25, 0);
+  const int labelHeight = graph->getFont().GetPixelSize().GetHeight();
+  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, 2 * labelHeight , 0.5*labelHeight);
   graph->abscissaAtBottom = false;
   graph->initAbscissa(PQ_TIME, 0.0, 0.001,
     0.0, 0.0, 0.0, 0.1, 10.0, 1.2,
@@ -48,9 +49,10 @@ TimeAxisPicture::TimeAxisPicture(wxWindow *parent) : BasicPicture(parent)
 
 void TimeAxisPicture::draw(wxDC &dc)
 {
-  int graphX, graphY, graphW, graphH;
-  graph->getDimensions(graphX, graphY, graphW, graphH);
-
+  // Re-init graph because the margin may have changed
+  const int labelHeight = graph->getFont().GetPixelSize().GetHeight();
+  graph->init(this, Data::getInstance()->LEFT_SCORE_MARGIN, 0, 2 * labelHeight, 0.5 * labelHeight);
+	
   // ****************************************************************
   // Fill the background and draw the graph.
   // ****************************************************************
@@ -58,6 +60,13 @@ void TimeAxisPicture::draw(wxDC &dc)
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
   graph->paintAbscissa(dc);
+}
+
+int TimeAxisPicture::getMinHeight()
+{
+	int _, top, bottom;
+	graph->getMargins(_, _, top, bottom);
+	return top + bottom;
 }
 
 // ****************************************************************************

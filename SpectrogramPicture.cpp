@@ -84,7 +84,9 @@ void SpectrogramPicture::paintSpectrogram(wxDC &dc)
       if (zeroX < windowWidth - 1)
       {
         // Fill the negative time region dark grey.
-        dc.SetPen(*wxGREY_PEN);
+        wxPen pen = *wxGREY_PEN;
+        pen.SetWidth(this->FromDIP(1));
+        dc.SetPen(pen);
         dc.SetBrush(*wxGREY_BRUSH);
         dc.DrawRectangle(0, 0, zeroX, windowHeight);
 
@@ -132,7 +134,7 @@ void SpectrogramPicture::paintSpectrogram(wxDC &dc)
   int markX = (data->mark_pt - firstSample)*windowWidth / numSamples;
   if ((markX >= 0) && (markX < windowWidth))
   {
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, this->FromDIP(1)));
     dc.DrawLine(markX, 0, markX, windowHeight-1);
   }
 
@@ -145,7 +147,7 @@ void SpectrogramPicture::paintSpectrogram(wxDC &dc)
     int w, h;
     wxString st;
 
-    dc.SetPen(*wxBLACK_PEN);
+    dc.SetPen(wxPen(*wxBLACK, this->FromDIP(1)));
     dc.SetBackgroundMode(wxSOLID);    // Set a solid white background
     dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 

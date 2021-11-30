@@ -173,7 +173,7 @@ void GesturalScorePage::initWidgets()
 
   txtContinualValue = new wxTextCtrl(staticBox, IDT_CONTINUAL_VALUE, "", wxDefaultPosition,
     wxDefaultSize, wxTE_PROCESS_ENTER);
-  txtContinualValue->SetMinSize( wxSize(50, -1) );
+  txtContinualValue->SetMinClientSize(1.25*GetTextExtent("0000.00"));
   // Connect the lost-focus-event to the event handler
   txtContinualValue->Connect(wxEVT_KILL_FOCUS, 
     wxFocusEventHandler(GesturalScorePage::OnContinualValueChanged), NULL, this);
@@ -183,7 +183,6 @@ void GesturalScorePage::initWidgets()
 
   lstNominalValue = new wxComboBox(staticBox, IDL_NOMINAL_VALUE, wxEmptyString, wxDefaultPosition,
     wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER);
-  lstNominalValue->SetMinSize( wxSize(100, -1) );
   sizer->Add(lstNominalValue, 1, wxGROW);
 
   gestureSizer->Add(sizer, 0, wxALL | wxGROW, 2);
@@ -215,16 +214,17 @@ void GesturalScorePage::initWidgets()
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
   label = new wxStaticText(staticBox, wxID_ANY, "Duration:");
-  sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
-  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+  txtDuration = new wxSpinCtrl(staticBox, IDE_DURATION, "0", wxDefaultPosition, wxDefaultSize , wxTE_PROCESS_ENTER);
+  txtDuration->SetMinClientSize(1.25*GetTextExtent("0000.00"));
   txtDuration->SetRange(MIN_GESTURE_DURATION_MS, MAX_GESTURE_DURATION_MS);
   this->Connect(IDE_DURATION, wxEVT_COMMAND_TEXT_ENTER,
     wxCommandEventHandler(GesturalScorePage::OnDurationEntered));
   sizer->Add(txtDuration, 0, wxGROW | wxRIGHT, 5);
 
   label = new wxStaticText(staticBox, wxID_ANY, "ms");
-  sizer->Add(label, 0, wxGROW | wxRIGHT, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
   gestureSizer->Add(sizer, 0, wxALL | wxGROW, 2);
 
@@ -251,14 +251,17 @@ void GesturalScorePage::initWidgets()
   
   sizer = new wxBoxSizer(wxHORIZONTAL);
   label = new wxStaticText(this, wxID_ANY, "Time axis:");
-  sizer->Add(label, 0, wxRIGHT | wxGROW, 5);
+  sizer->Add(label, wxSizerFlags(0).Center().Border(wxRIGHT, 5));
 
-  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-");
-  button->SetMinSize( wxSize(20, 20) );
+  button = new wxButton(this, IDB_TIME_ZOOM_MINUS, "-", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
-  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+");
-  button->SetMinSize( wxSize(20, 20) );
+  button = new wxButton(this, IDB_TIME_ZOOM_PLUS, "+", 
+      wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), 
+      button->GetSize().GetHeight()));
   sizer->Add(button, 0, wxRIGHT | wxGROW, 5);
 
   leftSizer->Add(sizer, 0, wxALL | wxGROW, 3);
@@ -368,7 +371,7 @@ void GesturalScorePage::initWidgets()
   wxPanel *upperPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   wxPanel *lowerPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   splitter->SplitHorizontally(upperPanel, lowerPanel);
-  splitter->SetSashPosition(300);
+  splitter->SetSashPosition(this->FromDIP(300));
 
   // ****************************************************************
   // Panel above the splitter.
@@ -381,11 +384,21 @@ void GesturalScorePage::initWidgets()
   
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
+  // Calculate the margin to fit all the labels from the GesturalScorePicture 
+  // before creating all the individual pictures
+  int maxWidth{ 0 };
+  for (int i = 0; i < GesturalScore::NUM_GESTURE_TYPES; ++i)
+  {
+      wxString label = data->gesturalScore->gestures[i].name;
+      maxWidth = std::max(maxWidth, GetTextExtent(label).GetWidth());
+  }
+  data->LEFT_SCORE_MARGIN = maxWidth + FromDIP(10);
+
   timeAxisPicture = new TimeAxisPicture(upperPanel);
-  timeAxisPicture->SetMinSize( wxSize(-1, 25) );
+  timeAxisPicture->SetMinSize(wxSize(-1, timeAxisPicture->getMinHeight()) );
   sizer->Add(timeAxisPicture, 1, wxGROW);
 
-  sizer->AddSpacer(20);
+  sizer->AddSpacer(this->FromDIP(20));
 
   upperSizer->Add(sizer, 0, wxBOTTOM | wxGROW, 5);
 
@@ -398,7 +411,7 @@ void GesturalScorePage::initWidgets()
 
   scrUpperOffset = new wxScrollBar(upperPanel, IDS_UPPER_OFFSET, wxDefaultPosition,
     wxDefaultSize, wxSB_VERTICAL);
-  scrUpperOffset->SetMinSize( wxSize(20, -1) );
+  scrUpperOffset->SetMinSize(this->FromDIP(wxSize(20, -1) ));
   scrUpperOffset->SetScrollbar(0, 1, 100, 1);
   sizer->Add(scrUpperOffset, 0, wxGROW);
 
@@ -417,12 +430,12 @@ void GesturalScorePage::initWidgets()
 
   // Add a dummy label as spacer at the left.
   label =new wxStaticText(lowerPanel, wxID_ANY, "");
-  label->SetMinSize( wxSize(Data::LEFT_SCORE_MARGIN, -1) );
+  label->SetMinSize(wxSize(Data::getInstance()->LEFT_SCORE_MARGIN, -1) );
   sizer->Add(label, 0, wxGROW);
 
   horzScrollBar = new wxScrollBar(lowerPanel, IDS_HORZ_SCROLL_BAR, wxDefaultPosition,
     wxDefaultSize, wxSB_HORIZONTAL);
-  horzScrollBar->SetMinSize( wxSize(-1, 20) );
+  horzScrollBar->SetMinSize(this->FromDIP(wxSize(-1, 20) ));
   horzScrollBar->SetScrollbar(0, 100, 60001, 100);    // Scroll units are ms.
   sizer->Add(horzScrollBar, 1, wxGROW);
 
@@ -440,12 +453,11 @@ void GesturalScorePage::initWidgets()
 
   scrLowerOffset = new wxScrollBar(lowerPanel, IDS_LOWER_OFFSET, wxDefaultPosition,
     wxDefaultSize, wxSB_VERTICAL);
-  scrLowerOffset->SetMinSize( wxSize(20, -1) );
+  scrLowerOffset->SetMinSize(this->FromDIP(wxSize(20, -1) ));
   scrLowerOffset->SetScrollbar(0, 1, 100, 1);
   sizer->Add(scrLowerOffset, 0, wxGROW);
 
   lowerSizer->Add(sizer, 1, wxGROW);
-
 
   // ****************************************************************
   // Top level sizer.
@@ -689,6 +701,8 @@ void GesturalScorePage::updateWidgets()
     labValue->SetLabel("Value:");
   }
 
+  // Reset the size of the time axis picture to the required height
+  timeAxisPicture->SetMinSize(wxSize(-1, timeAxisPicture->getMinHeight()));
 }
 
 
@@ -1044,21 +1058,21 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
 {
   if (event.GetInt() == REFRESH_PICTURES)
   {
-    gesturalScorePicture->Refresh();
+  	timeAxisPicture->Refresh();
     signalComparisonPicture->Refresh();
-    timeAxisPicture->Refresh();
+    gesturalScorePicture->Refresh();   
     // Of the controls, update only the time mark.
     labMark->SetLabel(wxString::Format("%2.3f s", data->gesturalScoreMark_s));
   }
   else
   if (event.GetInt() == UPDATE_PICTURES)
   {
-    gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
-    signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
-    timeAxisPicture->Refresh();
-    timeAxisPicture->Update();
+      timeAxisPicture->Refresh();
+      timeAxisPicture->Update();
+      signalComparisonPicture->Refresh();
+      signalComparisonPicture->Update();
+      gesturalScorePicture->Refresh();
+      gesturalScorePicture->Update();
     // Of the controls, update only the time mark.
     labMark->SetLabel(wxString::Format("%2.3f s", data->gesturalScoreMark_s));
   }
@@ -1068,9 +1082,9 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
     updateWidgets();
 
     // Refreshing of pictures is not included in updateWidgets() currently !!!
-    gesturalScorePicture->Refresh();
-    signalComparisonPicture->Refresh();
     timeAxisPicture->Refresh();
+    signalComparisonPicture->Refresh();
+    gesturalScorePicture->Refresh();
   }
   else
   if (event.GetInt() == UPDATE_PICTURES_AND_CONTROLS)
@@ -1078,12 +1092,12 @@ void GesturalScorePage::OnUpdateRequest(wxCommandEvent &event)
     updateWidgets();
 
     // Refreshing of pictures is not included in updateWidgets() currently !!!
-    gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
-    signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
     timeAxisPicture->Refresh();
     timeAxisPicture->Update();
+    signalComparisonPicture->Refresh();
+    signalComparisonPicture->Update();
+    gesturalScorePicture->Refresh();
+    gesturalScorePicture->Update();
   }
 }
 

@@ -239,7 +239,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   // ****************************************************************
   // ****************************************************************
 
-  const int LEFT_MARGIN = Data::LEFT_SCORE_MARGIN;
+  int LEFT_MARGIN = Data::getInstance()->LEFT_SCORE_MARGIN;
   double startTime_s = data->gsTimeAxisGraph->abscissa.reference;
   double duration_s  = data->gsTimeAxisGraph->abscissa.positiveLimit;
   
@@ -280,8 +280,8 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
       data->track[Data::MAIN_TRACK], firstSample, numSamples);
     dc.DrawText("Main oscillo.", 5, rowY[index]);
 
-    playButtonX[0] = (LEFT_MARGIN - PLAY_BUTTON_WIDTH) / 2;
-    playButtonY[0] = rowY[index] + 20;
+    playButtonX[0] = (LEFT_MARGIN - this->FromDIP(PLAY_BUTTON_WIDTH)) / 2;
+    playButtonY[0] = rowY[index] + this->FromDIP(20);
     paintPlayButton(dc, playButtonX[0], playButtonY[0]);
   }
   else
@@ -347,8 +347,8 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
       data->track[Data::EXTRA_TRACK], firstSample, numSamples);
     dc.DrawText("Extra oscillo.", 5, rowY[index]);
 
-    playButtonX[1] = (LEFT_MARGIN - PLAY_BUTTON_WIDTH) / 2;
-    playButtonY[1] = rowY[index] + 20;
+    playButtonX[1] = (LEFT_MARGIN - this->FromDIP(PLAY_BUTTON_WIDTH)) / 2;
+    playButtonY[1] = rowY[index] + this->FromDIP(20);
     paintPlayButton(dc, playButtonX[1], playButtonY[1]);
   }
   else
@@ -381,7 +381,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   // Draw black lines separating the rows.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   for (i=0; i < NUM_ROWS; i++)
   {
@@ -418,7 +418,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
       x2 = graphX + graphW - 1;
     }
 
-    dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_TRANSPARENT));    // no pen
+    dc.SetPen(wxPen(*wxBLACK, 0, wxPENSTYLE_TRANSPARENT));    // no pen
     dc.SetBrush(wxBrush(wxColor(220, 220, 220), wxBRUSHSTYLE_CROSSDIAG_HATCH));
     dc.DrawRectangle(x1, y1, x2 - x1, h / 10);
     dc.DrawRectangle(x1, y2 - h / 10, x2 - x1, h / 10);
@@ -449,7 +449,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   x = data->gsTimeAxisGraph->getXPos( data->gesturalScoreRefMark_s );
   if ((x >= graphX) && (x < graphX + graphW))
   {
-    dc.SetPen(wxPen(*wxRED, 1, wxPENSTYLE_DOT));
+    dc.SetPen(wxPen(*wxRED, lineWidth, wxPENSTYLE_LONG_DASH));
     dc.DrawLine(x, 0, x, windowHeight-1);
   }
 
@@ -458,7 +458,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
   x = data->gsTimeAxisGraph->getXPos( data->gesturalScoreMark_s );
   if ((x >= graphX) && (x < graphX + graphW))
   {
-    dc.SetPen(*wxRED_PEN);
+    dc.SetPen(wxPen(*wxRED, lineWidth));
     dc.DrawLine(x, 0, x, windowHeight-1);
 
     if (data->gesturalScoreRefMark_s >= 0.0)
@@ -484,7 +484,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
     double t0_s = data->segmentSequence->getSegmentBegin_s( data->selectedSegmentIndex );
     double t1_s = data->segmentSequence->getSegmentEnd_s( data->selectedSegmentIndex );
 
-    dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+    dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
     x = data->gsTimeAxisGraph->getXPos(t0_s);
     if ((x >= graphX) && (x < graphX + graphW))
     {
@@ -526,7 +526,7 @@ void SignalComparisonPicture::paintOscillogram(wxDC &dc, int areaX, int areaY,
   int y;
   double yFactor = 2.3*areaHeight / 65536.0;
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   rightIndex = firstSample;
 
@@ -646,7 +646,7 @@ void SignalComparisonPicture::paintPhoneSegmentation(wxDC &dc, int areaX, int ar
   // Run through all phones.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
   wxString st;
@@ -680,7 +680,7 @@ void SignalComparisonPicture::paintPhoneSegmentation(wxDC &dc, int areaX, int ar
         dc.SetPen(wxPen(*wxBLACK, 0, wxPENSTYLE_TRANSPARENT));
         dc.SetBrush( wxColor(255, 215, 0) );
         dc.DrawRectangle(x1, areaY, x2 - x1 + 1, areaHeight);
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(wxPen(*wxBLACK, lineWidth));
       }
     }
     
@@ -814,7 +814,7 @@ void SignalComparisonPicture::paintWordSegmentation(wxDC &dc, int areaX, int are
   // Run through all words.
   // ****************************************************************
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 
   wxString st;
@@ -887,22 +887,24 @@ void SignalComparisonPicture::paintWordSegmentation(wxDC &dc, int areaX, int are
 void SignalComparisonPicture::paintPlayButton(wxDC &dc, int x, int y)
 {
   dc.SetBrush( wxColor(250, 250, 250) );
-  dc.SetPen(*wxBLACK_PEN);
-  dc.DrawRectangle(x, y, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
+  const auto buttonWidth = this->FromDIP(PLAY_BUTTON_WIDTH);
+  const auto buttonHeight = this->FromDIP(PLAY_BUTTON_HEIGHT);
+  dc.DrawRectangle(x, y, buttonWidth, buttonHeight);
 
   wxPoint points[3] =
   {
-    wxPoint(0.15*PLAY_BUTTON_WIDTH, 0.15*PLAY_BUTTON_HEIGHT),
-    wxPoint(0.15*PLAY_BUTTON_WIDTH, 0.85*PLAY_BUTTON_HEIGHT),
-    wxPoint(0.85*PLAY_BUTTON_WIDTH, 0.5*PLAY_BUTTON_HEIGHT)
+    wxPoint(0.15*buttonWidth, 0.15*buttonHeight),
+    wxPoint(0.15*buttonWidth, 0.85*buttonHeight),
+    wxPoint(0.85*buttonWidth, 0.5*buttonHeight)
   };
 
   dc.SetBrush( wxColor(210, 210, 210) );
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 
   dc.DrawPolygon(3, points, x, y);
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
 }
 
 
@@ -914,10 +916,10 @@ void SignalComparisonPicture::drawSelectionMark(wxDC &dc, int x, int y1, int y2,
 {
   wxPen oldPen = dc.GetPen();
 
-  dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
+  dc.SetPen(wxPen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH));
   dc.DrawLine(x, y1, x, y2);
 
-  dc.SetPen(*wxBLACK_PEN);
+  dc.SetPen(wxPen(*wxBLACK, lineWidth));
   dc.SetBrush(*wxBLACK_BRUSH);
   const int W = 8;
 
@@ -1056,7 +1058,7 @@ void SignalComparisonPicture::updatePage()
 
   // Important for good usability and to prevent delays of reactions 
   // on the screen to user input  with the mouse.
-//  wxYield();
+  //wxYield();
 }
 
 

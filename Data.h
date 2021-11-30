@@ -97,7 +97,8 @@ public:
   static const int TRACK_DURATION_S = 60;                    // Length of the tracks in s
   static const int MAX_F0_FRAMES = TRACK_DURATION_S*1000;    // max. one frame for each ms
   // Left margin of the gestural score picture
-  static const int LEFT_SCORE_MARGIN = 120;
+  // Must not be constant because it is re-calculated at runtime to account for changing DPI
+  int LEFT_SCORE_MARGIN = 120;
   static const double MIN_ADVISED_VOWEL_AREA_CM2;
 
   // For TDS page

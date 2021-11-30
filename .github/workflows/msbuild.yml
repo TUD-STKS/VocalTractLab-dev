@@ -16,7 +16,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2 # Checkout frontend repo
+    - name: Checkout submodules # checkout backend repo as a submodule
+      shell: bash
+      run: |
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
@@ -34,7 +40,7 @@ jobs:
 
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows
+      run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows-rel
     
     - name: Build VocalTractLab
       working-directory: ${{env.GITHUB_WORKSPACE}}

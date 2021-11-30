@@ -24,26 +24,13 @@ jobs:
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
 
-    - name: Cache VCPKG packages
-      uses: actions/cache@v2
-      env: 
-        cache-name: cache-vcpkg-packages
-      with:
-        path: vcpkg
-        key: ${{ runner.OS }}-vcpkg-cache-${{ hashFiles('**\installed\vcpkg\status') }}
-        restore-keys: |
-          ${{ runner.OS }}-vcpkg-cache-  
+    # Uses a community action to setup and cache vcpkg
+    - uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: 63aa65e65b9d2c08772ea15d25fb8fdb0d32e557 }
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
     
-    - name: Get vcpkg
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-       git clone https://github.com/microsoft/vcpkg
-       .\vcpkg\bootstrap-vcpkg.bat
-       .\vcpkg\vcpkg integrate install
-
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows

@@ -23,15 +23,9 @@ jobs:
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
 
-    - name: Cache VCPKG packages
-      uses: actions/cache@v2
-      env: 
-        cache-name: cache-vcpkg-packages
-      with:
-        path: vcpkg
-        key: ${{ runner.OS }}-vcpkg-cache-${{ hashFiles('**/installed/vcpkg/status') }}
-        restore-keys: |
-          ${{ runner.OS }}-vcpkg-cache-    
+    # Uses a community action to setup and cache vcpkg
+    - uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: 63aa65e65b9d2c08772ea15d25fb8fdb0d32e557 }
     
     - name: Get GTK3 libs
       run: sudo apt-get install libgtk-3-dev
@@ -45,12 +39,6 @@ jobs:
     - name: Get GLUT
       run: sudo apt-get install freeglut3-dev
     
-    - name: Get vcpkg
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-       git clone https://github.com/microsoft/vcpkg
-       ./vcpkg/bootstrap-vcpkg.sh
-
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: ./vcpkg/vcpkg install wxwidgets --triplet=x64-linux
@@ -59,7 +47,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

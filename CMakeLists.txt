@@ -137,8 +137,4 @@ target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Back
 target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} )
 endif()
 
-target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
-
-target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES})
-
 

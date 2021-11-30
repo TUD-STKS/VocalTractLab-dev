@@ -80,7 +80,7 @@ if(UNIX)
 add_definitions(-D
 _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D WXUSINGDLL -D UNICODE -D wxUSE_UNICODE -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG -D HAVE_OPENAL)
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
+find_package(GLUT)
 find_package(OpenAL REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIRS})
 # Add source to this project's executable.

@@ -40,7 +40,7 @@ jobs:
 
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows-rel
+      run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows
     
     - name: Build VocalTractLab
       working-directory: ${{env.GITHUB_WORKSPACE}}

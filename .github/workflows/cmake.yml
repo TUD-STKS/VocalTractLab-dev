@@ -25,6 +25,12 @@ jobs:
     
     - name: Get GTK3 libs
       run: sudo apt-get install libgtk-3-dev
+      
+    - name: Get OpenGL
+      run: sudo apt-get install mesa-utils
+      
+    - name: get GLUT
+      run: sudo apt-get install freeglut3-dev
     
     - name: Get vcpkg
       working-directory: ${{env.GITHUB_WORKSPACE}}

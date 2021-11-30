@@ -24,22 +24,24 @@ jobs:
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
     
     - name: Get vcpkg
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: ~
       run: |
        git clone https://github.com/microsoft/vcpkg
        ./vcpkg/bootstrap-vcpkg.sh
 
     - name: Install wxWidgets
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+      working-directory: ~
       run: ./vcpkg/vcpkg install wxwidgets --triplet=x64-linux
 
 
     - name: Configure CMake
+      working-directory: ${{env.GITHUB_WORKSPACE}}
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
 
     - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target VocalTractLab
       

@@ -27,6 +27,8 @@ jobs:
     # Uses a community action to setup and cache vcpkg
     - uses: friendlyanon/setup-vcpkg@v1
       with: { committish: 63aa65e65b9d2c08772ea15d25fb8fdb0d32e557 }
+    - name: Integrate VCPKG
+      run: .\vcpkg\vcpkg integrate install
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2

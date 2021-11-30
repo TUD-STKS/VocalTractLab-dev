@@ -11,6 +11,13 @@ The main branch of this repo is reviewed on a semi-regular basis for inclusion i
 
 ## Build instructions
 - Use [vcpkg to install wxWidgets](https://www.wxwidgets.org/blog/2019/01/wxwidgets-and-vcpkg/)
-- Build using CMake
+- Build using CMake:
+
+```
+mkdir tmp
+cd tmp
+cmake ..
+cmake --build . --target VocalTractLab --config Release
+```
 
 Currently only Debug and Release configurations for Windows x64 are provided. If you are willing to contribute a Linux configuration, please do!

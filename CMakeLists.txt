@@ -9,9 +9,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 add_subdirectory("Backend")
 
+if (MSVC)
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
 endif()
-
 # Request the required wxWidgets libs
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 

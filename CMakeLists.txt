@@ -138,4 +138,10 @@ target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} 
 endif()
 
 
+<<<<<<< HEAD
+=======
+target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
+
+target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES})
+>>>>>>> 6e7e76dc56e4945ad31e83f4066c343a55eb8c63
 

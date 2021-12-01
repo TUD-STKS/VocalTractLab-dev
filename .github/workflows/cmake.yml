@@ -37,7 +37,7 @@ jobs:
       run: sudo apt-get install mesa-utils
       
     - name: Get GLUT
-      run: sudo apt-get install freeglut3-dev
+      run: ./vcpkg/vcpkg install freeglut
     
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}

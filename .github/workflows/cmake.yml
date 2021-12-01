@@ -36,6 +36,9 @@ jobs:
     - name: Get OpenGL
       run: sudo apt-get install mesa-utils
       
+    - name: Get GLUT depedencies
+      run: sudo apt-get install libxi-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev libxrandr-dev libxxf86vm-dev
+      
     - name: Get GLUT
       run: ./vcpkg/vcpkg install freeglut
     

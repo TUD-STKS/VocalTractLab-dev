@@ -52,7 +52,7 @@ jobs:
         ../configure --with-gtk --with-opengl
         make
     - name: Install wxWidgets
-      working-directory: ${{env.GITHUB_WORKSPACE}}/wxWidgets-3.1.5/buildgtk
+      working-directory: wxWidgets-3.1.5/buildgtk
       run: |
         sudo make install
         sudo ldconfig

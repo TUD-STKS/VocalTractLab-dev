@@ -28,8 +28,8 @@ jobs:
       id: cache-wx
       uses: actions/cache@v2
       with:
-      	path: wxWidgets-3.1.5
-      	key: ${{ runner.os }}-libs
+        path: wxWidgets-3.1.5
+        key: ${{ runner.os }}-libs
     
     - name: Get GTK3 libs
       run: sudo apt-get install libgtk-3-dev

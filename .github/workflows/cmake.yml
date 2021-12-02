@@ -28,7 +28,7 @@ jobs:
       id: cache-wx
       uses: actions/cache@v2
       with:
-        path: wxWidgets-3.1.5
+        path: ${{env.GITHUB_WORKSPACE}}/wxWidgets-3.1.5
         key: ${{ runner.os }}-libs
     
     - name: Get GTK3 libs

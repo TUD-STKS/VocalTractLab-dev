@@ -22,7 +22,6 @@ jobs:
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
     
-    
     - name: Get GTK3 libs
       run: sudo apt-get install libgtk-3-dev
     
@@ -45,11 +44,11 @@ jobs:
         cd buildgtk
         ../configure --with-gtk --with-opengl
         make
-     - name: Install wxWidgets
-       working-directory: ${{env.GITHUB_WORKSPACE}}/wxWidgets-3.1.5/buildgtk
-       run: |
-         sudo make install
-         sudo ldconfig
+    - name: Install wxWidgets
+      working-directory: ${{env.GITHUB_WORKSPACE}}/wxWidgets-3.1.5/buildgtk
+      run: |
+        sudo make install
+        sudo ldconfig
     
     - name: Configure CMake
       working-directory: ${{env.GITHUB_WORKSPACE}}

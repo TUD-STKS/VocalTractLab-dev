@@ -9,7 +9,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v2
     - name: Checkout submodules # checkout backend repo as a submodule
@@ -18,14 +18,14 @@ jobs:
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-
+    
     # Cache the previously built libraries
     - name: Cache wxWidgets
       id: cache-wx
       uses: actions/cache@v2
       with:
         path: ${{env.GITHUB_WORKSPACE}}/wxWidgets-3.1.5
-        key: ${{ runner.os }}-libs
+        key: ${{ runner.os }}-wxwidgets
     
     - name: Get GTK3 libs
       run: sudo apt-get install libgtk-3-dev
@@ -58,13 +58,13 @@ jobs:
        run: |
          sudo make install
          sudo ldconfig
-
+    
     - name: Configure CMake
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -B ${{github.workspace}}/build
-
+    
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Build your program with the given configuration

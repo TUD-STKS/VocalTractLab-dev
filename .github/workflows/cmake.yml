@@ -25,12 +25,11 @@ jobs:
 
     # Cache the previously built libraries
     - name: Cache libs
-      uses: actions/cache@v2
       id: cache-libs
+      uses: actions/cache@v2
       with:
       	path: /usr/local
-      	key: ${{ runner.os }}
-    	
+      	key: ${{ runner.os }}-libs
     
     - name: Get GTK3 libs
       if: steps.cache-libs.outputs.cache-hit != 'true'

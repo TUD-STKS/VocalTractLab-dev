@@ -27,9 +27,9 @@ using namespace std;
 
 // Left side controls
 
-static const int IDB_RUN_TEST_JUNCTION = 5995;
-static const int IDB_RUN_RAD_IMP = 5996;
-static const int IDB_RUN_TEST_MATRIX_E = 5997;
+//static const int IDB_RUN_TEST_JUNCTION = 5995;
+//static const int IDB_RUN_RAD_IMP = 5996;
+//static const int IDB_RUN_TEST_MATRIX_E = 5997;
 static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
 static const int IDB_RUN_TEST_ELEPHANT = 5999;
 static const int IDB_RUN_STATIC_SIMULATION = 6000;
@@ -60,10 +60,10 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
 
   // Left side controls
 
-  EVT_BUTTON(IDB_RUN_TEST_JUNCTION, Acoustic3dPage::OnRunTestJunction)
-  EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
-  EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
-  EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
+  //EVT_BUTTON(IDB_RUN_TEST_JUNCTION, Acoustic3dPage::OnRunTestJunction)
+  //EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
+  //EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
+  //EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
   EVT_BUTTON(IDB_RUN_TEST_ELEPHANT, Acoustic3dPage::OnRunTestElephant)
   EVT_BUTTON(IDB_SHAPES_DIALOG, Acoustic3dPage::OnShapesDialog)
   EVT_BUTTON(IDB_IMPORT_GEOMETRY, Acoustic3dPage::OnImportGeometry)
@@ -147,25 +147,25 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_RUN_TEST_JUNCTION, "Run test junction");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_TEST_JUNCTION, "Run test junction");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_RAD_IMP, "Run test scale rad imped");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_RAD_IMP, "Run test scale rad imped");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_TEST_MATRIX_E, "Run test matrix E");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_TEST_MATRIX_E, "Run test matrix E");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_TEST_DISCONTINUITY, "Run test discontinuity");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_TEST_DISCONTINUITY, "Run test discontinuity");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_RUN_TEST_ELEPHANT, "Run test elphant");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_STATIC_SIMULATION, "Run static simulation");
+  button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
+  button = new wxButton(this, IDB_RUN_STATIC_SIMULATION, "Compute transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
@@ -318,61 +318,61 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  // load geometry configuration file
-  wxFileName fileName;
-  wxString name = wxFileSelector("Load geometry description file", fileName.GetPath(),
-    fileName.GetFullName(), ".csv", "Geometry file (*.csv)|*.csv",
-    wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
-
-  if (!name.empty()){
-  simu3d->coneConcatenationSimulation(name.ToStdString());
-  updateWidgets();
-  picAreaFunction->Update();
-  picPropModes->Update();
-  }
-}
-
-// ****************************************************************************
-// ****************************************************************************
-
-void Acoustic3dPage::OnRunTestRadImp(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  string fileName("file");
-  simu3d->runTest(SCALE_RAD_IMP, fileName);
-  updateWidgets();
-  picAreaFunction->Update();
-  picPropModes->Update();
-}
+//void Acoustic3dPage::OnRunTestJunction(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  // load geometry configuration file
+//  wxFileName fileName;
+//  wxString name = wxFileSelector("Load geometry description file", fileName.GetPath(),
+//    fileName.GetFullName(), ".csv", "Geometry file (*.csv)|*.csv",
+//    wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
+//
+//  if (!name.empty()){
+//  simu3d->coneConcatenationSimulation(name.ToStdString());
+//  updateWidgets();
+//  picAreaFunction->Update();
+//  picPropModes->Update();
+//  }
+//}
 
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  string fileName("file");
-  simu3d->runTest(MATRIX_E, fileName);
-  updateWidgets();
-  picAreaFunction->Update();
-  picPropModes->Update();
-}
+//void Acoustic3dPage::OnRunTestRadImp(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  string fileName("file");
+//  simu3d->runTest(SCALE_RAD_IMP, fileName);
+//  updateWidgets();
+//  picAreaFunction->Update();
+//  picPropModes->Update();
+//}
 
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunTestDiscontinuity(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  string fileName("file");
-  simu3d->runTest(DISCONTINUITY, fileName);
-  updateWidgets();
-  picAreaFunction->Update();
-  picPropModes->Update();
-}
+//void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  string fileName("file");
+//  simu3d->runTest(MATRIX_E, fileName);
+//  updateWidgets();
+//  picAreaFunction->Update();
+//  picPropModes->Update();
+//}
+
+// ****************************************************************************
+// ****************************************************************************
+
+//void Acoustic3dPage::OnRunTestDiscontinuity(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  string fileName("file");
+//  simu3d->runTest(DISCONTINUITY, fileName);
+//  updateWidgets();
+//  picAreaFunction->Update();
+//  picPropModes->Update();
+//}
 
 // ****************************************************************************
 // ****************************************************************************

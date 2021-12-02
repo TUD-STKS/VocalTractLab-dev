@@ -53,10 +53,10 @@ private:
 
   // Event handers for controls at the left side
 
-  void OnRunTestJunction(wxCommandEvent& event);
-  void OnRunTestRadImp(wxCommandEvent& event);
-  void OnRunTestMatrixE(wxCommandEvent& event);
-  void OnRunTestDiscontinuity(wxCommandEvent& event);
+  //void OnRunTestJunction(wxCommandEvent& event);
+  //void OnRunTestRadImp(wxCommandEvent& event);
+  //void OnRunTestMatrixE(wxCommandEvent& event);
+  //void OnRunTestDiscontinuity(wxCommandEvent& event);
   void OnRunTestElephant(wxCommandEvent& event);
   void OnRunStaticSimulation(wxCommandEvent& event);
   void OnParamSimuDialog(wxCommandEvent& event);

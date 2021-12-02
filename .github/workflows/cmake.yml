@@ -28,7 +28,7 @@ jobs:
       uses: actions/cache@v2
       id: cache-libs
       with:
-      	path: "/usr/local"
+      	path: /usr/local
       	key: ${{ runner.os }}
     	
     

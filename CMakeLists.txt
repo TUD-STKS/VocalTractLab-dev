@@ -134,7 +134,7 @@ src/VocalTractPicture.cpp
 src/VocalTractShapesDialog.cpp
 )
 target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
-target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} GLUT::GLUT ${OPENAL_LIBRARY} )
+target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${OPENAL_LIBRARY} )
 endif()
 
 

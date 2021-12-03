@@ -1,3 +1,5 @@
+![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake.yml/badge.svg) ![MSBuild](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/msbuild.yml/badge.svg)
+
 # VocalTractLab-dev
 
 This is the VocalTractLab repository for on-going development work. *This is not the place for official stable releases!* 

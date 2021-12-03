@@ -10,7 +10,7 @@ Please feel free to fork this repo and make your own contributions, though!
 
 The main branch of this repo is reviewed on a semi-regular basis for inclusion into the official release.
 
-## Checkout the repository
+## Clone the repository
 This repository includes the VocalTractLabBackend library as a submodule. You therefore need to clone it slightly differently than what you may be used to:
 
 ```
@@ -69,7 +69,7 @@ xcopy wxWidgets-3.1.3\* C:\wxwidgets-3.1.3\ /s /h /e
 ### Build VocalTractLab using CMake (Linux, Windows)
 You can build VocalTractLab on Linux and Windows using CMake like so (starting from the repository root folder):
 
-```
+```bash
 mkdir tmp
 cd tmp
 cmake ..
@@ -78,6 +78,14 @@ cmake --build . --target VocalTractLab --config Release
 
 ### Build VocalTractLab using Visual Studio (Windows)
 Alternatively to CMake (see above), you can build VocalTractLab on Windows using the provided Visual Studio solution `VocalTractLab2.sln` in the directory `build/msw`. Simply open it with Visual Studio 2019 or above and build all projects.
+
+## Running VocalTractLab
+After building the program, the executable file can be found in `bin/Release/`. Before running it, you may want to copy the speaker file `JD3.speaker` from the folder `resources/` to the same folder as the executable. Otherwise you will have to load it at runtime.
+
+## Getting started
+Check out the official [manual](https://www.vocaltractlab.de/download-vocaltractlab/VTL2.3-manual.pdf) for detailed instructions and examples. Note that the manual is only updated with official releases, so not everything may still apply to most recent dev release from this repository.
+
+You can also find some example gestural scores and segment sequence files in the folder `examples/`.
 
 ## Troubleshooting
 If you run into any problems in the build process, make sure all the dependencies are correctly installed. If you still run into any trouble, feel free to open an issue.

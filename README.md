@@ -10,10 +10,64 @@ Please feel free to fork this repo and make your own contributions, though!
 
 The main branch of this repo is reviewed on a semi-regular basis for inclusion into the official release.
 
+## Checkout the repository
+This repository includes the VocalTractLabBackend library as a submodule. You therefore need to clone it slightly differently than what you may be used to:
+
+```
+git clone --recurse-submodules https://github.com/TUD-STKS/VocalTractLab-dev.git
+```
 
 ## Build instructions
-- Use [vcpkg to install wxWidgets](https://www.wxwidgets.org/blog/2019/01/wxwidgets-and-vcpkg/)
-- Build using CMake:
+VocalTractLab depends on the following additional libraries:
+
+- VocalTractLabBackend 
+- wxWidgets 3.1.3
+- OpenGL
+- OpenAL (on Windows or Linux) or WinMM (on Windows)
+
+The VocalTractLabBackend library is included as a submodule in this repo and built as part of the frontend build workflow.
+
+### Install dependencies on Linux (tested on Ubuntu)
+You can run the following to install OpenAL and OpenGL:
+
+```bash
+sudo apt-get update 
+sudo apt-get install libgtk-3-dev libopenal-dev mesa-utils freeglut3-dev
+```
+
+Now you should be ready to install wxWidgets. Unfortunately, the current wxWidgets binaries in the APT repositories are still version 3.0. So we need to download and build wxWidgets from source like so:
+
+```bash
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
+tar -xf wxWidgets-3.1.3.tar.bz2
+cd wxWidgets-3.1.3
+mkdir buildgtk
+cd buildgtk
+../configure --with-gtk --with-opengl
+make
+sudo make install
+sudo ldconfig
+```
+
+That should be it.
+
+### Install dependencies on Windows
+On Windows, OpenGL and WinMM are part of the Windows SDK and should already be available on your system. All that is left to do is build wxWidgets. Bring up a Powershell and run the following commands:
+
+```pwsh
+Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.zip -outfile wxWidgets-3.1.3.zip
+Expand-Archive wxWidgets-3.1.3.zip
+```
+
+Now open the solution `wx_vc16.sln` in the folder `wxWidgets-3.1.3\build\msw` using Visual Studio 2019 or above and build all projects.
+Once all libraries are built, copy them to the location where the VocalTractLab build files expect them. Bring up a Powershell again and run (from the parent directory of wxWidgets-3.1.3):
+
+```pwsh
+xcopy wxWidgets-3.1.3\* C:\wxwidgets-3.1.3\ /s /h /e
+```
+
+### Build VocalTractLab using CMake (Linux, Windows)
+You can build VocalTractLab on Linux and Windows using CMake like so (starting from the repository root folder):
 
 ```
 mkdir tmp
@@ -22,4 +76,10 @@ cmake ..
 cmake --build . --target VocalTractLab --config Release
 ```
 
-Currently only Debug and Release configurations for Windows x64 are provided. If you are willing to contribute a Linux configuration, please do!
+### Build VocalTractLab using Visual Studio (Windows)
+Alternatively to CMake (see above), you can build VocalTractLab on Windows using the provided Visual Studio solution `VocalTractLab2.sln` in the directory `build/msw`. Simply open it with Visual Studio 2019 or above and build all projects.
+
+## Troubleshooting
+If you run into any problems in the build process, make sure all the dependencies are correctly installed. If you still run into any trouble, feel free to open an issue.
+
+

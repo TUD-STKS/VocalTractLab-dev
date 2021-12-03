@@ -9,37 +9,46 @@ env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  BUILD_CONFIGURATION: Release_vcpkg
+  BUILD_CONFIGURATION: Release
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2 # Checkout frontend repo
+    - uses: actions/checkout@v2
     - name: Checkout submodules # checkout backend repo as a submodule
       shell: bash
       run: |
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-
-    # Uses a community action to setup and cache vcpkg
-    - uses: friendlyanon/setup-vcpkg@v1
-      with: { committish: 63aa65e65b9d2c08772ea15d25fb8fdb0d32e557 }
-    - name: Integrate VCPKG
-      run: .\vcpkg\vcpkg integrate install
+    - name: Cache wxWidgets
+      id: cache-wx
+      uses: actions/cache@v2
+      with:
+        path: wxWidgets-3.1.5
+        key: ${{ runner.os }}-wx
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
     
+    - name: Build wxWidgets
+      if: steps.cache-wx.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.zip -outfile wxWidgets-3.1.5.zip
+        Expand-Archive wxWidgets-3.1.5.zip
+        cd wxWidgets-3.1.5
+        cd build/msw
+        msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}};Platform=x64 wx_vc16.sln
+
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: .\vcpkg\vcpkg install wxwidgets --triplet=x64-windows
+      run: xcopy wxWidgets-3.1.5 C:\wxwidgets-3.1.3
+       
     
     - name: Build VocalTractLab
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /ignore:.vcxproj /t:VocalTractLab2
-

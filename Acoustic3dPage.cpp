@@ -411,34 +411,18 @@ void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
 
 void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "\nStart compute modes" << endl;
-
   Data* data = Data::getInstance();
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
   VocalTract* tract = data->vocalTract;
-  
+
+  simu3d->generateLogFileHeader(true);
+  ofstream log("log.txt", ofstream::app);
+  log << "\nStart compute modes" << endl;
+
   simu3d->createCrossSections(tract, true);
   log << "Geometry succesfully imported" << endl;
 
   simu3d->exportGeoInCsv("test.csv");
-
-  // exctract some contours
-  ofstream prop;
-  ostringstream os;
-  for (int i(0); i < 2; i++)
-  {
-    os.str("");
-    os.clear();
-    os << "c" << i << ".txt";
-    prop.open(os.str());
-    for (auto it : simu3d->crossSection(i)->contour())
-    {
-      prop << it.x() << "  " << it.y() << endl;
-    }
-    prop.close();
-  }
-
   simu3d->computeMeshAndModes();
 
   // update pictures

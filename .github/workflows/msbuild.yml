@@ -36,7 +36,7 @@ jobs:
     - name: Build wxWidgets
       if: steps.cache-wx.outputs.cache-hit != 'true'
       run: |
-        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.zip -outfile wxWidgets-3.1.5.zip
+        Invoke-WebRequest https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.zip -outfile wxWidgets-3.1.5.zip
         Expand-Archive wxWidgets-3.1.5.zip
         cd wxWidgets-3.1.5
         cd build/msw

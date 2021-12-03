@@ -28,7 +28,9 @@ VocalTractLab depends on the following additional libraries:
 The VocalTractLabBackend library is included as a submodule in this repo and built as part of the frontend build workflow.
 
 ### Install dependencies on Linux (tested on Ubuntu)
-You can run the following to install OpenAL and OpenGL:
+You can install the dependencies and build VocalTractLab by simply running the script `build/linux/build.sh`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
+
+First we need to install OpenGL and OpenAL:
 
 ```bash
 sudo apt-get update 
@@ -83,7 +85,7 @@ Alternatively to CMake (see above), you can build VocalTractLab on Windows using
 After building the program, the executable file can be found in `bin/Release/`. Before running it, you may want to copy the speaker file `JD3.speaker` from the folder `resources/` to the same folder as the executable. Otherwise you will have to load it at runtime.
 
 ## Getting started
-Check out the official [manual](https://www.vocaltractlab.de/download-vocaltractlab/VTL2.3-manual.pdf) for detailed instructions and examples. Note that the manual is only updated with official releases, so not everything may still apply to most recent dev release from this repository.
+Check out the official [manual](https://www.vocaltractlab.de/download-vocaltractlab/VTL2.3-manual.pdf) for detailed instructions and examples. Note that the manual is only updated with official releases, so not everything may still apply to the most recent dev release from this repository.
 
 You can also find some example gestural scores and segment sequence files in the folder `examples/`.
 

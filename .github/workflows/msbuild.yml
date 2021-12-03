@@ -40,7 +40,7 @@ jobs:
         Expand-Archive wxWidgets-3.1.5.zip
         cd wxWidgets-3.1.5
         cd build/msw
-        msbuild "/m /p:Configuration=${{env.BUILD_CONFIGURATION}};Platform=x64 wx_vc16.sln"
+        msbuild wx_vc16.sln --% /m /p:Configuration=${{env.BUILD_CONFIGURATION}};Platform=x64
 
     - name: Install wxWidgets
       working-directory: ${{env.GITHUB_WORKSPACE}}

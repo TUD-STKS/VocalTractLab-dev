@@ -54,6 +54,7 @@ sudo ldconfig
 That should be it.
 
 ### Install dependencies on Windows
+You can install the dependencies and build VocalTractLab by simply running the script `build/msw/build.ps1`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
 On Windows, OpenGL and WinMM are part of the Windows SDK and should already be available on your system. All that is left to do is build wxWidgets. Bring up a Powershell and run the following commands:
 
 ```pwsh

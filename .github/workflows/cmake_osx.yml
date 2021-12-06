@@ -1,0 +1,58 @@
+name: CMake_OSX
+
+on: [push, pull_request]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: macos-10.15
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout submodules # checkout backend repo as a submodule
+      shell: bash
+      run: |
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+    - name: Cache wxWidgets
+      id: cache-wx
+      uses: actions/cache@v2
+      with:
+        path: wxWidgets-3.1.3
+        key: ${{ runner.os }}-wx
+    
+    
+    - name: Build wxWidgets
+      if: steps.cache-wx.outputs.cache-hit != 'true'
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
+        tar -xf wxWidgets-3.1.3.tar.bz2
+        cd wxWidgets-3.1.3
+        mkdir buildosx
+        cd buildosx
+        ../configure --with-opengl
+        make
+    - name: Install wxWidgets
+      working-directory: wxWidgets-3.1.3/buildgtk
+      run: |
+        sudo make install
+    
+    - name: Configure CMake
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --target VocalTractLab
+      

@@ -1,4 +1,4 @@
-![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake.yml/badge.svg) ![MSBuild](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/msbuild.yml/badge.svg)
+![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_linux.yml/badge.svg) ![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_windows.yml/badge.svg) ![MSBuild](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/msbuild.yml/badge.svg)
 
 # VocalTractLab-dev
 

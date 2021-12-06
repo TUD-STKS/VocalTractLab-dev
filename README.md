@@ -1,4 +1,4 @@
-![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_linux.yml/badge.svg) ![CMake](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_windows.yml/badge.svg) ![MSBuild](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/msbuild.yml/badge.svg)
+![CMake Linux](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_linux.yml/badge.svg) ![CMake Windows](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_windows.yml/badge.svg) ![CMake OSX](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/cmake_osx.yml/badge.svg) ![MSBuild](https://github.com/TUD-STKS/VocalTractLab-dev/actions/workflows/msbuild.yml/badge.svg)
 
 # VocalTractLab-dev
 
@@ -53,6 +53,22 @@ sudo ldconfig
 
 That should be it.
 
+### Install dependencies on Mac OS X 
+You can install the dependencies and build VocalTractLab by simply running the script `build/osx/build.sh`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
+
+Mac OS X already ships with OpenGL and OpenAL built-in. You just need to build and install wxWidgets:
+
+```bash
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
+tar -xf wxWidgets-3.1.3.tar.bz2
+cd wxWidgets-3.1.3
+mkdir buildosx
+cd buildosx
+../configure --with-opengl
+make
+sudo make install
+```
+
 ### Install dependencies on Windows
 You can install the dependencies and build VocalTractLab by simply running the script `build/msw/build.ps1`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
 On Windows, OpenGL and WinMM are part of the Windows SDK and should already be available on your system. All that is left to do is build wxWidgets. Bring up a Powershell and run the following commands:
@@ -69,7 +85,7 @@ Once all libraries are built, copy them to the location where the VocalTractLab 
 xcopy wxWidgets-3.1.3\* C:\wxwidgets-3.1.3\ /s /h /e
 ```
 
-### Build VocalTractLab using CMake (Linux, Windows)
+### Build VocalTractLab using CMake (Linux, Mac OS X, Windows)
 You can build VocalTractLab on Linux and Windows using CMake like so (starting from the repository root folder):
 
 ```bash
@@ -77,6 +93,15 @@ mkdir tmp
 cd tmp
 cmake ..
 cmake --build . --target VocalTractLab --config Release
+```
+
+On Mac OS X, you need the specify the build type (a.k.a. configuration) when the build files are generated:
+
+```bash
+mkdir tmp
+cd tmp
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --target VocalTractLab
 ```
 
 ### Build VocalTractLab using Visual Studio (Windows)

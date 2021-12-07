@@ -1,7 +1,6 @@
 
 area = [0.8 1.34];
 
-
 vowels = {'a', 'i', 'u', 'schwa'};
 types = {'_st', '', '_a'};
 gender = {'m', 'f'};
@@ -17,7 +16,7 @@ colors = {'r', 'k', 'b', [0.2 0.6 0.4]};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
 
 % loop over genders
-for g = 1:2
+for g = 2:2
     corrFac = (10^5)/area(g);
     % loop over vowels
     for v = 1:4
@@ -41,7 +40,7 @@ for g = 1:2
       figure
 
       % plot module
-      subplot(2,1,1)
+%       subplot(2,1,1)
       title(['vowel ' vowels{v} ' ' genderNames{g}])
 
       hold on
@@ -58,24 +57,24 @@ for g = 1:2
 
       set(gca, 'fontsize', ftSize)
 
-      % plot phase
-      subplot(2,1,2)
-      hold on
-      plot(f, -angle(H), 'linewidth', lineSize, 'color', colors{1})
-      for t = 1:3
-        plot(freqs, phase_MM(:,t), 'linewidth', lineSize, 'color', colors{t+1})
-      end
-
-      xlim([0 10000])
-
-      xlabel('f (Hz)')
-      ylabel('phase (rad)')
+%       % plot phase
+%       subplot(2,1,2)
+%       hold on
+%       plot(f, -angle(H), 'linewidth', lineSize, 'color', colors{1})
+%       for t = 1:3
+%         plot(freqs, phase_MM(:,t), 'linewidth', lineSize, 'color', colors{t+1})
+%       end
+% 
+%       xlim([0 10000])
+% 
+%       xlabel('f (Hz)')
+%       ylabel('phase (rad)')
 
       h = legend('FEM', 'MM straight', 'MM curved', 'MM curved + area variation',...
          'orientation', 'horizontal');
-      set(h, 'fontsize', ftSize, 'position', [0.15 0.45 0.7 0.07]);
+%       set(h, 'fontsize', ftSize, 'position', [0.15 0.45 0.7 0.07]);
       legend boxoff 
-      set(gca, 'fontsize', ftSize, 'position', [0.13 0.11 0.775 0.3])
+%       set(gca, 'fontsize', ftSize, 'position', [0.13 0.11 0.775 0.3])
     end
 end
 

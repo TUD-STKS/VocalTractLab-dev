@@ -21,8 +21,13 @@
 
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
 #include <fstream>
 #include <sstream>
 #include "VocalTractLabBackend/VocalTract.h"

@@ -5,6 +5,7 @@ cmake_minimum_required (VERSION 3.16)
 
 project ("VocalTractLab")
 
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 add_subdirectory("Backend")
@@ -133,12 +134,12 @@ src/VocalTractPage.cpp
 src/VocalTractPicture.cpp
 src/VocalTractShapesDialog.cpp
 )
+# We have to turn off PIE, otherwise the executable can only be run from the command line
+include(CheckPIESupported)
+check_pie_supported()
+set_property(TARGET VocalTractLab PROPERTY POSITION_INDEPENDENT_CODE FALSE)
 target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
-target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${OPENAL_LIBRARY} )
+target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${OPENAL_LIBRARY} )
 endif()
-
-target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)
-
-target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES})
 
 

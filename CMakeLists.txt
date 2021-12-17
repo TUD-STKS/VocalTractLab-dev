@@ -23,6 +23,7 @@ if (MSVC)
 add_definitions(-D
 _USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS -D UNICODE -D wxUSE_UNICODE -D _WINDOWS -D __WXMSW__ -D _CRT_SECURE_NO_DEPRECATE -D _CRT_NONSTDC_NO_DEPRECATE -D NDEBUG)
 # Add source to this project's executable.
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/build/msw/VocalTractLab2.rc")
 add_executable (VocalTractLab WIN32
 src/AnalysisResultsDialog.cpp
 src/AnalysisSettingsDialog.cpp
@@ -71,6 +72,7 @@ src/VocalTractDialog.cpp
 src/VocalTractPage.cpp
 src/VocalTractPicture.cpp
 src/VocalTractShapesDialog.cpp
+${APP_ICON_RESOURCE_WINDOWS}
 )
 set_property(TARGET VocalTractLab PROPERTY VS_DPI_AWARE "PerMonitor")
 target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Backend/include/VocalTractLabBackend)

@@ -40,14 +40,22 @@ static const int IDB_PARAM_SIMU_DIALOG = 6004;
 static const int IDB_PLAY_LONG_VOWEL = 6005;
 static const int IDB_PLAY_NOISE_SOURCE = 6006;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD = 6007;
+static const int IDB_EXPORT_TF = 6008;
 
 // Main panel controls
-
 static const int IDB_SHOW_LOWER_ORDER_MODE = 6010;
 static const int IDB_SHOW_MESH = 6011;
 static const int IDB_SHOW_MODE = 6012;
 //static const int IDB_SHOW_F = 6013;
 static const int IDB_SHOW_HIGHER_ORDER_MODE = 6014;
+
+// Spectrum panel controls
+static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
+static const int IDB_UPPER_SPECTRUM_LIMIT_MINUS		= 7001;
+static const int IDB_LOWER_SPECTRUM_LIMIT_PLUS		= 7002;
+static const int IDB_LOWER_SPECTRUM_LIMIT_MINUS		= 7003;
+static const int IDB_FREQUENCY_RANGE_MINUS			  = 7006;
+static const int IDB_FREQUENCY_RANGE_PLUS 		  	= 7007;
 
 // ****************************************************************************
 // The event table.
@@ -73,15 +81,22 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
+  EVT_BUTTON(IDB_EXPORT_TF, Acoustic3dPage::OnExportTf)
 
   // Main panel controls
-
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
   EVT_CHECKBOX(IDB_SHOW_MODE, Acoustic3dPage::OnShowMode)
   //EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
   EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowHigherOrderMode)
 
+  // Spectrum panel controls
+  EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_PLUS, Acoustic3dPage::OnUpperSpectrumLimitPlus)
+  EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_MINUS, Acoustic3dPage::OnUpperSpectrumLimitMinus)
+  EVT_BUTTON(IDB_LOWER_SPECTRUM_LIMIT_PLUS, Acoustic3dPage::OnLowerSpectrumLimitPlus)
+  EVT_BUTTON(IDB_LOWER_SPECTRUM_LIMIT_MINUS, Acoustic3dPage::OnLowerSpectrumLimitMinus)
+  EVT_BUTTON(IDB_FREQUENCY_RANGE_MINUS, Acoustic3dPage::OnFrequencyRangeMinus)
+  EVT_BUTTON(IDB_FREQUENCY_RANGE_PLUS, Acoustic3dPage::OnFrequencyRangePlus)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -147,6 +162,17 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
 
+  button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_SHAPES_DIALOG, "Vocal tract shapes");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_IMPORT_GEOMETRY, "Import geometry");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  leftSizer->AddSpacer(20);
+
   //button = new wxButton(this, IDB_RUN_TEST_JUNCTION, "Run test junction");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
@@ -171,19 +197,11 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  leftSizer->AddSpacer(10);
+  leftSizer->AddSpacer(20);
   
-  button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
+  button = new wxButton(this, IDB_EXPORT_TF, "Export transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  button = new wxButton(this, IDB_SHAPES_DIALOG, "Vocal tract shapes");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  button = new wxButton(this, IDB_IMPORT_GEOMETRY, "Import geometry");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  leftSizer->AddSpacer(10);
-
+  
   button = new wxButton(this, IDB_PLAY_LONG_VOWEL, "Play long vowel");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
@@ -247,27 +265,89 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   sizer = new wxBoxSizer(wxHORIZONTAL);
 
-  button = new wxButton(topPanel, IDB_SHOW_LOWER_ORDER_MODE, "<", wxDefaultPosition, wxSize(25, 25));
-  sizer->Add(button, 0, wxALL, 5);
+  sizer->AddStretchSpacer(1);
+
+  button = new wxButton(topPanel, IDB_SHOW_LOWER_ORDER_MODE, "<", wxDefaultPosition, wxSize(35, 35));
+  sizer->Add(button, 0, wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
 
   chkShowMesh = new wxCheckBox(topPanel, IDB_SHOW_MESH, "Mesh");
-  sizer->Add(chkShowMesh, 0, wxALL, 2);
+  sizer->Add(chkShowMesh, 0, wxALIGN_BOTTOM | wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
 
   chkShowMode = new wxCheckBox(topPanel, IDB_SHOW_MODE, "Modes");
-  sizer->Add(chkShowMode, 0, wxALL, 2);
+  sizer->Add(chkShowMode, 0, wxALIGN_BOTTOM | wxALL, 2);
 
   //chkShowF = new wxCheckBox(topPanel, IDB_SHOW_F, "F");
   //sizer->Add(chkShowF, 0, wxALL, 2);
 
-  button = new wxButton(topPanel, IDB_SHOW_HIGHER_ORDER_MODE, ">", wxDefaultPosition, wxSize(25, 25));
-  sizer->Add(button, 0, wxALL, 5);
+  sizer->AddStretchSpacer(1);
+  
+  button = new wxButton(topPanel, IDB_SHOW_HIGHER_ORDER_MODE, ">", wxDefaultPosition, wxSize(35, 35));
+  sizer->Add(button, 0, wxALL, 2);
 
-  topRightSizer->Add(sizer);
+  sizer->AddStretchSpacer(1);
+
+  topRightSizer->Add(sizer, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL);
   topSizer->Add(topRightSizer, 1, wxEXPAND | wxALL, 2);
 
-// ****************************************************************
-// Set the top-level sizer for this window.
-// ****************************************************************
+  // ****************************************************************
+  // Create the bottom panel (spectrum panel).
+  // ****************************************************************
+
+  wxBoxSizer *bottomSizer = new wxBoxSizer(wxHORIZONTAL);
+  bottomPanel->SetSizer(bottomSizer);
+
+  // the right side
+
+  sizer = new wxBoxSizer(wxVERTICAL);
+  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  sizer->Add(button, 0, wxALL, 5);
+  button = new wxButton(bottomPanel, IDB_UPPER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  sizer->Add(button, 0, wxALL, 5);
+
+  sizer->AddSpacer(5);
+  sizer->AddStretchSpacer(1);
+
+  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  sizer->Add(button, 0, wxALL, 5);
+  button = new wxButton(bottomPanel, IDB_LOWER_SPECTRUM_LIMIT_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  sizer->Add(button, 0, wxALL, 5);
+
+  bottomSizer->Add(sizer, 0, wxGROW | wxALL, 2);
+
+  // The actual spectrum picture
+
+  picSpectrum = new Spectrum3dPicture(bottomPanel, simu3d);
+  bottomSizer->Add(picSpectrum, 1, wxGROW | wxTOP | wxBOTTOM, 5);
+  
+  // the bottom side
+
+  sizer = new wxBoxSizer(wxVERTICAL);
+  sizer->AddStretchSpacer(1);
+
+  wxBoxSizer* subSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  subSizer->Add(button, 0, wxALL, 5);
+  button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  subSizer->Add(button, 0, wxALL, 5);
+
+  sizer->Add(subSizer, 0, wxGROW | wxALL, 2); 
+
+  bottomSizer->Add(sizer, 0, wxGROW | wxALL, 2);
+
+  // ****************************************************************
+  // Set the top-level sizer for this window.
+  // ****************************************************************
 
   this->SetSizer(topLevelSizer);
 }
@@ -450,6 +530,22 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
   picPropModes->Update();
 }
 
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnExportTf(wxCommandEvent& event)
+{
+  //ofstream log("log.txt", ofstream::app);
+  //log << "Export tf" << endl;
+
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "Geometry file (*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  simu3d->exportTransferFucntions(name.ToStdString());
+  //log.close();
+}
 
 // ****************************************************************************
 // ****************************************************************************
@@ -627,3 +723,52 @@ void Acoustic3dPage::OnShowHigherOrderMode(wxCommandEvent& event)
 {
   picPropModes->setModeIdx(picPropModes->modeIdx() + 1);
 }
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnUpperSpectrumLimitPlus(wxCommandEvent& event)
+{
+  picSpectrum->graph.zoomOutOrdinate(false, true);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnUpperSpectrumLimitMinus(wxCommandEvent &event)
+{
+  picSpectrum->graph.zoomInOrdinate(false, true);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnLowerSpectrumLimitPlus(wxCommandEvent &event)
+{
+  picSpectrum->graph.zoomInOrdinate(true, false);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnLowerSpectrumLimitMinus(wxCommandEvent &event)
+{
+  picSpectrum->graph.zoomOutOrdinate(true, false);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnFrequencyRangeMinus(wxCommandEvent &event)
+{
+  picSpectrum->graph.zoomInAbscissa(false, true);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnFrequencyRangePlus(wxCommandEvent &event)
+{
+  picSpectrum->graph.zoomOutAbscissa(false, true);
+  picSpectrum->Refresh();
+}
+

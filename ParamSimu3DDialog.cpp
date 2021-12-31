@@ -1,6 +1,7 @@
 #include "ParamSimu3DDialog.h"
 #include <fstream>
 #include "Backend/Constants.h"
+#include <wx/filename.h>
 
 // ****************************************************************************
 // IDs.
@@ -14,7 +15,7 @@ static const int IDE_MAX_SIM_FREQ       = 4003;
 static const int IDE_NUM_INTEGRATION    = 4004;
 static const int IDE_SEC_NOISE_SOURCE   = 4005;
 static const int IDE_SEC_CONSTRICTION	  = 4006;
-static const int IDE_EXP_SPECTRUM_LGTH  = 4007;
+//static const int IDE_EXP_SPECTRUM_LGTH  = 4007;
 static const int IDE_PERCENT_LOSSES		  = 4008;
 
 // acoustic field computation options
@@ -29,8 +30,9 @@ static const int IDE_BBOX_MAX_Y       = 4014;
 static const int IDE_TF_POINT_X       = 4015;
 static const int IDE_TF_POINT_Y       = 4016;
 static const int IDE_TF_POINT_Z       = 4017;
+static const int IDB_LOAD_TF_POINTS   = 4018;
 
-static const int IDE_WALL_ADMIT       = 4018;
+static const int IDE_WALL_ADMIT       = 4019;
 
 static const int IDB_CHK_FDEP_LOSSES	= 5001;
 static const int IDB_CHK_WALL_LOSSES    = 5002;
@@ -43,6 +45,7 @@ static const int IDB_CHK_VAR_AREA		= 5006;
 static const int IDB_COMPUTE_RAD_FIELD = 5007;
 
 static const int IDL_MOUTH_BCOND = 6000;
+static const int IDL_FREQ_RES = 6001;
 
 // ****************************************************************************
 // The event table.
@@ -57,7 +60,7 @@ EVT_TEXT_ENTER(IDE_MAX_SIM_FREQ, ParamSimu3DDialog::OnMaxSimFreq)
 EVT_TEXT_ENTER(IDE_NUM_INTEGRATION, ParamSimu3DDialog::OnNumIntegrationEnter)
 EVT_TEXT_ENTER(IDE_SEC_NOISE_SOURCE, ParamSimu3DDialog::OnSecNoiseSourceEnter)
 EVT_TEXT_ENTER(IDE_SEC_CONSTRICTION, ParamSimu3DDialog::OnSecConstrictionEnter)
-EVT_TEXT_ENTER(IDE_EXP_SPECTRUM_LGTH, ParamSimu3DDialog::OnExpSpectrumLgthEnter)
+//EVT_TEXT_ENTER(IDE_EXP_SPECTRUM_LGTH, ParamSimu3DDialog::OnExpSpectrumLgthEnter)
 EVT_TEXT_ENTER(IDE_PERCENT_LOSSES, ParamSimu3DDialog::OnPercentLosses)
 EVT_TEXT_ENTER(IDE_FREQ_COMPUTE_FIELD, ParamSimu3DDialog::OnFreqComputeField)
 EVT_TEXT_ENTER(IDE_RESOLUTION_FIELD, ParamSimu3DDialog::OnResolutionField)
@@ -69,6 +72,7 @@ EVT_TEXT_ENTER(IDE_BBOX_MAX_Y, ParamSimu3DDialog::OnBboxMaxY)
 EVT_TEXT_ENTER(IDE_TF_POINT_X, ParamSimu3DDialog::OnTfPointX)
 EVT_TEXT_ENTER(IDE_TF_POINT_Y, ParamSimu3DDialog::OnTfPointY)
 EVT_TEXT_ENTER(IDE_TF_POINT_Z, ParamSimu3DDialog::OnTfPointZ)
+EVT_BUTTON(IDB_LOAD_TF_POINTS, ParamSimu3DDialog::OnLoadTfPts)
 
 EVT_TEXT_ENTER(IDE_WALL_ADMIT, ParamSimu3DDialog::OnWallAdmitEnter)
 
@@ -81,6 +85,7 @@ EVT_CHECKBOX(IDB_CHK_VAR_AREA, ParamSimu3DDialog::OnChkVarArea)
 EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
+EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 END_EVENT_TABLE()
 
 // The single instance of this class.
@@ -106,6 +111,9 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
 
 void ParamSimu3DDialog::updateWidgets()
 {
+  ofstream log("log.txt", ofstream::app);
+  log << "Update widgets" << endl;
+
   wxString st;
 
   st = wxString::Format("%2.1f", m_simuParams.temperature);
@@ -132,12 +140,12 @@ void ParamSimu3DDialog::updateWidgets()
 	st = wxString::Format("%d", m_secConstriction);
 	txtConstriction->SetValue(st);
 
-  st = wxString::Format("%d", m_expSpectrumLgth);
-  txtExpLgth->SetValue(st);
+  //st = wxString::Format("%d", m_expSpectrumLgth);
+  //txtExpLgth->SetValue(st);
 
-  st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
-      (double)(1 << (m_expSpectrumLgth - 1)));
-  txtNbFreqs->SetLabel(st);
+  //st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
+      //(double)(1 << (m_expSpectrumLgth - 1)));
+  //txtNbFreqs->SetLabel(st);
 
 	st = wxString::Format("%1.2f", m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);
@@ -181,13 +189,13 @@ void ParamSimu3DDialog::updateWidgets()
   txtBboxMaxY->SetValue(st);
 
   // transfer function point
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint.x());
+  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].x());
   txtTfPointX->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint.y());
+  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].y());
   txtTfPointY->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint.z());
+  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].z());
   txtTfPointZ->SetValue(st);
 
   // mouth boundary condition
@@ -210,6 +218,13 @@ void ParamSimu3DDialog::updateWidgets()
     break;
   }
 
+  // frequency resolution
+  log << "Before update freq res list, idx: " << 
+    m_expSpectrumLgth - m_expSpectrumLgthStart << 
+    " list length" << m_listFreqRes.size() << endl;
+  lstFreqRes->SetValue(m_listFreqRes[m_expSpectrumLgth - m_expSpectrumLgthStart]);
+  log << "List updated" << endl;
+
   st = wxString::Format("%1.4f", real(m_simuParams.thermalBndSpecAdm));
   txtWallAdmit->SetValue(st);
 
@@ -217,6 +232,8 @@ void ParamSimu3DDialog::updateWidgets()
 
   simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
+
+  log.close();
 }
 
 // ****************************************************************************
@@ -254,20 +271,46 @@ wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
   // Init and update the widgets.
   // ****************************************************************
 
-    initWidgets();
+  initWidgets();
 
-    // create the list of boundary conditions
-    m_listMouthBcond.clear();
-    m_listMouthBcond.push_back("Radiation");
-    m_listMouthBcond.push_back("Constant admittance");
+  // create the list of boundary conditions
+  m_listMouthBcond.clear();
+  m_listMouthBcond.push_back("Radiation");
+  m_listMouthBcond.push_back("Constant admittance");
 
-    lstMouthBcond->Clear();
-    for (int i(0); i < m_listMouthBcond.size(); i++)
-    {
-      lstMouthBcond->Append(m_listMouthBcond[i]);
-    }
+  lstMouthBcond->Clear();
+  for (int i(0); i < m_listMouthBcond.size(); i++)
+  {
+    lstMouthBcond->Append(m_listMouthBcond[i]);
+  }
 
-    updateWidgets();
+  // create the list of frequency resolutions
+  m_expSpectrumLgthStart = 8;
+  m_expSpectrumLgthEnd = 15;
+  m_listFreqRes.clear();
+  wxString st;
+  for (int i(m_expSpectrumLgthStart); i < m_expSpectrumLgthEnd; i++)
+  {
+  st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
+      (double)(1 << (i - 1)));
+  m_listFreqRes.push_back(st.ToStdString());
+  }
+
+  ofstream log("log.txt", ofstream::app);
+  log << "List freq res created " << m_listFreqRes.size() << endl;
+  for (int i(0); i < m_listFreqRes.size(); i++)
+  {
+    log << m_listFreqRes[i] << endl;
+  }
+  log.close();
+
+  lstFreqRes->Clear();
+  for (int i(0); i < m_listFreqRes.size(); i++)
+  {
+    lstFreqRes->Append(m_listFreqRes[i]);
+  }
+
+  updateWidgets();
 }
 
 // ****************************************************************************
@@ -279,6 +322,7 @@ void ParamSimu3DDialog::initWidgets()
     wxBoxSizer* topLevelSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* lineSizer = NULL;
     wxStaticText* label = NULL;
+    wxButton* button; 
 
     // ****************************************************************
     // Set temperature.
@@ -513,16 +557,20 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Exponent of spectrum length: ");
+    label = new wxStaticText(this, wxID_ANY, "Frequency resolution");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    txtExpLgth = new wxTextCtrl(this, IDE_EXP_SPECTRUM_LGTH, "", wxDefaultPosition,
-        wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtExpLgth, 0, wxALL, 3);
+    //txtExpLgth = new wxTextCtrl(this, IDE_EXP_SPECTRUM_LGTH, "", wxDefaultPosition,
+        //wxSize(40, -1), wxTE_PROCESS_ENTER);
+    //lineSizer->Add(txtExpLgth, 0, wxALL, 3);
 
-    wxString st(wxString::Format(" %d freqs", 1 << (m_expSpectrumLgth - 1)));
-    txtNbFreqs = new wxStaticText(this, wxID_ANY, st);
-    lineSizer->Add(txtNbFreqs, 0, wxALL | wxALIGN_CENTER, 3);
+    //wxString st(wxString::Format(" %d freqs", 1 << (m_expSpectrumLgth - 1)));
+    //txtNbFreqs = new wxStaticText(this, wxID_ANY, st);
+    //lineSizer->Add(txtNbFreqs, 0, wxALL | wxALIGN_CENTER, 3);
+
+    lstFreqRes = new wxComboBox(this, IDL_FREQ_RES, "", wxDefaultPosition,
+      this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstFreqRes, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
 
@@ -554,6 +602,19 @@ void ParamSimu3DDialog::initWidgets()
     txtTfPointZ = new wxTextCtrl(this, IDE_TF_POINT_Z, "", wxDefaultPosition,
       wxSize(40, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtTfPointZ, 0, wxALL, 3);
+
+    topLevelSizer->Add(lineSizer);
+
+    // ****************************************************************
+    // Load the transfer function points from a file
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(10);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    button = new wxButton(this, IDB_LOAD_TF_POINTS, "Load transfer function points");
+    lineSizer->Add(button, 0, wxGROW | wxALL, 3);
 
     topLevelSizer->Add(lineSizer);
 
@@ -783,17 +844,17 @@ void ParamSimu3DDialog::OnSecConstrictionEnter(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void ParamSimu3DDialog::OnExpSpectrumLgthEnter(wxCommandEvent& event)
-{
-    double x(0.);
-    wxString st = txtExpLgth->GetValue();
-    if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 16.))
-    {
-        m_expSpectrumLgth = (int)x;
-    }
+//void ParamSimu3DDialog::OnExpSpectrumLgthEnter(wxCommandEvent& event)
+//{
+    //double x(0.);
+    //wxString st = txtExpLgth->GetValue();
+    //if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 16.))
+    //{
+        //m_expSpectrumLgth = (int)x;
+    //}
 
-    updateWidgets();
-}
+    //updateWidgets();
+//}
 
 // ****************************************************************************
 // ****************************************************************************
@@ -903,8 +964,8 @@ void ParamSimu3DDialog::OnTfPointX(wxCommandEvent& event)
   wxString st = txtTfPointX->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint = Point_3(x, m_simuParams.tfPoint.y(), 
-      m_simuParams.tfPoint.z());
+    m_simuParams.tfPoint[0] = Point_3(x, m_simuParams.tfPoint[0].y(), 
+      m_simuParams.tfPoint[0].z());
   }
   updateWidgets();
 }
@@ -918,8 +979,8 @@ void ParamSimu3DDialog::OnTfPointY(wxCommandEvent& event)
   wxString st = txtTfPointY->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint = Point_3(m_simuParams.tfPoint.x(), x,
-      m_simuParams.tfPoint.z());
+    m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(), x,
+      m_simuParams.tfPoint[0].z());
   }
   updateWidgets();
 }
@@ -933,10 +994,28 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
   wxString st = txtTfPointZ->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint = Point_3(m_simuParams.tfPoint.x(),
-      m_simuParams.tfPoint.y(), x);
+    m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(),
+      m_simuParams.tfPoint[0].y(), x);
   }
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Import transfer function points as csv file", fileName.GetPath(),
+  fileName.GetFullName(), ".csv", "Points file (*.csv)|*.csv",
+  wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
+
+  ofstream log("log.txt", ofstream::app);
+  log << "Load tf points from file:" << endl;
+  log << name.ToStdString() << endl;
+  bool success = simu3d->setTFPointsFromCsvFile(name.ToStdString());
+  log << "Importation successfull " << success << endl;
+  log.close();
 }
 
 // ****************************************************************************
@@ -1045,6 +1124,18 @@ void ParamSimu3DDialog::OnMouthBcond(wxCommandEvent& event)
     m_mouthBoundaryCond = RADIATION;
     break;
   }
+
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnFreqRes(wxCommandEvent& event)
+{
+  auto res = lstFreqRes->GetSelection();
+
+  m_expSpectrumLgth = m_expSpectrumLgthStart + res;
 
   updateWidgets();
 }

@@ -24,19 +24,19 @@ public:
 // **************************************************************************
 
 private:
-    static ParamSimu3DDialog *instance;
-    wxWindow* updateRequestReceiver;
+  static ParamSimu3DDialog *instance;
+  wxWindow* updateRequestReceiver;
 
-    wxTextCtrl* txtTemperature;
-    wxTextCtrl* txtSndSpeed;
-    wxTextCtrl *txtMeshDensity;
-    wxTextCtrl* txtMaxCutOnFreq;
-    wxTextCtrl* txtMaxSimFreq;
-    wxTextCtrl* txtNumIntegrationStep;
-    wxTextCtrl* txtSecNoiseSource;
+  wxTextCtrl* txtTemperature;
+  wxTextCtrl* txtSndSpeed;
+  wxTextCtrl *txtMeshDensity;
+  wxTextCtrl* txtMaxCutOnFreq;
+  wxTextCtrl* txtMaxSimFreq;
+  wxTextCtrl* txtNumIntegrationStep;
+  wxTextCtrl* txtSecNoiseSource;
 	wxTextCtrl* txtConstriction;
-    wxTextCtrl* txtExpLgth;
-    wxStaticText* txtNbFreqs;
+    //wxTextCtrl* txtExpLgth;
+    //wxStaticText* txtNbFreqs;
 	wxTextCtrl* txtPercLoss;
 
   // for acoustic field computation
@@ -55,14 +55,15 @@ private:
   wxTextCtrl* txtWallAdmit;
 
 	wxCheckBox* chkFdepLosses;
-    wxCheckBox* chkWallLosses;
-    wxCheckBox* chkStraight;
-    wxCheckBox* chkMagnus;
+  wxCheckBox* chkWallLosses;
+  wxCheckBox* chkStraight;
+  wxCheckBox* chkMagnus;
 	wxCheckBox* chkCurv;
 	wxCheckBox* chkVarArea;
   wxCheckBox* chkComputeRad;
 
   wxComboBox* lstMouthBcond;
+  wxComboBox* lstFreqRes;
     
   Acoustic3dSimulation* simu3d;
   double m_meshDensity;
@@ -71,6 +72,9 @@ private:
 	int m_secConstriction;
   int m_expSpectrumLgth;
   vector<string> m_listMouthBcond;
+  int m_expSpectrumLgthStart;
+  int m_expSpectrumLgthEnd;
+  vector<string> m_listFreqRes;
   openEndBoundaryCond m_mouthBoundaryCond;
 	struct simulationParameters m_simuParams;
 
@@ -90,7 +94,7 @@ private:
   void OnNumIntegrationEnter(wxCommandEvent& event);
   void OnSecNoiseSourceEnter(wxCommandEvent& event);
 	void OnSecConstrictionEnter(wxCommandEvent& event);
-  void OnExpSpectrumLgthEnter(wxCommandEvent& event);
+  //void OnExpSpectrumLgthEnter(wxCommandEvent& event);
 	void OnPercentLosses(wxCommandEvent& event);
   void OnFreqComputeField(wxCommandEvent& event);
   void OnResolutionField(wxCommandEvent& event);
@@ -102,18 +106,20 @@ private:
   void OnTfPointX(wxCommandEvent& event);
   void OnTfPointY(wxCommandEvent& event);
   void OnTfPointZ(wxCommandEvent& event);
+  void OnLoadTfPts(wxCommandEvent& event);
 
   void OnWallAdmitEnter(wxCommandEvent& event);
 
 	void OnChkFdepLosses(wxCommandEvent& event);
-    void OnChkWallLosses(wxCommandEvent& event);
-    void OnChkStraight(wxCommandEvent& event);
-    void OnChkMagnus(wxCommandEvent& event);
+  void OnChkWallLosses(wxCommandEvent& event);
+  void OnChkStraight(wxCommandEvent& event);
+  void OnChkMagnus(wxCommandEvent& event);
 	void OnChkCurv(wxCommandEvent& event);
 	void OnChkVarArea(wxCommandEvent& event);
   void OnChkComputeRad(wxCommandEvent& event);
 
   void OnMouthBcond(wxCommandEvent& event);
+  void OnFreqRes(wxCommandEvent& event);
 
 // **************************************************************************
 // Declare the event table.

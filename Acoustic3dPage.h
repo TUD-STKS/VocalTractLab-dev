@@ -13,6 +13,7 @@
 #include "AreaFunctionPicture.h"
 #include "CrossSectionPicture.h"
 #include "PropModesPicture.h"
+#include "Spectrum3dPicture.h"
 
 class Acoustic3dPage : public wxPanel
 {
@@ -34,7 +35,7 @@ private:
   wxSplitterWindow *splitter;
   AreaFunctionPicture *picAreaFunction;
   PropModesPicture *picPropModes;
-  //wxGenericProgressDialog *progressDialog;
+  Spectrum3dPicture *picSpectrum;
 
   // propagation modes controls
 
@@ -67,20 +68,27 @@ private:
   void OnPlayNoiseSource(wxCommandEvent& event);
   void OnComputeModes(wxCommandEvent& event);
   void OnComputeAcousticField(wxCommandEvent& event);
+  void OnExportTf(wxCommandEvent& event);
 
   // event handlers for main panel control
-
   void OnShowLowerOrderMode(wxCommandEvent& event);
   void OnShowMesh(wxCommandEvent& event);
   void OnShowMode(wxCommandEvent& event);
   //void OnShowF(wxCommandEvent& event);
   void OnShowHigherOrderMode(wxCommandEvent& event);
 
+  // event handlers for bottom panel
+  void OnUpperSpectrumLimitPlus(wxCommandEvent& event);
+  void OnUpperSpectrumLimitMinus(wxCommandEvent& event);
+  void OnLowerSpectrumLimitPlus(wxCommandEvent& event);
+  void OnLowerSpectrumLimitMinus(wxCommandEvent& event);
+  void OnFrequencyRangeMinus(wxCommandEvent& event);
+  void OnFrequencyRangePlus(wxCommandEvent& event);
+
 // ****************************************************************************
  // Declare the event table right at the end
  // ****************************************************************************
 
   DECLARE_EVENT_TABLE()
-
 };
 #endif

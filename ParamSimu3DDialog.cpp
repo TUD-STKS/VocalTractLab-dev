@@ -15,7 +15,6 @@ static const int IDE_MAX_SIM_FREQ       = 4003;
 static const int IDE_NUM_INTEGRATION    = 4004;
 static const int IDE_SEC_NOISE_SOURCE   = 4005;
 static const int IDE_SEC_CONSTRICTION	  = 4006;
-//static const int IDE_EXP_SPECTRUM_LGTH  = 4007;
 static const int IDE_PERCENT_LOSSES		  = 4008;
 
 // acoustic field computation options
@@ -60,7 +59,6 @@ EVT_TEXT_ENTER(IDE_MAX_SIM_FREQ, ParamSimu3DDialog::OnMaxSimFreq)
 EVT_TEXT_ENTER(IDE_NUM_INTEGRATION, ParamSimu3DDialog::OnNumIntegrationEnter)
 EVT_TEXT_ENTER(IDE_SEC_NOISE_SOURCE, ParamSimu3DDialog::OnSecNoiseSourceEnter)
 EVT_TEXT_ENTER(IDE_SEC_CONSTRICTION, ParamSimu3DDialog::OnSecConstrictionEnter)
-//EVT_TEXT_ENTER(IDE_EXP_SPECTRUM_LGTH, ParamSimu3DDialog::OnExpSpectrumLgthEnter)
 EVT_TEXT_ENTER(IDE_PERCENT_LOSSES, ParamSimu3DDialog::OnPercentLosses)
 EVT_TEXT_ENTER(IDE_FREQ_COMPUTE_FIELD, ParamSimu3DDialog::OnFreqComputeField)
 EVT_TEXT_ENTER(IDE_RESOLUTION_FIELD, ParamSimu3DDialog::OnResolutionField)
@@ -111,9 +109,6 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
 
 void ParamSimu3DDialog::updateWidgets()
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "Update widgets" << endl;
-
   wxString st;
 
   st = wxString::Format("%2.1f", m_simuParams.temperature);
@@ -219,11 +214,7 @@ void ParamSimu3DDialog::updateWidgets()
   }
 
   // frequency resolution
-  log << "Before update freq res list, idx: " << 
-    m_expSpectrumLgth - m_expSpectrumLgthStart << 
-    " list length" << m_listFreqRes.size() << endl;
   lstFreqRes->SetValue(m_listFreqRes[m_expSpectrumLgth - m_expSpectrumLgthStart]);
-  log << "List updated" << endl;
 
   st = wxString::Format("%1.4f", real(m_simuParams.thermalBndSpecAdm));
   txtWallAdmit->SetValue(st);
@@ -232,8 +223,6 @@ void ParamSimu3DDialog::updateWidgets()
 
   simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
-
-  log.close();
 }
 
 // ****************************************************************************
@@ -295,14 +284,6 @@ wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
       (double)(1 << (i - 1)));
   m_listFreqRes.push_back(st.ToStdString());
   }
-
-  ofstream log("log.txt", ofstream::app);
-  log << "List freq res created " << m_listFreqRes.size() << endl;
-  for (int i(0); i < m_listFreqRes.size(); i++)
-  {
-    log << m_listFreqRes[i] << endl;
-  }
-  log.close();
 
   lstFreqRes->Clear();
   for (int i(0); i < m_listFreqRes.size(); i++)
@@ -1014,7 +995,14 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   log << "Load tf points from file:" << endl;
   log << name.ToStdString() << endl;
   bool success = simu3d->setTFPointsFromCsvFile(name.ToStdString());
-  log << "Importation successfull " << success << endl;
+  if (success)
+  {
+  log << "Importation successfull" << endl;
+  }
+  else
+  {
+    log << "Importation failed" << endl;
+  }
   log.close();
 }
 

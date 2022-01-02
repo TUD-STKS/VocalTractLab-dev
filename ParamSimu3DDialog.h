@@ -35,8 +35,6 @@ private:
   wxTextCtrl* txtNumIntegrationStep;
   wxTextCtrl* txtSecNoiseSource;
 	wxTextCtrl* txtConstriction;
-    //wxTextCtrl* txtExpLgth;
-    //wxStaticText* txtNbFreqs;
 	wxTextCtrl* txtPercLoss;
 
   // for acoustic field computation

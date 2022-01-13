@@ -11,4 +11,4 @@ sudo make install
 mkdir ../../../../tmp
 cd ../../../../tmp
 cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --target VocalTractLab
+cmake --build . --target VocalTractLab --config Release

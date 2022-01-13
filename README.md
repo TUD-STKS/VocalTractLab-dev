@@ -91,17 +91,8 @@ You can build VocalTractLab on Linux and Windows using CMake like so (starting f
 ```bash
 mkdir tmp
 cd tmp
-cmake ..
-cmake --build . --target VocalTractLab --config Release
-```
-
-On Mac OS X, you need the specify the build type (a.k.a. configuration) when the build files are generated:
-
-```bash
-mkdir tmp
-cd tmp
 cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --target VocalTractLab
+cmake --build . --target VocalTractLab --config Release
 ```
 
 ### Build VocalTractLab using Visual Studio (Windows)

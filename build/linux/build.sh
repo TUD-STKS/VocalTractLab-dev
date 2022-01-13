@@ -13,5 +13,5 @@ sudo make install
 sudo ldconfig
 mkdir ../../../../tmp
 cd ../../../../tmp
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --target VocalTractLab --config Release

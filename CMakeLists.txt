@@ -155,6 +155,7 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_EXECUTABLES "VocalTractLab;VocalTractLab")
 set(CPACK_CREATE_DESKTOP_LINKS "VocalTractLab")
 set(CPACK_NSIS_MODIFY_PATH "on")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "TU Dresden, Chair for Speech Technology and Cognitive Systems")
 include(CPack)
 
 # You can create the installer by running cpack from the command line

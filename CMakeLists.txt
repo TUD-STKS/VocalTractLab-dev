@@ -8,7 +8,7 @@ project ("VocalTractLab")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-add_subdirectory("Backend")
+add_subdirectory("Backend" EXCLUDE_FROM_ALL)
 
 if (MSVC)
 set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
@@ -144,4 +144,17 @@ target_include_directories(VocalTractLab PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Back
 target_link_libraries(VocalTractLab VocalTractLabBackend ${wxWidgets_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${OPENAL_LIBRARY} )
 endif()
 
+# Allow creation of an installer using CPack
+install(TARGETS VocalTractLab CONFIGURATIONS Release)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/JD3.speaker" DESTINATION "bin")
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_VENDOR "TU Dresden, Chair for Speech Technology and Cognitive Systems")
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/installer")
+set(CPACK_PACKAGE_HOMEPAGE_URL "www.vocaltractlab.de")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_EXECUTABLES "VocalTractLab;VocalTractLab")
+set(CPACK_CREATE_DESKTOP_LINKS "VocalTractLab")
+set(CPACK_NSIS_MODIFY_PATH "on")
+include(CPack)
 
+# You can create the installer by running cpack from the command line

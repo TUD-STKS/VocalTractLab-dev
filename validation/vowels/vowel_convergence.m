@@ -2,7 +2,34 @@ vowels = {'a', 'i', 'u'};
 nVowels = length(vowels);
 param = [20 30 40 50 60];
 nCutOffs = length(param);
+
+% simulation times
+simuTimesA = [6+4/60, 6+12/60, 11, 23, 45];
+simuTimesI = [5+49/60, 9, 21, 50, 60+56];
 simuTimesU = [3.5, 6.5, 15, 36,60+25];
+
+% linear regression
+lmA = fitlm(table(param(2:end)', log(simuTimesA(2:end))'), 'linear')
+
+% plot simulation times
+h = figure('position', [680   558   467   325]);
+semilogy(param, simuTimesA, 'r*')
+hold on
+semilogy(param, simuTimesI, 'kx')
+semilogy(param, simuTimesU, 'b+')
+set(gca, 'xtick', param)
+xlim([15 65])
+ylim([3 150])
+xlabel('Maximal cut-off frequency (kHz)')
+ylabel('Computation time (minutes)')
+legend('/a/', '/i/', '/u/', 'location', 'northwest')
+legend boxoff
+
+print('-dsvg', h, 'computation_time_raw.svg')
+
+
+
+
 sep = ';';
 
 f = 1:9991;

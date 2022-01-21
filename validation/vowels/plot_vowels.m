@@ -18,6 +18,7 @@ lineStyle = {'-', '-', '-', '-'};
 % lineStyle = {'-', '--', ':', '-.'};
 stringSave = 'save(''-mat'', ''vowels_MM.mat''';
 csvFileName = 'resonancesFEM.csv';
+sep = ';';
 fid = fopen(csvFileName, 'w');
 
 % h = figure('position', [656   266   414   673]);%('position', [568    42   982   954]);

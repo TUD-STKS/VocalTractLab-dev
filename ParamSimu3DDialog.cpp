@@ -35,13 +35,14 @@ static const int IDE_WALL_ADMIT       = 4019;
 
 static const int IDB_CHK_FDEP_LOSSES	= 5001;
 static const int IDB_CHK_WALL_LOSSES    = 5002;
+static const int IDB_CHK_WALL_ADMITTANCE = 5003;
 
-static const int IDB_CHK_STRAIGHT       = 5003;
-static const int IDB_CHK_MAGNUS			= 5004;
-static const int IDB_CHK_CURV			= 5005;
-static const int IDB_CHK_VAR_AREA		= 5006;
+static const int IDB_CHK_STRAIGHT       = 5004;
+static const int IDB_CHK_MAGNUS			= 5005;
+static const int IDB_CHK_CURV			= 5006;
+static const int IDB_CHK_VAR_AREA		= 5007;
 
-static const int IDB_COMPUTE_RAD_FIELD = 5007;
+static const int IDB_COMPUTE_RAD_FIELD = 5008;
 
 static const int IDL_MOUTH_BCOND = 6000;
 static const int IDL_FREQ_RES = 6001;
@@ -76,6 +77,7 @@ EVT_TEXT_ENTER(IDE_WALL_ADMIT, ParamSimu3DDialog::OnWallAdmitEnter)
 
 EVT_CHECKBOX(IDB_CHK_FDEP_LOSSES, ParamSimu3DDialog::OnChkFdepLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_LOSSES, ParamSimu3DDialog::OnChkWallLosses)
+EVT_CHECKBOX(IDB_CHK_WALL_ADMITTANCE, ParamSimu3DDialog::OnChkWallAdmittance)
 EVT_CHECKBOX(IDB_CHK_STRAIGHT, ParamSimu3DDialog::OnChkStraight)
 EVT_CHECKBOX(IDB_CHK_MAGNUS, ParamSimu3DDialog::OnChkMagnus)
 EVT_CHECKBOX(IDB_CHK_CURV, ParamSimu3DDialog::OnChkCurv)
@@ -142,12 +144,21 @@ void ParamSimu3DDialog::updateWidgets()
       //(double)(1 << (m_expSpectrumLgth - 1)));
   //txtNbFreqs->SetLabel(st);
 
-	st = wxString::Format("%1.2f", m_simuParams.percentageLosses);
+	st = wxString::Format("%1.2f", 100. * m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);
 
 	chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
 
   chkWallLosses->SetValue(m_simuParams.wallLosses);
+
+  if (m_simuParams.freqDepLosses || m_simuParams.wallLosses)
+  {
+    chkWallAdmittance->SetValue(false);
+  }
+  else
+  {
+    chkWallAdmittance->SetValue(true);
+  }
 
   switch (m_simuParams.propMethod) {
       case MAGNUS:
@@ -306,7 +317,7 @@ void ParamSimu3DDialog::initWidgets()
     wxButton* button; 
 
     // ****************************************************************
-    // Set temperature.
+    // Set temperature or sound speed.
     // ****************************************************************
 
     topLevelSizer->AddSpacer(10);
@@ -319,16 +330,6 @@ void ParamSimu3DDialog::initWidgets()
     txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtTemperature, 0, wxALL, 3);
-
-    topLevelSizer->Add(lineSizer);
-
-    // ****************************************************************
-    // Set sound speed.
-    // ****************************************************************
-
-    topLevelSizer->AddSpacer(10);
-
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Sound speed (m/s): ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
@@ -374,18 +375,31 @@ void ParamSimu3DDialog::initWidgets()
     topLevelSizer->Add(lineSizer);
 
     // ****************************************************************
-    // Select the simulation type
+    // Select the numerical scheme
     // ****************************************************************
 
     topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
+    label = new wxStaticText(this, wxID_ANY, "Numerical scheme: ");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
     chkStraight = new wxCheckBox(this, IDB_CHK_STRAIGHT, "Straight");
     lineSizer->Add(chkStraight, 0, wxALL, 2);
 
     chkMagnus = new wxCheckBox(this, IDB_CHK_MAGNUS, "Magnus");
     lineSizer->Add(chkMagnus, 0, wxALL, 2);
+
+    topLevelSizer->Add(lineSizer);
+
+    // ****************************************************************
+    // Select the geometrical features
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(10);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     chkCurv = new wxCheckBox(this, IDB_CHK_CURV, "Curved");
     lineSizer->Add(chkCurv, 0, wxALL, 2);
@@ -456,19 +470,31 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     chkFdepLosses = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
-      "Frequency dependant losses");
+      "Visco-thermal losses");
     lineSizer->Add(chkFdepLosses, 0, wxALL, 2);
 
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
-      "Wall losses");
+      "Soft walls");
     lineSizer->Add(chkWallLosses, 0, wxALL, 2);
 
+    topLevelSizer->Add(lineSizer);
+
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(10);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    chkWallAdmittance = new wxCheckBox(this, IDB_CHK_WALL_ADMITTANCE,
+      "Constant wall admittance");
+    lineSizer->Add(chkWallAdmittance, 0, wxALL, 2);
+
     label = new wxStaticText(this, wxID_ANY, " admittance ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 0, wxALL, 2);
 
     txtWallAdmit = new wxTextCtrl(this, IDE_WALL_ADMIT, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtWallAdmit, 0, wxALL, 3);
+    lineSizer->Add(txtWallAdmit, 0, wxALL, 2);
 
     topLevelSizer->Add(lineSizer);
 
@@ -844,9 +870,9 @@ void ParamSimu3DDialog::OnPercentLosses(wxCommandEvent& event)
 {
 	double x(0.);
 	wxString st = txtPercLoss->GetValue();
-	if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 1.))
+	if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 100.))
 	{
-		m_simuParams.percentageLosses = x;
+		m_simuParams.percentageLosses = x/100.;
 	}
 
 	updateWidgets();
@@ -1031,6 +1057,10 @@ void ParamSimu3DDialog::OnChkFdepLosses(wxCommandEvent& event)
     {
         m_simuParams.wallLosses = false;
     }
+    if (m_simuParams.freqDepLosses)
+    {
+      chkWallAdmittance->SetValue(false);
+    }
 	updateWidgets();
 }
 
@@ -1041,7 +1071,29 @@ void ParamSimu3DDialog::OnChkWallLosses(wxCommandEvent& event)
 {
     m_simuParams.wallLosses = !m_simuParams.wallLosses;
     chkWallLosses->SetValue(m_simuParams.wallLosses);
-    updateWidgets();
+    if (m_simuParams.wallLosses)
+    {
+      chkWallAdmittance->SetValue(false);
+    }
+    if (!m_simuParams.freqDepLosses && m_simuParams.wallLosses)
+    {
+      m_simuParams.freqDepLosses = true;
+      chkFdepLosses->SetValue(true);
+    }
+    
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnChkWallAdmittance(wxCommandEvent& event)
+{
+  m_simuParams.wallLosses = false;
+  chkWallLosses->SetValue(m_simuParams.wallLosses);
+  m_simuParams.freqDepLosses = false;
+  chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
+  updateWidgets();
 }
 
 // ****************************************************************************

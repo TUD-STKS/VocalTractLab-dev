@@ -54,6 +54,7 @@ private:
 
 	wxCheckBox* chkFdepLosses;
   wxCheckBox* chkWallLosses;
+  wxCheckBox* chkWallAdmittance;
   wxCheckBox* chkStraight;
   wxCheckBox* chkMagnus;
 	wxCheckBox* chkCurv;
@@ -110,6 +111,7 @@ private:
 
 	void OnChkFdepLosses(wxCommandEvent& event);
   void OnChkWallLosses(wxCommandEvent& event);
+  void OnChkWallAdmittance(wxCommandEvent& event);
   void OnChkStraight(wxCommandEvent& event);
   void OnChkMagnus(wxCommandEvent& event);
 	void OnChkCurv(wxCommandEvent& event);

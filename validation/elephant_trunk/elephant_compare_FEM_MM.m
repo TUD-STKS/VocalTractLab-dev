@@ -58,27 +58,29 @@ load elephant_ac_press_MM_p0.txt
 % load elephant_ac_press_MM_p0_mn_53_nPt_200_d_30.txt
 % p4 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_30;
 
-% % effect of mesh density
-% param = [10 20 30];
-% paramName = 'mesh density';
-% load elephant_ac_press_MM_p0_mn_53_nPt_200_d_10.txt
-% p1 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_10;
-% load elephant_ac_press_MM_p0_mn_53_nPt_200_d_20.txt
-% p2 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_20;
-% load elephant_ac_press_MM_p0_mn_53_nPt_200_d_30.txt
-% p3 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_30;
-
-% effect of number of points for the Magnus scheme
-param = [25 50 100 200];
-paramName = 'num int pts';
-load elephant_ac_press_MM_p0_mn_53_nPt_25_d_30.txt
-p1 = elephant_ac_press_MM_p0_mn_53_nPt_25_d_30;
-load elephant_ac_press_MM_p0_mn_53_nPt_50_d_30.txt
-p2 = elephant_ac_press_MM_p0_mn_53_nPt_50_d_30;
-load elephant_ac_press_MM_p0_mn_53_nPt_100_d_30.txt
-p3 = elephant_ac_press_MM_p0_mn_53_nPt_100_d_30;
+% effect of mesh density
+param = [10 15 20 30];
+paramName = 'mesh density';
+load elephant_ac_press_MM_p0_mn_53_nPt_200_d_10.txt
+p1 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_10;
+load elephant_ac_press_MM_p0_mn_53_nPt_200_d_15.txt
+p2 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_15;
+load elephant_ac_press_MM_p0_mn_53_nPt_200_d_20.txt
+p3 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_20;
 load elephant_ac_press_MM_p0_mn_53_nPt_200_d_30.txt
 p4 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_30;
+
+% % effect of number of points for the Magnus scheme
+% param = [25 50 100 200];
+% paramName = 'num int pts';
+% load elephant_ac_press_MM_p0_mn_53_nPt_25_d_30.txt
+% p1 = elephant_ac_press_MM_p0_mn_53_nPt_25_d_30;
+% load elephant_ac_press_MM_p0_mn_53_nPt_50_d_30.txt
+% p2 = elephant_ac_press_MM_p0_mn_53_nPt_50_d_30;
+% load elephant_ac_press_MM_p0_mn_53_nPt_100_d_30.txt
+% p3 = elephant_ac_press_MM_p0_mn_53_nPt_100_d_30;
+% load elephant_ac_press_MM_p0_mn_53_nPt_200_d_30.txt
+% p4 = elephant_ac_press_MM_p0_mn_53_nPt_200_d_30;
 
 fac = input_area*(10^5);
 
@@ -94,7 +96,7 @@ resFEM = extractResonances(HFEM);
 H1 = 20*log10(abs(interp1(p1(:,1), p1(:,2), f, 'spline')));
 plot(f/1000, H1)
 res1 = extractResonances(H1);
-H2 = 20*log10(abs(interp1(p2(:,1), p2(:,2), f, 'spline')));
+H2 = 20*log10(abs(interp1(p2(:,1), p2(:,2)/10, f, 'spline')));
 plot(f/1000, H2)
 res2 = extractResonances(H2);
 H3 = 20*log10(abs(interp1(p3(:,1), p3(:,2), f, 'spline')));
@@ -114,8 +116,8 @@ xlabel('f (kHz)')
 ylabel('|H| (dB)')
 grid on
 
-h = legend('FEM', 'MM', 'location', 'southeast', 'orientation', 'horizontal');
-% h = legend('FEM', 'MM d = 10', 'MM d = 20', 'MM d = 30', 'location', 'southeast', 'orientation', 'horizontal');
+% h = legend('FEM', 'MM', 'location', 'southeast', 'orientation', 'horizontal');
+h = legend('FEM', 'MM d = 10', 'MM d = 15', 'MM d = 20', 'MM d = 30', 'location', 'southeast', 'orientation', 'horizontal');
 % h = legend('FEM', 'MM nPt 25', 'MM nPt 50', 'MM nPt 100', 'MM nPt 200', 'location', 'southeast', 'orientation', 'horizontal');
 set(h, 'fontsize', ftSize);
 legend boxoff

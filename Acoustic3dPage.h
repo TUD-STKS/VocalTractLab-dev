@@ -14,6 +14,7 @@
 #include "CrossSectionPicture.h"
 #include "PropModesPicture.h"
 #include "Spectrum3dPicture.h"
+#include "SegmentsPicture.h"
 
 class Acoustic3dPage : public wxPanel
 {
@@ -36,6 +37,7 @@ private:
   AreaFunctionPicture *picAreaFunction;
   PropModesPicture *picPropModes;
   Spectrum3dPicture *picSpectrum;
+  SegmentsPicture* segPic;
 
   // propagation modes controls
 

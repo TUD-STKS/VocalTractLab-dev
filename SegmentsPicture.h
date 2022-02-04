@@ -1,0 +1,26 @@
+#ifndef __SEGMENTS_PICTURE_H__
+#define __SEGMENTS_PICTURE_H__
+
+#include "BasicPicture.h"
+#include "Backend/Acoustic3dSimulation.h"
+
+class SegmentsPicture : public BasicPicture
+{
+// **************************************************************************
+// Public functions.
+// **************************************************************************
+
+public:
+
+  SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d);
+  virtual void draw(wxDC& dc);
+
+// **************************************************************************
+// Private data.
+// **************************************************************************
+
+private:
+
+  Acoustic3dSimulation* m_simu3d;
+};
+#endif

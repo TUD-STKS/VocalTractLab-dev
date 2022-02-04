@@ -256,6 +256,15 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   // ****************************************************************
 
+  wxBoxSizer* middleSizer = new wxBoxSizer(wxVERTICAL);
+
+  segPic = new SegmentsPicture(topPanel, simu3d);
+  middleSizer->Add(segPic, 1, wxEXPAND | wxALL, 2);
+
+  topSizer->Add(middleSizer, 1, wxEXPAND | wxALL, 2);
+
+  // ****************************************************************
+
   wxBoxSizer* topRightSizer = new wxBoxSizer(wxVERTICAL);
 
   picPropModes = new PropModesPicture(topPanel, picVocalTract, simu3d);

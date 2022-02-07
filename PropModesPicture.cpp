@@ -29,13 +29,14 @@ typedef int(*ColorMap)[256][3];
 // ****************************************************************************
 
 PropModesPicture::PropModesPicture(wxWindow* parent, VocalTractPicture* picVocalTract,
-	Acoustic3dSimulation* simu3d)
+	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
 	: BasicPicture(parent),
 	m_objectToDisplay(1),
 	m_modeIdx(0)
 {
 	this->m_picVocalTract = picVocalTract;
 	this->m_simu3d = simu3d;
+  this->m_segPic = segPic;
 }
 
 // ****************************************************************************
@@ -86,21 +87,23 @@ void PropModesPicture::draw(wxDC& dc)
 // Identify the index of the corresponding tube
 // ****************************************************************
 
-	cumLength = 0.;
-	sectionIdx = 0;
+  sectionIdx = m_segPic->activeSegment();
 
-	for (int i(0); i < m_simu3d->sectionNumber(); i++)
-	{
-		if (((pos - cumLength) >= -minDist) &&
-			((pos - (cumLength + 
-			(m_simu3d->crossSection(i))->length()))
-			<= minDist))
-		{
-			sectionIdx = i;
-			break;
-		}
-		cumLength += (m_simu3d->crossSection(i))->length();
-	}
+	//cumLength = 0.;
+	//sectionIdx = 0;
+
+	//for (int i(0); i < m_simu3d->sectionNumber(); i++)
+	//{
+	//	if (((pos - cumLength) >= -minDist) &&
+	//		((pos - (cumLength + 
+	//		(m_simu3d->crossSection(i))->length()))
+	//		<= minDist))
+	//	{
+	//		sectionIdx = i;
+	//		break;
+	//	}
+	//	cumLength += (m_simu3d->crossSection(i))->length();
+	//}
 
 	//log << "Cumlength: " << cumLength << endl;
 	//log << "Position: " << pos << endl;

@@ -3,6 +3,7 @@
 
 #include "BasicPicture.h"
 #include "VocalTractPicture.h"
+#include "SegmentsPicture.h"
 #include "Backend/Acoustic3dSimulation.h"
 
 
@@ -17,7 +18,7 @@ class PropModesPicture : public BasicPicture
 
 public:
 	PropModesPicture(wxWindow* parent, VocalTractPicture* picVocalTract,
-		Acoustic3dSimulation *simu3d);
+    Acoustic3dSimulation* simu3d, SegmentsPicture* segPic);
 	virtual void draw(wxDC& dc);
 
 	void showMesh();
@@ -46,6 +47,7 @@ private:
 	int m_modeIdx;
 	VocalTractPicture* m_picVocalTract;
 	Acoustic3dSimulation* m_simu3d;
+  SegmentsPicture* m_segPic;
 };
 
 #endif

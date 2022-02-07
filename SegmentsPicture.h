@@ -14,6 +14,11 @@ public:
 
   SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d);
   virtual void draw(wxDC& dc);
+  void showPreivousSegment();
+  void showNextSegment();
+
+  // acessors
+  int activeSegment() const { return m_activeSegment; }
 
 // **************************************************************************
 // Private data.
@@ -22,5 +27,6 @@ public:
 private:
 
   Acoustic3dSimulation* m_simu3d;
+  int m_activeSegment;
 };
 #endif

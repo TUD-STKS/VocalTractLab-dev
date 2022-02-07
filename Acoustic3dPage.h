@@ -79,6 +79,10 @@ private:
   //void OnShowF(wxCommandEvent& event);
   void OnShowHigherOrderMode(wxCommandEvent& event);
 
+  // event handlers for segments picture
+  void OnShowPreviousSegment(wxCommandEvent& event);
+  void OnShowNextSegment(wxCommandEvent& event);
+
   // event handlers for bottom panel
   void OnUpperSpectrumLimitPlus(wxCommandEvent& event);
   void OnUpperSpectrumLimitMinus(wxCommandEvent& event);

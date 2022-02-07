@@ -49,6 +49,10 @@ static const int IDB_SHOW_MODE = 6012;
 //static const int IDB_SHOW_F = 6013;
 static const int IDB_SHOW_HIGHER_ORDER_MODE = 6014;
 
+// segments picture controls
+static const int IDB_SHOW_PREVIOUS_SEGMENT = 6015;
+static const int IDB_SHOW_NEXT_SEGMENT = 6016;
+
 // Spectrum panel controls
 static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
 static const int IDB_UPPER_SPECTRUM_LIMIT_MINUS		= 7001;
@@ -90,6 +94,10 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   //EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
   EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowHigherOrderMode)
 
+  // segments picture controls
+  EVT_BUTTON(IDB_SHOW_PREVIOUS_SEGMENT, Acoustic3dPage::OnShowPreviousSegment)
+  EVT_BUTTON(IDB_SHOW_NEXT_SEGMENT, Acoustic3dPage::OnShowNextSegment)
+
   // Spectrum panel controls
   EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_PLUS, Acoustic3dPage::OnUpperSpectrumLimitPlus)
   EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_MINUS, Acoustic3dPage::OnUpperSpectrumLimitMinus)
@@ -129,6 +137,7 @@ void Acoustic3dPage::updateWidgets()
 
   picAreaFunction->Refresh();
   picPropModes->Refresh();
+  segPic->Refresh();
 }
 
 // ****************************************************************************
@@ -261,13 +270,30 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   segPic = new SegmentsPicture(topPanel, simu3d);
   middleSizer->Add(segPic, 1, wxEXPAND | wxALL, 2);
 
+  // segment options sizer
+
+  sizer = new wxBoxSizer(wxHORIZONTAL);
+
+  sizer->AddStretchSpacer(1);
+
+  button = new wxButton(topPanel, IDB_SHOW_PREVIOUS_SEGMENT, "<", wxDefaultPosition, wxSize(35, 35));
+  sizer->Add(button, 0, wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  button = new wxButton(topPanel, IDB_SHOW_NEXT_SEGMENT, ">", wxDefaultPosition, wxSize(35, 35));
+  sizer->Add(button, 0, wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  middleSizer->Add(sizer, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL);
   topSizer->Add(middleSizer, 1, wxEXPAND | wxALL, 2);
 
   // ****************************************************************
 
   wxBoxSizer* topRightSizer = new wxBoxSizer(wxVERTICAL);
 
-  picPropModes = new PropModesPicture(topPanel, picVocalTract, simu3d);
+  picPropModes = new PropModesPicture(topPanel, picVocalTract, simu3d, segPic);
   topRightSizer->Add(picPropModes, 1, wxEXPAND | wxALL, 2);
 
   // propagation modes option sizer
@@ -508,7 +534,7 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   ofstream log("log.txt", ofstream::app);
   log << "\nStart compute modes" << endl;
 
-  simu3d->createCrossSections(tract, true);
+  simu3d->createCrossSections(tract, false);
   log << "Geometry succesfully imported" << endl;
 
   simu3d->exportGeoInCsv("test.csv");
@@ -731,6 +757,22 @@ void Acoustic3dPage::OnShowLowerOrderMode(wxCommandEvent& event)
 void Acoustic3dPage::OnShowHigherOrderMode(wxCommandEvent& event)
 {
   picPropModes->setModeIdx(picPropModes->modeIdx() + 1);
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowPreviousSegment(wxCommandEvent& event)
+{
+  segPic->showPreivousSegment();
+  picPropModes->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowNextSegment(wxCommandEvent& event)
+{
+  segPic->showNextSegment();
+  picPropModes->Refresh();
 }
 
 // ****************************************************************************

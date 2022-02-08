@@ -34,7 +34,7 @@ private:
   Data *data;
   Acoustic3dSimulation *simu3d;
   wxSplitterWindow *splitter;
-  AreaFunctionPicture *picAreaFunction;
+  //AreaFunctionPicture *picAreaFunction;
   PropModesPicture *picPropModes;
   Spectrum3dPicture *picSpectrum;
   SegmentsPicture* segPic;

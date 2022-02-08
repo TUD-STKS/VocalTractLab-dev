@@ -17,8 +17,11 @@ class PropModesPicture : public BasicPicture
 // **************************************************************************
 
 public:
-	PropModesPicture(wxWindow* parent, VocalTractPicture* picVocalTract,
+	PropModesPicture(wxWindow* parent,
     Acoustic3dSimulation* simu3d, SegmentsPicture* segPic);
+  //PropModesPicture(wxWindow* parent, VocalTractPicture* picVocalTract,
+  //  Acoustic3dSimulation* simu3d, SegmentsPicture* segPic);
+
 	virtual void draw(wxDC& dc);
 
 	void showMesh();
@@ -45,7 +48,7 @@ private:
 	//bool m_displayMesh;
 	int m_objectToDisplay;
 	int m_modeIdx;
-	VocalTractPicture* m_picVocalTract;
+	//VocalTractPicture* m_picVocalTract;
 	Acoustic3dSimulation* m_simu3d;
   SegmentsPicture* m_segPic;
 };

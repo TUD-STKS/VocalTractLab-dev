@@ -1,6 +1,8 @@
 #include "SegmentsPicture.h"
 #include <iostream>
 
+#include "Acoustic3dPage.h"
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Aff_transformation_2.h>
 
@@ -10,14 +12,24 @@ typedef CGAL::Point_2<K>                                Point;
 typedef CGAL::Aff_transformation_2<K>           Transformation;
 
 // ****************************************************************************
+// The event table.
+// ****************************************************************************
+
+BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
+  EVT_MOUSE_EVENTS(SegmentsPicture::OnMouseEvent)
+END_EVENT_TABLE()
+
+// ****************************************************************************
 /// Constructor. Passes the parent parameter.
 // ****************************************************************************
 
-SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d)
+SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
+  wxWindow* updateEventReceiver)
   : BasicPicture(parent),
   m_activeSegment(0)
 {
   this->m_simu3d = simu3d;
+  this->updateEventReceiver = updateEventReceiver;
 }
 
 // ****************************************************************************
@@ -27,8 +39,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d)
 void SegmentsPicture::draw(wxDC& dc)
 {
   int width, height;
-  double maxLength, zoom, centerX, centerY;
-  pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
+  double zoom, centerX, centerY;
 
   ofstream log("log.txt", ofstream::app);
   log << "Start draw segments picture" << endl;
@@ -52,21 +63,7 @@ void SegmentsPicture::draw(wxDC& dc)
     // Determine the zoom (pix/cm).
     // ****************************************************************
 
-    // get the dimensions of the picture
-    this->GetSize(&width, &height);
-
-    log << "Width " << width << " height " << height << endl;
-
-    maxLength = 1.1 * max(bboxSagittalPlane.second.x - bboxSagittalPlane.first.x,
-      bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
-    zoom = (double)min(width, height) / maxLength;
-
-    centerX = (double)width * abs(bboxSagittalPlane.first.x) /
-      (bboxSagittalPlane.second.x - bboxSagittalPlane.first.x);
-    centerY = (double)height * abs(bboxSagittalPlane.first.y) /
-      (bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
-
-    log << "Zoom " << zoom << " centerX " << centerX << " centerY " << centerY << endl;
+    getZoomAndCenter(width, height, centerX, centerY, zoom);
 
     // ****************************************************************
     // plot the bounding box
@@ -118,7 +115,8 @@ void SegmentsPicture::draw(wxDC& dc)
 
     for (int i(0); i < m_simu3d->numCrossSections(); i++)
     {
-      log << "draw section " << i << endl;
+      //log << "draw section " << i << endl;
+
       sec = m_simu3d->crossSection(i);
       bbox = sec->contour().bbox();
 
@@ -172,7 +170,7 @@ void SegmentsPicture::draw(wxDC& dc)
       dc.DrawLine(xBig, yBig, xEnd, yEnd);
     }
 
-    log << "Draw active segment" << endl;
+    //log << "Draw active segment" << endl;
 
     // plot the active segment
     dc.SetPen(*wxRED_PEN);
@@ -243,4 +241,76 @@ void SegmentsPicture::showNextSegment()
 {
   m_activeSegment = min(m_simu3d->numCrossSections() - 1, m_activeSegment + 1);
   Refresh();
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
+{
+  int mx, my;
+  int width, height;
+  double zoom, centerX, centerY;
+  Point ptSelected;
+  int idxSeg(-1);
+
+  ofstream log("log.txt", ofstream::app);
+
+  if (event.ButtonDown(wxMOUSE_BTN_LEFT) && (m_simu3d->numCrossSections() > 0))
+  {
+    mx = event.GetX();
+    my = event.GetY();
+
+    //log << "mx " << mx << " my " << my << endl;
+
+    getZoomAndCenter(width, height, centerX, centerY, zoom);
+
+    ptSelected = Point(((double)mx - centerX) / zoom,
+      ((double)height - (double)my - centerY) / zoom);
+
+    //log << "Point selected " << ptSelected << endl;
+
+    m_simu3d->findSegmentContainingPoint(ptSelected, idxSeg);
+
+    //log << "Segment identified " << idxSeg << endl;
+
+    if (idxSeg >= 0)
+    {
+      m_activeSegment = idxSeg;
+      Refresh();
+
+      wxCommandEvent event(updateRequestEvent);
+      event.SetInt(UPDATE_PICTURES);
+      wxPostEvent(updateEventReceiver, event);
+    }
+  }
+
+  log.close();
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::getZoomAndCenter(int& width, int& height, double& centerX,
+  double& centerY, double& zoom)
+{
+  ofstream log("log.txt", ofstream::app);
+  double maxLength;
+  pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
+
+  // get the dimensions of the picture
+  this->GetSize(&width, &height);
+
+  //log << "Width " << width << " height " << height << endl;
+
+  maxLength = 1.1 * max(bboxSagittalPlane.second.x - bboxSagittalPlane.first.x,
+    bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
+  zoom = (double)min(width, height) / maxLength;
+
+  centerX = (double)width * abs(bboxSagittalPlane.first.x) /
+    (bboxSagittalPlane.second.x - bboxSagittalPlane.first.x);
+  centerY = (double)height * abs(bboxSagittalPlane.first.y) /
+    (bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
+
+  //log << "Zoom " << zoom << " centerX " << centerX << " centerY " << centerY << endl;
+
+  log.close();
 }

@@ -28,13 +28,13 @@ typedef int(*ColorMap)[256][3];
 /// Constructor. Passes the parent parameter.
 // ****************************************************************************
 
-PropModesPicture::PropModesPicture(wxWindow* parent, VocalTractPicture* picVocalTract,
+PropModesPicture::PropModesPicture(wxWindow* parent,
 	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
 	: BasicPicture(parent),
 	m_objectToDisplay(1),
 	m_modeIdx(0)
 {
-	this->m_picVocalTract = picVocalTract;
+	//this->m_picVocalTract = picVocalTract;
 	this->m_simu3d = simu3d;
   this->m_segPic = segPic;
 }
@@ -52,7 +52,7 @@ void PropModesPicture::draw(wxDC& dc)
 	int xBig, yBig, xEnd, yEnd;
 	Data *data = Data::getInstance();
 	VocalTract *tract = data->vocalTract;
-	double pos = m_picVocalTract->cutPlanePos_cm;
+	//double pos = m_picVocalTract->cutPlanePos_cm;
 	double cumLength(0.), minDist(1e-15);
 	int sectionIdx(0);
 
@@ -73,15 +73,15 @@ void PropModesPicture::draw(wxDC& dc)
 		return;
 	}
 
-	// Check if the cursor lies inside the vocal tract
-	if ((pos < 0.0) || (pos > tract->centerLineLength))
-	{
-		dc.SetPen(*wxBLACK_PEN);
-		dc.SetBackgroundMode(wxTRANSPARENT);
-		dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-		dc.DrawText("Cut vector position out of range.", 0, 0);
-		return;
-	}
+	//// Check if the cursor lies inside the vocal tract
+	//if ((pos < 0.0) || (pos > tract->centerLineLength))
+	//{
+	//	dc.SetPen(*wxBLACK_PEN);
+	//	dc.SetBackgroundMode(wxTRANSPARENT);
+	//	dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	//	dc.DrawText("Cut vector position out of range.", 0, 0);
+	//	return;
+	//}
 
 // ****************************************************************
 // Identify the index of the corresponding tube

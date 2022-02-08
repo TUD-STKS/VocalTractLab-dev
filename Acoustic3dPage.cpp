@@ -135,7 +135,7 @@ void Acoustic3dPage::updateWidgets()
   chkShowMode->SetValue(picPropModes->modeSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
 
-  picAreaFunction->Refresh();
+  //picAreaFunction->Refresh();
   picPropModes->Refresh();
   segPic->Refresh();
 }
@@ -243,7 +243,7 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxPanel* topPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   wxPanel* bottomPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   splitter->SplitHorizontally(topPanel, bottomPanel);
-  splitter->SetSashPosition(400);
+  splitter->SetSashPosition(600);
 
   topLevelSizer->Add(splitter, 1, wxEXPAND);
 
@@ -255,19 +255,19 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
   topPanel->SetSizer(topSizer);
 
-  wxBoxSizer* topLeftSizer = new wxBoxSizer(wxVERTICAL);
+  //wxBoxSizer* topLeftSizer = new wxBoxSizer(wxVERTICAL);
 
-  picAreaFunction = new AreaFunctionPicture(topPanel, picVocalTract, this);
-  picAreaFunction->showSideBranches = false;
-  topLeftSizer->Add(picAreaFunction, 1, wxEXPAND | wxALL, 2);
+  //picAreaFunction = new AreaFunctionPicture(topPanel, picVocalTract, this);
+  //picAreaFunction->showSideBranches = false;
+  //topLeftSizer->Add(picAreaFunction, 1, wxEXPAND | wxALL, 2);
 
-  topSizer->Add(topLeftSizer, 2, wxEXPAND | wxALL, 2);
+  //topSizer->Add(topLeftSizer, 2, wxEXPAND | wxALL, 2);
 
   // ****************************************************************
 
   wxBoxSizer* middleSizer = new wxBoxSizer(wxVERTICAL);
 
-  segPic = new SegmentsPicture(topPanel, simu3d);
+  segPic = new SegmentsPicture(topPanel, simu3d, this);
   middleSizer->Add(segPic, 1, wxEXPAND | wxALL, 2);
 
   // segment options sizer
@@ -293,7 +293,7 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   wxBoxSizer* topRightSizer = new wxBoxSizer(wxVERTICAL);
 
-  picPropModes = new PropModesPicture(topPanel, picVocalTract, simu3d, segPic);
+  picPropModes = new PropModesPicture(topPanel, simu3d, segPic);
   topRightSizer->Add(picPropModes, 1, wxEXPAND | wxALL, 2);
 
   // propagation modes option sizer
@@ -398,14 +398,14 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 {
   if (event.GetInt() == REFRESH_PICTURES)
   {
-    picAreaFunction->Refresh();
+    //picAreaFunction->Refresh();
     picPropModes->Refresh();
   }
   else
   if (event.GetInt() == UPDATE_PICTURES)
   {
-    picAreaFunction->Refresh();
-    picAreaFunction->Update();
+    //picAreaFunction->Refresh();
+    //picAreaFunction->Update();
     picPropModes->Refresh();
     picPropModes->Update();
   }
@@ -418,14 +418,14 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   if (event.GetInt() == UPDATE_PICTURES_AND_CONTROLS)
   {
     updateWidgets();
-    picAreaFunction->Update();
+    //picAreaFunction->Update();
     picPropModes->Update();
   }
   else
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
     updateWidgets();
-    picAreaFunction->Update();
+    //picAreaFunction->Update();
     picPropModes->Update();
   }
 }
@@ -498,7 +498,7 @@ void Acoustic3dPage::OnRunTestElephant(wxCommandEvent& event)
   string fileName("file");
   simu3d->runTest(ELEPHANT_TRUNK, fileName);
   updateWidgets();
-  picAreaFunction->Update();
+  //picAreaFunction->Update();
   picPropModes->Update();
 }
 
@@ -515,7 +515,7 @@ void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
 
   // update pictures
   updateWidgets();
-  picAreaFunction->Update();
+  //picAreaFunction->Update();
   picPropModes->Update();
 
   OnPlayLongVowel();
@@ -542,7 +542,7 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
 
   // update pictures
   updateWidgets();
-  picAreaFunction->Update();
+  //picAreaFunction->Update();
   picPropModes->Update();
 
   log.close();
@@ -561,7 +561,7 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 
   // update pictures
   updateWidgets();
-  picAreaFunction->Update();
+  //picAreaFunction->Update();
   picPropModes->Update();
 }
 

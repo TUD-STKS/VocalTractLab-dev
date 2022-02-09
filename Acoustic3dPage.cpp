@@ -243,7 +243,7 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxPanel* topPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   wxPanel* bottomPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   splitter->SplitHorizontally(topPanel, bottomPanel);
-  splitter->SetSashPosition(600);
+  splitter->SetSashPosition(550);
 
   topLevelSizer->Add(splitter, 1, wxEXPAND);
 
@@ -540,6 +540,13 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   simu3d->exportGeoInCsv("test.csv");
   simu3d->computeMeshAndModes();
 
+  ofstream ofs("modes.txt");
+  for (int i(0); i < simu3d->numCrossSections(); i++)
+  {
+    ofs << simu3d->crossSection(i)->numberOfModes() << endl;
+  }
+  ofs.close();
+
   // update pictures
   updateWidgets();
   //picAreaFunction->Update();
@@ -601,6 +608,7 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
   simu3d->setGeometryImported(false);
+  segPic->resetActiveSegment();
 }
 
 // ****************************************************************************
@@ -616,6 +624,7 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
   simu3d->setGeometryImported(true);
   simu3d->setContourInterpolationMethod(FROM_FILE);
   simu3d->setGeometryFile(name.ToStdString());
+  segPic->resetActiveSegment();
 }
 
 // ****************************************************************************

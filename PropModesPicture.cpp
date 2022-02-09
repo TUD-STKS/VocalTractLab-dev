@@ -55,6 +55,7 @@ void PropModesPicture::draw(wxDC& dc)
 	//double pos = m_picVocalTract->cutPlanePos_cm;
 	double cumLength(0.), minDist(1e-15);
 	int sectionIdx(0);
+  ostringstream info;
 
 	//ofstream log("log.txt", ofstream::app);
 	//log << "\nStart draw mode picture" << endl;
@@ -147,13 +148,21 @@ void PropModesPicture::draw(wxDC& dc)
 // plot the segments of the mesh
 // ****************************************************************
 
-	if ((m_simu3d->crossSection(sectionIdx))->numberOfFaces() > 0) {
+	if (((m_simu3d->crossSection(sectionIdx))->numberOfFaces() > 0)) {
+
+    info << "Section " << sectionIdx;
+    info << "      area  " << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
+      << "      length  " << m_simu3d->crossSection(sectionIdx)->length() << " cm " << endl;
+    info << "Curvature angle     "
+      << 180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI << " deg   "
+      << "        radius  " << m_simu3d->crossSection(sectionIdx)->curvRadius() << " cm" << endl;
+    info << "Scaling in  " << m_simu3d->crossSection(sectionIdx)->scaleIn()
+      << "      scaling out  " << m_simu3d->crossSection(sectionIdx)->scaleOut() << endl;
 
 		switch (m_objectToDisplay) {
 		case 1: {
 
 			array<int, 3> tri;
-			ostringstream infoMesh;
 
 			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
 			vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
@@ -226,9 +235,6 @@ void PropModesPicture::draw(wxDC& dc)
 				xBig = (int)(zoom * (vit->point(0).x()) + centerX);
 				yBig = (int)(centerY - zoom * (vit->point(0).y()));
 				dc.DrawCircle(xBig, yBig, 1);
-				//xEnd = (int)(zoom * (vit->point(1).x()) + centerX);
-				//yEnd = (int)(centerY - zoom * (vit->point(1).y()));
-				//dc.DrawLine(xBig, yBig, xEnd, yEnd);
 			}
 			//log << endl;
 			//log.close();
@@ -272,10 +278,8 @@ void PropModesPicture::draw(wxDC& dc)
 			//}
 
 			// display number of vertex, segments and triangles
-			infoMesh << "Section " << sectionIdx << ", "
-				<< (m_simu3d->crossSection(sectionIdx))->numberOfVertices() << "  vertexes  "
-				<< (m_simu3d->crossSection(sectionIdx))->numberOfFaces() << "  faces"
-				<< " l= " << (m_simu3d->crossSection(sectionIdx))->length() << endl;
+      info << (m_simu3d->crossSection(sectionIdx))->numberOfVertices() << "  vertexes  "
+        << (m_simu3d->crossSection(sectionIdx))->numberOfFaces() << "  faces" << endl;
 
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
@@ -283,8 +287,6 @@ void PropModesPicture::draw(wxDC& dc)
 			//log << "tri " << tTri.count() << endl;
 			//log << "Coord " << tCoord.count() << endl;
 			//log.close();
-			dc.SetPen(*wxBLACK_PEN);
-			dc.DrawText(infoMesh.str(), 0, 0);
 
 			}
 			break;
@@ -336,9 +338,6 @@ void PropModesPicture::draw(wxDC& dc)
 			//elapsed_seconds = end - start;
 			//log << "map initialization "  << endl;
 			//start = std::chrono::system_clock::now();
-
-			// create stream to write modes informations
-			ostringstream infoModes;
 
 			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
 			int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
@@ -422,8 +421,7 @@ void PropModesPicture::draw(wxDC& dc)
 			//start = std::chrono::system_clock::now();
 
 			// write informations about the mode
-			infoModes << "Section " << sectionIdx
-				<< " mode " << m_modeIdx + 1 << " over " <<
+			info << "mode " << m_modeIdx + 1 << " over " <<
 				(m_simu3d->crossSection(sectionIdx))->numberOfModes() <<
 				"    f" << m_modeIdx + 1 <<
 				"= " << (m_simu3d->crossSection(sectionIdx))->eigenFrequency(m_modeIdx) <<
@@ -434,10 +432,6 @@ void PropModesPicture::draw(wxDC& dc)
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
 			//log << "Draw map " << elapsed_seconds.count() << endl;
-
-			dc.SetPen(*wxBLACK_PEN);
-			dc.DrawText(infoModes.str(), 0, 0);
-			//log.close();
 		}
 		break;
 		case 3: {
@@ -445,11 +439,6 @@ void PropModesPicture::draw(wxDC& dc)
 			int numCont(F.size());
 			int maxNumF(0);
 
-			//// determine the maximum number of F matrix to display
-			//for (int m(0); m < numCont; m++)
-			//{
-			//	maxNumF = max(maxNumF, (int)F[m].size());
-			//}
 			maxNumF = 1;// max(maxNumF, numCont);
 
 
@@ -511,11 +500,14 @@ void PropModesPicture::draw(wxDC& dc)
 	}
 	else
 	{
-		dc.SetPen(*wxBLACK_PEN);
-		dc.SetBackgroundMode(wxTRANSPARENT);
-		dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-		dc.DrawText("No modes computed.", 0, 0);
+  info << "No modes computed." << endl;
 	}
+
+  dc.SetPen(*wxBLACK_PEN);
+  dc.SetBackgroundMode(wxTRANSPARENT);
+  dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+  dc.DrawText(info.str(), 0., 0.);
+
 	//log.close();
 }
 

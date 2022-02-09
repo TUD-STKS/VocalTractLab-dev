@@ -41,8 +41,8 @@ void SegmentsPicture::draw(wxDC& dc)
   int width, height;
   double zoom, centerX, centerY;
 
-  ofstream log("log.txt", ofstream::app);
-  log << "Start draw segments picture" << endl;
+  //ofstream log("log.txt", ofstream::app);
+  //log << "Start draw segments picture" << endl;
 
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
@@ -222,7 +222,7 @@ void SegmentsPicture::draw(wxDC& dc)
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
   }
 
-  log.close();
+  //log.close();
 }
 
 // ****************************************************************************
@@ -285,6 +285,13 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
   }
 
   log.close();
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::resetActiveSegment()
+{
+  m_activeSegment = 0;
 }
 
 // ****************************************************************************

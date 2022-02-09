@@ -17,6 +17,7 @@ public:
   void showPreivousSegment();
   void showNextSegment();
   void OnMouseEvent(wxMouseEvent& event);
+  void resetActiveSegment();
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
@@ -24,6 +25,8 @@ public:
 // **************************************************************************
 // Private functions.
 // **************************************************************************
+
+private:
 
   void getZoomAndCenter(int& width, int& height, double& centerX, double& centerY,
     double& zoom);

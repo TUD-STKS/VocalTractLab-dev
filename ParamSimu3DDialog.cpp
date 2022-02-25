@@ -42,10 +42,14 @@ static const int IDB_CHK_MAGNUS			= 5005;
 static const int IDB_CHK_CURV			= 5006;
 static const int IDB_CHK_VAR_AREA		= 5007;
 
-static const int IDB_COMPUTE_RAD_FIELD = 5008;
+static const int IDB_CHK_MULTI_TF_PTS = 5008;
+
+static const int IDB_COMPUTE_RAD_FIELD = 5009;
 
 static const int IDL_MOUTH_BCOND = 6000;
 static const int IDL_FREQ_RES = 6001;
+
+static const int IDB_SET_DEFAULT_PARAMS = 6002;
 
 // ****************************************************************************
 // The event table.
@@ -82,10 +86,13 @@ EVT_CHECKBOX(IDB_CHK_STRAIGHT, ParamSimu3DDialog::OnChkStraight)
 EVT_CHECKBOX(IDB_CHK_MAGNUS, ParamSimu3DDialog::OnChkMagnus)
 EVT_CHECKBOX(IDB_CHK_CURV, ParamSimu3DDialog::OnChkCurv)
 EVT_CHECKBOX(IDB_CHK_VAR_AREA, ParamSimu3DDialog::OnChkVarArea)
+EVT_CHECKBOX(IDB_CHK_MULTI_TF_PTS, ParamSimu3DDialog::OnChkMultiTFPts)
 EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
+
+EVT_BUTTON(IDB_SET_DEFAULT_PARAMS, ParamSimu3DDialog::OnSetDefaultParams)
 END_EVENT_TABLE()
 
 // The single instance of this class.
@@ -324,7 +331,7 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Temperature: ");
+    label = new wxStaticText(this, wxID_ANY, "Temperature (°C): ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,
@@ -338,7 +345,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtSndSpeed, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set mesh density.
@@ -355,7 +362,10 @@ void ParamSimu3DDialog::initWidgets()
         wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMeshDensity, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    label = new wxStaticText(this, wxID_ANY, "Elements per length");
+    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the maximal cut-on frequency
@@ -365,14 +375,14 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Maximal cut-on frequency: ");
+    label = new wxStaticText(this, wxID_ANY, "Maximal cut-off frequency: ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxCutOnFreq = new wxTextCtrl(this, IDE_MAX_CUT_ON, "", wxDefaultPosition,
         wxSize(80, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxCutOnFreq, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Select the numerical scheme
@@ -391,7 +401,7 @@ void ParamSimu3DDialog::initWidgets()
     chkMagnus = new wxCheckBox(this, IDB_CHK_MAGNUS, "Magnus");
     lineSizer->Add(chkMagnus, 0, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Select the geometrical features
@@ -407,7 +417,7 @@ void ParamSimu3DDialog::initWidgets()
     chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
     lineSizer->Add(chkVarArea, 0, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the number of integration steps
@@ -424,7 +434,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtNumIntegrationStep, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Select mouth boundary condition
@@ -441,7 +451,7 @@ void ParamSimu3DDialog::initWidgets()
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstMouthBcond, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
 
     // ****************************************************************
@@ -459,7 +469,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtPercLoss, 0, wxALL | wxALIGN_CENTER, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set options losses
@@ -472,12 +482,13 @@ void ParamSimu3DDialog::initWidgets()
     chkFdepLosses = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
       "Visco-thermal losses");
     lineSizer->Add(chkFdepLosses, 0, wxALL, 2);
+    chkFdepLosses->Disable();
 
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
       "Soft walls");
     lineSizer->Add(chkWallLosses, 0, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
 
@@ -496,7 +507,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtWallAdmit, 0, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     ///////////////////////////////////////////////////////////////////
     // Transfer function options
@@ -520,7 +531,7 @@ void ParamSimu3DDialog::initWidgets()
         wxSize(80, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxSimFreq, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the section containing the noise source
@@ -537,7 +548,7 @@ void ParamSimu3DDialog::initWidgets()
         wxSize(40, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtSecNoiseSource, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the section of the constriction
@@ -554,7 +565,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(40, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtConstriction, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the length of the spectrum
@@ -579,7 +590,7 @@ void ParamSimu3DDialog::initWidgets()
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstFreqRes, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Set the point for transfer function computation
@@ -589,7 +600,7 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Transfer function point X ");
+    label = new wxStaticText(this, wxID_ANY, "Transfer function point (cm) X ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtTfPointX = new wxTextCtrl(this, IDE_TF_POINT_X, "", wxDefaultPosition,
@@ -610,7 +621,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(40, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtTfPointZ, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     // ****************************************************************
     // Load the transfer function points from a file
@@ -620,10 +631,16 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    button = new wxButton(this, IDB_LOAD_TF_POINTS, "Load transfer function points");
+    chkMultiTFPts = new wxCheckBox(this, IDB_CHK_MULTI_TF_PTS,
+      "Multiple transfer function points");
+    lineSizer->Add(chkMultiTFPts, 0, wxGROW | wxALL, 3);
+    chkMultiTFPts->Disable();
+
+    button = new wxButton(this, IDB_LOAD_TF_POINTS, 
+      "Load coordinates to evaluate transfer functions");
     lineSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-    topLevelSizer->Add(lineSizer);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
     ///////////////////////////////////////////////////////////////////
     // Acoustic field computation options
@@ -657,7 +674,7 @@ void ParamSimu3DDialog::initWidgets()
   label = new wxStaticText(this, wxID_ANY, " point per cm");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-  topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
   // ****************************************************************
   // Set the bounding box to compute the acoustic field
@@ -695,7 +712,7 @@ void ParamSimu3DDialog::initWidgets()
     wxSize(50, -1), wxTE_PROCESS_ENTER);
   lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
 
-  topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
   // ****************************************************************
   // Set if the radiated field must be computed or not
@@ -709,7 +726,21 @@ void ParamSimu3DDialog::initWidgets()
     "Compute radiated field");
   lineSizer->Add(chkComputeRad, 0, wxALL, 2);
 
-  topLevelSizer->Add(lineSizer);
+  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+
+  // ****************************************************************
+  // Set the default parameters
+  // ****************************************************************
+
+  topLevelSizer->AddSpacer(10);
+
+  lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  button = new wxButton(this, IDB_SET_DEFAULT_PARAMS,
+    "Set default parameters");
+  lineSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
   // ****************************************************************
   // Set the top-level-sizer for this window.
@@ -974,6 +1005,7 @@ void ParamSimu3DDialog::OnTfPointX(wxCommandEvent& event)
     m_simuParams.tfPoint[0] = Point_3(x, m_simuParams.tfPoint[0].y(), 
       m_simuParams.tfPoint[0].z());
   }
+  chkMultiTFPts->SetValue(false);
   updateWidgets();
 }
 
@@ -989,6 +1021,7 @@ void ParamSimu3DDialog::OnTfPointY(wxCommandEvent& event)
     m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(), x,
       m_simuParams.tfPoint[0].z());
   }
+  chkMultiTFPts->SetValue(false);
   updateWidgets();
 }
 
@@ -1004,6 +1037,7 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
     m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(),
       m_simuParams.tfPoint[0].y(), x);
   }
+  chkMultiTFPts->SetValue(false);
   updateWidgets();
 }
 
@@ -1023,11 +1057,13 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   bool success = simu3d->setTFPointsFromCsvFile(name.ToStdString());
   if (success)
   {
-  log << "Importation successfull" << endl;
+    log << "Importation successfull" << endl;
+    chkMultiTFPts->SetValue(true);
   }
   else
   {
     log << "Importation failed" << endl;
+    chkMultiTFPts->SetValue(false);
   }
   log.close();
 }
@@ -1139,6 +1175,14 @@ void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
+void ParamSimu3DDialog::OnChkMultiTFPts(wxCommandEvent& event)
+{
+
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
 void ParamSimu3DDialog::OnChkComputeRad(wxCommandEvent& event)
 {
   m_simuParams.computeRadiatedField = !m_simuParams.computeRadiatedField;
@@ -1176,6 +1220,38 @@ void ParamSimu3DDialog::OnFreqRes(wxCommandEvent& event)
   auto res = lstFreqRes->GetSelection();
 
   m_expSpectrumLgth = m_expSpectrumLgthStart + res;
+
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnSetDefaultParams(wxCommandEvent& event)
+{
+  m_simuParams.sndSpeed = 35000.;
+  m_simuParams.volumicMass = ADIABATIC_CONSTANT * STATIC_PRESSURE_CGS /
+    pow(m_simuParams.sndSpeed, 2);
+  m_simuParams.temperature = pow(m_simuParams.sndSpeed, 2) * MOLECULAR_MASS /
+    GAS_CONSTANT / ADIABATIC_CONSTANT - KELVIN_SHIFT;
+
+  m_meshDensity = 15.;
+
+  m_maxCutOnFreq = 40000.;
+
+  m_simuParams.propMethod = MAGNUS;
+
+  m_simuParams.curved = true;
+
+  m_simuParams.varyingArea = true;
+
+  m_mouthBoundaryCond = RADIATION;
+
+  m_simuParams.percentageLosses = 1.;
+
+  m_simuParams.wallLosses = false;
+
+  m_simuParams.freqDepLosses = false;
 
   updateWidgets();
 }

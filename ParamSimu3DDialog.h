@@ -59,6 +59,7 @@ private:
   wxCheckBox* chkMagnus;
 	wxCheckBox* chkCurv;
 	wxCheckBox* chkVarArea;
+  wxCheckBox* chkMultiTFPts;
   wxCheckBox* chkComputeRad;
 
   wxComboBox* lstMouthBcond;
@@ -116,10 +117,13 @@ private:
   void OnChkMagnus(wxCommandEvent& event);
 	void OnChkCurv(wxCommandEvent& event);
 	void OnChkVarArea(wxCommandEvent& event);
+  void OnChkMultiTFPts(wxCommandEvent& event);
   void OnChkComputeRad(wxCommandEvent& event);
 
   void OnMouthBcond(wxCommandEvent& event);
   void OnFreqRes(wxCommandEvent& event);
+
+  void OnSetDefaultParams(wxCommandEvent& event);
 
 // **************************************************************************
 // Declare the event table.

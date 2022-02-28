@@ -49,7 +49,8 @@ static const int IDB_COMPUTE_RAD_FIELD = 5009;
 static const int IDL_MOUTH_BCOND = 6000;
 static const int IDL_FREQ_RES = 6001;
 
-static const int IDB_SET_DEFAULT_PARAMS = 6002;
+static const int IDB_SET_DEFAULT_PARAMS_FAST = 6002;
+static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 6003;
 
 // ****************************************************************************
 // The event table.
@@ -92,7 +93,8 @@ EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 
-EVT_BUTTON(IDB_SET_DEFAULT_PARAMS, ParamSimu3DDialog::OnSetDefaultParams)
+EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_FAST, ParamSimu3DDialog::OnSetDefaultParamsFast)
+EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_ACCURATE, ParamSimu3DDialog::OnSetDefaultParamsAccurate)
 END_EVENT_TABLE()
 
 // The single instance of this class.
@@ -736,8 +738,12 @@ void ParamSimu3DDialog::initWidgets()
 
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-  button = new wxButton(this, IDB_SET_DEFAULT_PARAMS,
-    "Set default parameters");
+  button = new wxButton(this, IDB_SET_DEFAULT_PARAMS_FAST,
+    "Set default parameters\nfast simulation (innacurate)");
+  lineSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_SET_DEFAULT_PARAMS_ACCURATE,
+    "Set default parameters\naccurate simulation (slow)");
   lineSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
@@ -1227,17 +1233,53 @@ void ParamSimu3DDialog::OnFreqRes(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void ParamSimu3DDialog::OnSetDefaultParams(wxCommandEvent& event)
+void ParamSimu3DDialog::OnSetDefaultParamsFast(wxCommandEvent& event)
 {
+  SetDefaultParams(true);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnSetDefaultParamsAccurate(wxCommandEvent& event)
+{
+  SetDefaultParams(false);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::SetDefaultParams(bool fast)
+{
+  // for fast computations, but very innacurate
+  if (fast)
+  {
+    m_meshDensity = 5.;
+
+    m_maxCutOnFreq = 20000.;
+
+    m_simuParams.maxComputedFreq = 10000.;
+
+    // for about 40 Hz resolution
+    m_expSpectrumLgth = m_expSpectrumLgthStart + 2;
+  }
+  else
+  {
+    m_meshDensity = 15.;
+
+    m_maxCutOnFreq = 40000.;
+
+    m_simuParams.maxComputedFreq = 20000.;
+
+    // for about 10 Hz resolution
+    m_expSpectrumLgth = m_expSpectrumLgthStart + 4;
+  }
+
   m_simuParams.sndSpeed = 35000.;
   m_simuParams.volumicMass = ADIABATIC_CONSTANT * STATIC_PRESSURE_CGS /
     pow(m_simuParams.sndSpeed, 2);
   m_simuParams.temperature = pow(m_simuParams.sndSpeed, 2) * MOLECULAR_MASS /
     GAS_CONSTANT / ADIABATIC_CONSTANT - KELVIN_SHIFT;
-
-  m_meshDensity = 15.;
-
-  m_maxCutOnFreq = 40000.;
 
   m_simuParams.propMethod = MAGNUS;
 
@@ -1252,6 +1294,25 @@ void ParamSimu3DDialog::OnSetDefaultParams(wxCommandEvent& event)
   m_simuParams.wallLosses = false;
 
   m_simuParams.freqDepLosses = false;
+
+  m_simuParams.thermalBndSpecAdm = complex<double>(0.005, 0.);
+
+  m_secConstriction = 0;
+
+  m_secNoiseSource = 25;
+
+  m_simuParams.tfPoint.clear();
+  m_simuParams.tfPoint.push_back(Point_3(100., 0., 0.));
+  chkMultiTFPts->SetValue(false);
+
+  m_simuParams.freqField = 5000.;
+
+  m_simuParams.fieldResolution = 30;
+
+  m_simuParams.bboxField[0] = Point(-5., -10.);
+  m_simuParams.bboxField[1] = Point(10., 5.);
+
+  m_simuParams.computeRadiatedField = false;
 
   updateWidgets();
 }

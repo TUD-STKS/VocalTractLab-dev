@@ -123,7 +123,9 @@ private:
   void OnMouthBcond(wxCommandEvent& event);
   void OnFreqRes(wxCommandEvent& event);
 
-  void OnSetDefaultParams(wxCommandEvent& event);
+  void OnSetDefaultParamsFast(wxCommandEvent& event);
+  void OnSetDefaultParamsAccurate(wxCommandEvent& event);
+  void SetDefaultParams(bool fast);
 
 // **************************************************************************
 // Declare the event table.

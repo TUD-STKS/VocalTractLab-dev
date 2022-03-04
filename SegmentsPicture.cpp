@@ -1,7 +1,9 @@
-#include "SegmentsPicture.h"
 #include <iostream>
 
+#include "SegmentsPicture.h"
 #include "Acoustic3dPage.h"
+
+#include <wx/rawbmp.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Aff_transformation_2.h>
@@ -41,8 +43,8 @@ void SegmentsPicture::draw(wxDC& dc)
   int width, height;
   double zoom, centerX, centerY;
 
-  //ofstream log("log.txt", ofstream::app);
-  //log << "Start draw segments picture" << endl;
+  ofstream log("log.txt", ofstream::app);
+  log << "Start draw segments picture" << endl;
 
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
@@ -65,45 +67,95 @@ void SegmentsPicture::draw(wxDC& dc)
 
     getZoomAndCenter(width, height, centerX, centerY, zoom);
 
-    // ****************************************************************
-    // plot the bounding box
-    // ****************************************************************
+
 
     int xBig, yBig, xEnd, yEnd;
 
     dc.SetPen(*wxBLACK_PEN);
 
-    //// bottom line
-    //xBig = (int)(zoom * bboxSagittalPlane.first.x + centerX);
-    //yBig = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
-    //xEnd = (int)(zoom * bboxSagittalPlane.second.x + centerX);
-    //yEnd = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
+    pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
+
+    //***************************************************************
+    // Plot the acoustic field
+    //***************************************************************
+
+    if (m_simu3d->acousticFieldSize() > 0)
+    {
+      Point queryPt;
+      double field;
+
+      // initialise white bitmap
+      wxBitmap bmp(width, height, 24);
+      wxNativePixelData data(bmp);
+      wxNativePixelData::Iterator p(data);
+      for (int i = 0; i < height; ++i)
+      {
+        wxNativePixelData::Iterator rowStart = p;
+        for (int j = 0; j < width; ++j, ++p)
+        {
+          //queryPt = Point(((double)i - centerX) / zoom,
+          //  ((double)(j - height) - centerY) / zoom);
+          queryPt = Point(((double)(width - i)) / zoom,
+            ((double)(j - height)) / zoom);
+          field = m_simu3d->interpolateAcousticField(queryPt);
+          //log << "i " << i << " j " << j << "  " << field << endl;
+
+          if (field == 0.)
+          {
+            p.Red() = 254;
+            p.Green() = 254;
+            p.Blue() = 254;
+          }
+          else
+          {
+            p.Red() = 100;
+            p.Green() = 254;
+            p.Blue() = 50;
+          }
+
+        }
+        p = rowStart;
+        p.OffsetY(data, 1);
+      }
+
+      dc.DrawBitmap(bmp, 0, 0, 0);
+    }
+
+    // ****************************************************************
+    // plot the bounding box
+    // ****************************************************************
+
+    // bottom line
+    xBig = (int)(zoom * bboxSagittalPlane.first.x + centerX);
+    yBig = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
+    xEnd = (int)(zoom * bboxSagittalPlane.second.x + centerX);
+    yEnd = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
 
     //log << "xBig " << xBig << " yBig " << yBig << " xEnd "
     //  << xEnd << " yEnd " << yEnd << endl;
 
-    //dc.DrawLine(xBig, yBig, xEnd, yEnd);
+    dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
-    //// right line
-    //xBig = xEnd;
-    //yBig = yEnd;
-    //yEnd = height - (int)(zoom * bboxSagittalPlane.second.y + centerY);
+    // right line
+    xBig = xEnd;
+    yBig = yEnd;
+    yEnd = height - (int)(zoom * bboxSagittalPlane.second.y + centerY);
 
-    //dc.DrawLine(xBig, yBig, xEnd, yEnd);
+    dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
-    //// top line
-    //xBig = xEnd;
-    //yBig = yEnd;
-    //xEnd = (int)(zoom * bboxSagittalPlane.first.x + centerX);
+    // top line
+    xBig = xEnd;
+    yBig = yEnd;
+    xEnd = (int)(zoom * bboxSagittalPlane.first.x + centerX);
 
-    //dc.DrawLine(xBig, yBig, xEnd, yEnd);
+    dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
-    //// left line
-    //xBig = xEnd;
-    //yBig = yEnd;
-    //yEnd = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
+    // left line
+    xBig = xEnd;
+    yBig = yEnd;
+    yEnd = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
 
-    //dc.DrawLine(xBig, yBig, xEnd, yEnd);
+    dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
     // ****************************************************************
     // Plot first section
@@ -222,7 +274,7 @@ void SegmentsPicture::draw(wxDC& dc)
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
   }
 
-  //log.close();
+  log.close();
 }
 
 // ****************************************************************************

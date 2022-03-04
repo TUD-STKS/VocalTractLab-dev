@@ -40,10 +40,10 @@ private:
   // for acoustic field computation
   wxTextCtrl* txtFreqComputeField;
   wxTextCtrl* txtResolutionField;
-  wxTextCtrl* txtBboxMinX;
-  wxTextCtrl* txtBboxMinY;
-  wxTextCtrl* txtBboxMaxX;
-  wxTextCtrl* txtBboxMaxY;
+  //wxTextCtrl* txtBboxMinX;
+  //wxTextCtrl* txtBboxMinY;
+  //wxTextCtrl* txtBboxMaxX;
+  //wxTextCtrl* txtBboxMaxY;
 
   // transfer function point
   wxTextCtrl* txtTfPointX;
@@ -98,10 +98,10 @@ private:
 	void OnPercentLosses(wxCommandEvent& event);
   void OnFreqComputeField(wxCommandEvent& event);
   void OnResolutionField(wxCommandEvent& event);
-  void OnBboxMinX(wxCommandEvent& event);
-  void OnBboxMinY(wxCommandEvent& event);
-  void OnBboxMaxX(wxCommandEvent& event);
-  void OnBboxMaxY(wxCommandEvent& event);
+  //void OnBboxMinX(wxCommandEvent& event);
+  //void OnBboxMinY(wxCommandEvent& event);
+  //void OnBboxMaxX(wxCommandEvent& event);
+  //void OnBboxMaxY(wxCommandEvent& event);
 
   void OnTfPointX(wxCommandEvent& event);
   void OnTfPointY(wxCommandEvent& event);

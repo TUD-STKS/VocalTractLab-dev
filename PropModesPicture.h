@@ -26,12 +26,16 @@ public:
 
 	void showMesh();
 	void showMode();
+  void showField();
 	void showF();
 	void setModeIdx(int idx);
-	bool meshSelected();
-	bool modeSelected();
-	bool fSelected();
-	int modeIdx();
+
+  // accessors
+  bool meshSelected() const { return(m_objectToDisplay == 1); }
+  bool modeSelected() const { return(m_objectToDisplay == 2); }
+  bool fSelected() const { return(m_objectToDisplay == 3); }
+  bool fieldSelected() const { return(m_objectToDisplay == 4); }
+  int modeIdx() const { return(m_modeIdx); }
 
 // **************************************************************************
 // Private data.

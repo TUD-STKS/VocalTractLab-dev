@@ -2,6 +2,7 @@
 
 #include "SegmentsPicture.h"
 #include "Acoustic3dPage.h"
+#include "ColorScale.h"
 
 #include <wx/rawbmp.h>
 
@@ -12,6 +13,10 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K>                                Point;
 typedef CGAL::Aff_transformation_2<K>           Transformation;
+
+typedef Eigen::VectorXd                 Vec;
+
+typedef int(*ColorMap)[256][3];   // for the colormap
 
 // ****************************************************************************
 // The event table.
@@ -28,7 +33,9 @@ END_EVENT_TABLE()
 SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   wxWindow* updateEventReceiver)
   : BasicPicture(parent),
-  m_activeSegment(0)
+  m_activeSegment(0),
+  m_showSegments(true),
+  m_showField(false)
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
@@ -67,7 +74,7 @@ void SegmentsPicture::draw(wxDC& dc)
 
     getZoomAndCenter(width, height, centerX, centerY, zoom);
 
-
+    //log << "centerX " << centerX << " centerY " << centerY << endl;
 
     int xBig, yBig, xEnd, yEnd;
 
@@ -79,46 +86,75 @@ void SegmentsPicture::draw(wxDC& dc)
     // Plot the acoustic field
     //***************************************************************
 
-    if (m_simu3d->acousticFieldSize() > 0)
+    if (m_showField)
     {
-      Point queryPt;
-      double field;
-
-      // initialise white bitmap
-      wxBitmap bmp(width, height, 24);
-      wxNativePixelData data(bmp);
-      wxNativePixelData::Iterator p(data);
-      for (int i = 0; i < height; ++i)
+      //auto start = std::chrono::system_clock::now();
+      //auto tic = std::chrono::system_clock::now();
+      //auto toc = std::chrono::system_clock::now();
+      //std::chrono::duration<double> elapsed;
+      if (m_simu3d->acousticFieldSize() > 0)
       {
-        wxNativePixelData::Iterator rowStart = p;
-        for (int j = 0; j < width; ++j, ++p)
+        ColorMap colorMap = ColorScale::getColorMap();
+
+        Point queryPt;
+        Matrix field;
+        int normAmp;
+        double maxAmp(m_simu3d->maxAmpField());
+
+        // generate the coordinates of the points of the pixel map
+        //tic = std::chrono::system_clock::now();
+        Vec coordX(width), coordY(height);
+        for (int i(0); i < width; i++)
         {
-          //queryPt = Point(((double)i - centerX) / zoom,
-          //  ((double)(j - height) - centerY) / zoom);
-          queryPt = Point(((double)(width - i)) / zoom,
-            ((double)(j - height)) / zoom);
-          field = m_simu3d->interpolateAcousticField(queryPt);
-          //log << "i " << i << " j " << j << "  " << field << endl;
-
-          if (field == 0.)
-          {
-            p.Red() = 254;
-            p.Green() = 254;
-            p.Blue() = 254;
-          }
-          else
-          {
-            p.Red() = 100;
-            p.Green() = 254;
-            p.Blue() = 50;
-          }
-
+          coordX(i) = ((double)i - centerX) / zoom;
         }
-        p = rowStart;
-        p.OffsetY(data, 1);
-      }
+        for (int i(0); i < height; i++)
+        {
+          coordY(i) = ((double)(height - i) - centerY) / zoom;
+        }
+        m_simu3d->interpolateAcousticField(coordX, coordY, field);
+        //toc = std::chrono::system_clock::now();
+        //elapsed += toc - tic;
 
-      dc.DrawBitmap(bmp, 0, 0, 0);
+
+        // initialise white bitmap
+        wxBitmap bmp(width, height, 24);
+        wxNativePixelData data(bmp);
+        wxNativePixelData::Iterator p(data);
+        for (int i(0); i < height; ++i)
+        {
+          wxNativePixelData::Iterator rowStart = p;
+          for (int j(0); j < width; ++j, ++p)
+          {
+            queryPt = Point(((double)j - centerX) / zoom,
+              ((double)(height - i) - centerY) / zoom);
+
+            if (field(i, j) > 0.)
+            {
+              normAmp = max(1, (int)(256. * field(i, j) / maxAmp));
+
+              p.Red() = (*colorMap)[normAmp][0];
+              p.Green() = (*colorMap)[normAmp][1];
+              p.Blue() = (*colorMap)[normAmp][2];
+            }
+            else
+            {
+              p.Red() = 254;
+              p.Green() = 254;
+              p.Blue() = 254;
+            }
+
+          }
+          p = rowStart;
+          p.OffsetY(data, 1);
+        }
+
+        dc.DrawBitmap(bmp, 0, 0, 0);
+      }
+      //auto end = std::chrono::system_clock::now();
+      //std::chrono::duration<double> elapsed_seconds = end - start;
+      //log << "Time draw field: " << elapsed_seconds.count() << endl;
+      //log << "Time interpolate field " << elapsed.count() << endl;
     }
 
     // ****************************************************************
@@ -130,9 +166,6 @@ void SegmentsPicture::draw(wxDC& dc)
     yBig = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
     xEnd = (int)(zoom * bboxSagittalPlane.second.x + centerX);
     yEnd = height - (int)(zoom * bboxSagittalPlane.first.y + centerY);
-
-    //log << "xBig " << xBig << " yBig " << yBig << " xEnd "
-    //  << xEnd << " yEnd " << yEnd << endl;
 
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
@@ -158,18 +191,73 @@ void SegmentsPicture::draw(wxDC& dc)
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
     // ****************************************************************
-    // Plot first section
+    // Draw the segments
     // ****************************************************************
 
-    auto sec = m_simu3d->crossSection(0);
-    auto bbox = sec->contour().bbox();
-    Point ptInMin, ptInMax, ptOutMin, ptOutMax;
-
-    for (int i(0); i < m_simu3d->numCrossSections(); i++)
+    if (m_showSegments)
     {
-      //log << "draw section " << i << endl;
 
-      sec = m_simu3d->crossSection(i);
+      auto sec = m_simu3d->crossSection(0);
+      auto bbox = sec->contour().bbox();
+      Point ptInMin, ptInMax, ptOutMin, ptOutMax;
+
+      for (int i(0); i < m_simu3d->numCrossSections(); i++)
+      {
+        //log << "draw section " << i << endl;
+
+        sec = m_simu3d->crossSection(i);
+        bbox = sec->contour().bbox();
+
+        Transformation translateInMin(CGAL::TRANSLATION,
+          sec->scaleIn() * bbox.ymin() * sec->normalIn());
+        ptInMin = translateInMin(sec->ctrLinePtIn());
+
+        Transformation translateInMax(CGAL::TRANSLATION,
+          sec->scaleIn() * bbox.ymax() * sec->normalIn());
+        ptInMax = translateInMax(sec->ctrLinePtIn());
+
+        Transformation translateOutMin(CGAL::TRANSLATION,
+          sec->scaleOut() * bbox.ymin() * sec->normalOut());
+        ptOutMin = translateOutMin(sec->ctrLinePtOut());
+
+        Transformation translateOutMax(CGAL::TRANSLATION,
+          sec->scaleOut() * bbox.ymax() * sec->normalOut());
+        ptOutMax = translateOutMax(sec->ctrLinePtOut());
+
+        // draw first line
+        xBig = (int)(zoom * ptInMin.x() + centerX);
+        yBig = height - (int)(zoom * ptInMin.y() + centerY);
+        xEnd = (int)(zoom * ptInMax.x() + centerX);
+        yEnd = height - (int)(zoom * ptInMax.y() + centerY);
+        dc.DrawLine(xBig, yBig, xEnd, yEnd);
+
+        // draw second line
+        xBig = xEnd;
+        yBig = yEnd;
+        xEnd = (int)(zoom * ptOutMax.x() + centerX);
+        yEnd = height - (int)(zoom * ptOutMax.y() + centerY);
+        dc.DrawLine(xBig, yBig, xEnd, yEnd);
+
+        // draw third line
+        xBig = xEnd;
+        yBig = yEnd;
+        xEnd = (int)(zoom * ptOutMin.x() + centerX);
+        yEnd = height - (int)(zoom * ptOutMin.y() + centerY);
+        dc.DrawLine(xBig, yBig, xEnd, yEnd);
+
+        // draw fourth line
+        xBig = xEnd;
+        yBig = yEnd;
+        xEnd = (int)(zoom * ptInMin.x() + centerX);
+        yEnd = height - (int)(zoom * ptInMin.y() + centerY);
+        dc.DrawLine(xBig, yBig, xEnd, yEnd);
+      }
+
+      //log << "Draw active segment" << endl;
+
+      // plot the active segment
+      dc.SetPen(*wxRED_PEN);
+      sec = m_simu3d->crossSection(m_activeSegment);
       bbox = sec->contour().bbox();
 
       Transformation translateInMin(CGAL::TRANSLATION,
@@ -187,11 +275,6 @@ void SegmentsPicture::draw(wxDC& dc)
       Transformation translateOutMax(CGAL::TRANSLATION,
         sec->scaleOut() * bbox.ymax() * sec->normalOut());
       ptOutMax = translateOutMax(sec->ctrLinePtOut());
-
-      //log << "ptInMin " << ptInMin
-      //  << " ptInMax " << ptInMax
-      //  << " ptOutMin " << ptOutMin
-      //  << " ptOutMax " << ptOutMax << endl;
 
       // draw first line
       xBig = (int)(zoom * ptInMin.x() + centerX);
@@ -221,59 +304,7 @@ void SegmentsPicture::draw(wxDC& dc)
       yEnd = height - (int)(zoom * ptInMin.y() + centerY);
       dc.DrawLine(xBig, yBig, xEnd, yEnd);
     }
-
-    //log << "Draw active segment" << endl;
-
-    // plot the active segment
-    dc.SetPen(*wxRED_PEN);
-    sec = m_simu3d->crossSection(m_activeSegment);
-    bbox = sec->contour().bbox();
-
-    Transformation translateInMin(CGAL::TRANSLATION,
-      sec->scaleIn()* bbox.ymin()* sec->normalIn());
-    ptInMin = translateInMin(sec->ctrLinePtIn());
-
-    Transformation translateInMax(CGAL::TRANSLATION,
-      sec->scaleIn()* bbox.ymax()* sec->normalIn());
-    ptInMax = translateInMax(sec->ctrLinePtIn());
-
-    Transformation translateOutMin(CGAL::TRANSLATION,
-      sec->scaleOut()* bbox.ymin()* sec->normalOut());
-    ptOutMin = translateOutMin(sec->ctrLinePtOut());
-
-    Transformation translateOutMax(CGAL::TRANSLATION,
-      sec->scaleOut()* bbox.ymax()* sec->normalOut());
-    ptOutMax = translateOutMax(sec->ctrLinePtOut());
-
-    // draw first line
-    xBig = (int)(zoom * ptInMin.x() + centerX);
-    yBig = height - (int)(zoom * ptInMin.y() + centerY);
-    xEnd = (int)(zoom * ptInMax.x() + centerX);
-    yEnd = height - (int)(zoom * ptInMax.y() + centerY);
-    dc.DrawLine(xBig, yBig, xEnd, yEnd);
-
-    // draw second line
-    xBig = xEnd;
-    yBig = yEnd;
-    xEnd = (int)(zoom * ptOutMax.x() + centerX);
-    yEnd = height - (int)(zoom * ptOutMax.y() + centerY);
-    dc.DrawLine(xBig, yBig, xEnd, yEnd);
-
-    // draw third line
-    xBig = xEnd;
-    yBig = yEnd;
-    xEnd = (int)(zoom * ptOutMin.x() + centerX);
-    yEnd = height - (int)(zoom * ptOutMin.y() + centerY);
-    dc.DrawLine(xBig, yBig, xEnd, yEnd);
-
-    // draw fourth line
-    xBig = xEnd;
-    yBig = yEnd;
-    xEnd = (int)(zoom * ptInMin.x() + centerX);
-    yEnd = height - (int)(zoom * ptInMin.y() + centerY);
-    dc.DrawLine(xBig, yBig, xEnd, yEnd);
   }
-
   log.close();
 }
 

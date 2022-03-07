@@ -18,9 +18,13 @@ public:
   void showNextSegment();
   void OnMouseEvent(wxMouseEvent& event);
   void resetActiveSegment();
+  void setShowSegments(bool showSegs) { m_showSegments = showSegs; }
+  void setShowField(bool showField) { m_showField = showField; }
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
+  bool showSegements() const { return m_showSegments; }
+  bool showField() const { return m_showField; }
 
 // **************************************************************************
 // Private functions.
@@ -40,6 +44,8 @@ private:
   Acoustic3dSimulation* m_simu3d;
   wxWindow* updateEventReceiver;
   int m_activeSegment;
+  bool m_showSegments;
+  bool m_showField;
 
  // ****************************************************************************
  // Declare the event table right at the end

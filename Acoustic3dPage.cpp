@@ -46,12 +46,15 @@ static const int IDB_EXPORT_TF = 6008;
 static const int IDB_SHOW_LOWER_ORDER_MODE = 6010;
 static const int IDB_SHOW_MESH = 6011;
 static const int IDB_SHOW_MODE = 6012;
+static const int IDB_SHOW_TRANSVERS_FIELD = 6013;
 //static const int IDB_SHOW_F = 6013;
 static const int IDB_SHOW_HIGHER_ORDER_MODE = 6014;
 
 // segments picture controls
 static const int IDB_SHOW_PREVIOUS_SEGMENT = 6015;
 static const int IDB_SHOW_NEXT_SEGMENT = 6016;
+static const int IDB_SHOW_SEGMENTS = 6017;
+static const int IDB_SHOW_FIELD = 6018;
 
 // Spectrum panel controls
 static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
@@ -91,12 +94,15 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
   EVT_CHECKBOX(IDB_SHOW_MODE, Acoustic3dPage::OnShowMode)
+  EVT_CHECKBOX(IDB_SHOW_TRANSVERS_FIELD, Acoustic3dPage::OnShowTransField)
   //EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
   EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowHigherOrderMode)
 
   // segments picture controls
   EVT_BUTTON(IDB_SHOW_PREVIOUS_SEGMENT, Acoustic3dPage::OnShowPreviousSegment)
   EVT_BUTTON(IDB_SHOW_NEXT_SEGMENT, Acoustic3dPage::OnShowNextSegment)
+  EVT_CHECKBOX(IDB_SHOW_SEGMENTS, Acoustic3dPage::OnShowSegments)
+  EVT_CHECKBOX(IDB_SHOW_FIELD, Acoustic3dPage::OnShowField)
 
   // Spectrum panel controls
   EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_PLUS, Acoustic3dPage::OnUpperSpectrumLimitPlus)
@@ -133,6 +139,7 @@ void Acoustic3dPage::updateWidgets()
   // display selected options for mode picture
   chkShowMesh->SetValue(picPropModes->meshSelected());
   chkShowMode->SetValue(picPropModes->modeSelected());
+  chkShowTransField->SetValue(picPropModes->fieldSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
 
   //picAreaFunction->Refresh();
@@ -281,6 +288,16 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   sizer->AddStretchSpacer(1);
 
+  chkShowSegments = new wxCheckBox(topPanel, IDB_SHOW_SEGMENTS, "Show segments");
+  sizer->Add(chkShowSegments, 0, wxALIGN_BOTTOM | wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  chkShowField = new wxCheckBox(topPanel, IDB_SHOW_FIELD, "Show field");
+  sizer->Add(chkShowField, 0, wxALIGN_BOTTOM | wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
   button = new wxButton(topPanel, IDB_SHOW_NEXT_SEGMENT, ">", wxDefaultPosition, wxSize(35, 35));
   sizer->Add(button, 0, wxALL, 2);
 
@@ -314,6 +331,11 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   chkShowMode = new wxCheckBox(topPanel, IDB_SHOW_MODE, "Modes");
   sizer->Add(chkShowMode, 0, wxALIGN_BOTTOM | wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  chkShowTransField = new wxCheckBox(topPanel, IDB_SHOW_TRANSVERS_FIELD, "Field");
+  sizer->Add(chkShowTransField, 0, wxALIGN_BOTTOM | wxALL, 2);
 
   //chkShowF = new wxCheckBox(topPanel, IDB_SHOW_F, "F");
   //sizer->Add(chkShowF, 0, wxALL, 2);
@@ -733,6 +755,7 @@ void Acoustic3dPage::OnShowMesh(wxCommandEvent& event)
 {
   picPropModes->showMesh();
   chkShowMode->SetValue(picPropModes->modeSelected());
+  chkShowTransField->SetValue(picPropModes->fieldSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
 }
 
@@ -742,7 +765,17 @@ void Acoustic3dPage::OnShowMode(wxCommandEvent& event)
 {
   picPropModes->showMode();
   chkShowMesh->SetValue(picPropModes->meshSelected());
+  chkShowTransField->SetValue(picPropModes->fieldSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowTransField(wxCommandEvent& event)
+{
+  picPropModes->showField();
+  chkShowMesh->SetValue(picPropModes->meshSelected());
+  chkShowMode->SetValue(picPropModes->modeSelected());
 }
 
 // ****************************************************************************
@@ -782,6 +815,22 @@ void Acoustic3dPage::OnShowNextSegment(wxCommandEvent& event)
 {
   segPic->showNextSegment();
   picPropModes->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowSegments(wxCommandEvent& event)
+{
+  segPic->setShowSegments(chkShowSegments->GetValue());
+  segPic->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowField(wxCommandEvent& event)
+{
+  segPic->setShowField(chkShowField->GetValue());
+  segPic->Refresh();
 }
 
 // ****************************************************************************

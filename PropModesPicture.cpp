@@ -16,6 +16,7 @@
 
 // typedef for eigen
 typedef Eigen::MatrixXd Matrix;
+typedef Eigen::VectorXd Vec;
 
 // typedef for CGAL
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -57,8 +58,8 @@ void PropModesPicture::draw(wxDC& dc)
 	int sectionIdx(0);
   ostringstream info;
 
-	//ofstream log("log.txt", ofstream::app);
-	//log << "\nStart draw mode picture" << endl;
+	ofstream log("log.txt", ofstream::app);
+	log << "\nStart draw mode picture" << endl;
 
 	// Clear the background.
 	dc.SetBackground(*wxWHITE_BRUSH);
@@ -74,42 +75,11 @@ void PropModesPicture::draw(wxDC& dc)
 		return;
 	}
 
-	//// Check if the cursor lies inside the vocal tract
-	//if ((pos < 0.0) || (pos > tract->centerLineLength))
-	//{
-	//	dc.SetPen(*wxBLACK_PEN);
-	//	dc.SetBackgroundMode(wxTRANSPARENT);
-	//	dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	//	dc.DrawText("Cut vector position out of range.", 0, 0);
-	//	return;
-	//}
-
 // ****************************************************************
 // Identify the index of the corresponding tube
 // ****************************************************************
 
   sectionIdx = m_segPic->activeSegment();
-
-	//cumLength = 0.;
-	//sectionIdx = 0;
-
-	//for (int i(0); i < m_simu3d->sectionNumber(); i++)
-	//{
-	//	if (((pos - cumLength) >= -minDist) &&
-	//		((pos - (cumLength + 
-	//		(m_simu3d->crossSection(i))->length()))
-	//		<= minDist))
-	//	{
-	//		sectionIdx = i;
-	//		break;
-	//	}
-	//	cumLength += (m_simu3d->crossSection(i))->length();
-	//}
-
-	//log << "Cumlength: " << cumLength << endl;
-	//log << "Position: " << pos << endl;
-	//log << "Section index: " << sectionIdx << endl;
-	//log.close();
 
 // ****************************************************************
 // Determine the zoom (pix/cm).
@@ -434,6 +404,11 @@ void PropModesPicture::draw(wxDC& dc)
 			//log << "Draw map " << elapsed_seconds.count() << endl;
 		}
 		break;
+
+    // ****************************************************************
+    // plot the junction matrix
+    // ****************************************************************
+
 		case 3: {
 			vector<Matrix> F = (m_simu3d->crossSection(sectionIdx))->getMatrixF();
 			int numCont(F.size());
@@ -496,6 +471,110 @@ void PropModesPicture::draw(wxDC& dc)
 
 			}
 		break;
+
+    // ****************************************************************
+    // plot the acoustic field
+    // ****************************************************************
+
+    case 4:
+
+      ColorMap colorMap = ColorScale::getColorMap();
+      double maxAmp;
+      double minAmp;
+      Point3D vecTri[3];
+      Point3D pointToDraw;
+      int numPtSide;
+      double alpha;
+      double beta;
+      double maxDist;
+      int normAmp;
+
+      // initialise white bitmap
+      wxBitmap bmp(width, height, 24);
+      wxNativePixelData data(bmp);
+      wxNativePixelData::Iterator p(data);
+      for (int i = 0; i < height; ++i)
+      {
+        wxNativePixelData::Iterator rowStart = p;
+        for (int j = 0; j < width; ++j, ++p)
+        {
+          p.Red() = 254;
+          p.Green() = 254;
+          p.Blue() = 254;
+        }
+        p = rowStart;
+        p.OffsetY(data, 1);
+      }
+
+      int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
+      int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
+      vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
+      vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
+      Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
+      int mn(modes.cols());
+
+      log << "Mode number " << mn << endl;
+
+      auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
+      auto bid = modes * modesAmpl;
+
+      Vec amplitudes((modes* modesAmpl).cwiseAbs());
+
+      log << "amplitudes\n" << amplitudes << endl;
+
+      maxAmp = amplitudes.maxCoeff();
+      minAmp = amplitudes.minCoeff();
+
+      // draw the acoustic field
+      //
+      // The triangles are interpolated by adding the the fraction a and b 
+      // of the vector formed by two sides and the corresponding vertex amplitude.
+      // The corresponding values are attributed to the location of the nearest 
+      // pixel in the bitmap grid. 
+      // This avoid searching to which triangle a pixel belongs, which has a higher
+      // computational cost.
+      //
+      //
+      //   ^ P1
+      //   |
+      //   |   P?
+      //   |________\ P2
+      //  O         /
+      //
+      //  P = a*P1 + b*P2 + (1 - a - b)*O 
+      //  
+      //  with 0 <= a <= 1 and 0 <= b <= 1
+
+      for (int it(0); it < numFaces; ++it)
+      {
+        for (int i(0); i < 3; i++)
+        {
+          vecTri[i] = Point3D(pts[triangles[it][i]][0], pts[triangles[it][i]][1],
+            amplitudes(triangles[it][i]));
+        }
+
+        maxDist = max(sqrt(pow(vecTri[1].x - vecTri[0].x, 2) + pow(vecTri[1].y - vecTri[0].y, 2)),
+          max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
+            sqrt(pow(vecTri[1].x - vecTri[2].x, 2) + pow(vecTri[1].y - vecTri[2].y, 2))));
+        numPtSide = (int)ceil(maxDist * zoom) + 1;
+
+        for (int i(0); i < numPtSide; i++)
+        {
+          for (int j(0); j < (numPtSide - i); j++)
+          {
+            alpha = ((double)(i) / (double)(numPtSide - 1));
+            beta = ((double)(j) / (double)(numPtSide - 1));
+            pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
+              (1. - alpha - beta) * vecTri[0];
+            normAmp = max(1, (int)(256 * (pointToDraw.z / max(maxAmp, -minAmp) + 1.) / 2.) - 1);
+            p.MoveTo(data, (int)(zoom * pointToDraw.x + centerX), (int)(centerY - zoom * pointToDraw.y));
+            p.Red() = (*colorMap)[normAmp][0];
+            p.Green() = (*colorMap)[normAmp][1];
+            p.Blue() = (*colorMap)[normAmp][2];
+          }
+        }
+      }
+      dc.DrawBitmap(bmp, 0, 0, 0);
 		}
 	}
 	else
@@ -508,7 +587,7 @@ void PropModesPicture::draw(wxDC& dc)
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
   dc.DrawText(info.str(), 0., 0.);
 
-	//log.close();
+	log.close();
 }
 
 // ****************************************************************************
@@ -534,6 +613,14 @@ void PropModesPicture::showF()
 {
 	m_objectToDisplay = 3;
 	Refresh();
+}
+
+// ****************************************************************************
+
+void PropModesPicture::showField()
+{
+  m_objectToDisplay = 4;
+  Refresh();
 }
 
 // ****************************************************************************
@@ -573,11 +660,3 @@ void PropModesPicture::setModeIdx(int idx)
 	m_modeIdx = idx;
 	Refresh();
 }
-
-// ****************************************************************************
-// Accessors
-
-bool PropModesPicture::meshSelected() { return(m_objectToDisplay == 1); }
-bool PropModesPicture::modeSelected() { return(m_objectToDisplay == 2); }
-bool PropModesPicture::fSelected() { return(m_objectToDisplay == 3); }
-int PropModesPicture::modeIdx() { return(m_modeIdx); }

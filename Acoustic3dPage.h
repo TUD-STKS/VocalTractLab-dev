@@ -34,15 +34,18 @@ private:
   Data *data;
   Acoustic3dSimulation *simu3d;
   wxSplitterWindow *splitter;
-  //AreaFunctionPicture *picAreaFunction;
   PropModesPicture *picPropModes;
   Spectrum3dPicture *picSpectrum;
   SegmentsPicture* segPic;
 
-  // propagation modes controls
+  // segment picture controls
+  wxCheckBox* chkShowSegments;
+  wxCheckBox* chkShowField;
 
+  // propagation modes controls
   wxCheckBox* chkShowMesh;
   wxCheckBox* chkShowMode;
+  wxCheckBox* chkShowTransField;
   //wxCheckBox* chkShowF;
 
 // ****************************************************************
@@ -76,12 +79,15 @@ private:
   void OnShowLowerOrderMode(wxCommandEvent& event);
   void OnShowMesh(wxCommandEvent& event);
   void OnShowMode(wxCommandEvent& event);
+  void OnShowTransField(wxCommandEvent& event);
   //void OnShowF(wxCommandEvent& event);
   void OnShowHigherOrderMode(wxCommandEvent& event);
 
   // event handlers for segments picture
   void OnShowPreviousSegment(wxCommandEvent& event);
   void OnShowNextSegment(wxCommandEvent& event);
+  void OnShowSegments(wxCommandEvent& event);
+  void OnShowField(wxCommandEvent& event);
 
   // event handlers for bottom panel
   void OnUpperSpectrumLimitPlus(wxCommandEvent& event);

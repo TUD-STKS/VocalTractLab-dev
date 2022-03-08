@@ -489,6 +489,9 @@ void PropModesPicture::draw(wxDC& dc)
       double maxDist;
       int normAmp;
 
+      Matrix field(width, height);
+      int idxI, idxJ;
+
       // initialise white bitmap
       wxBitmap bmp(width, height, 24);
       wxNativePixelData data(bmp);
@@ -520,10 +523,10 @@ void PropModesPicture::draw(wxDC& dc)
 
       Vec amplitudes((modes* modesAmpl).cwiseAbs());
 
-      log << "amplitudes\n" << amplitudes << endl;
-
       maxAmp = amplitudes.maxCoeff();
       minAmp = amplitudes.minCoeff();
+
+      log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
 
       // draw the acoustic field
       //
@@ -566,15 +569,27 @@ void PropModesPicture::draw(wxDC& dc)
             beta = ((double)(j) / (double)(numPtSide - 1));
             pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
               (1. - alpha - beta) * vecTri[0];
-            normAmp = max(1, (int)(256 * (pointToDraw.z / max(maxAmp, -minAmp) + 1.) / 2.) - 1);
-            p.MoveTo(data, (int)(zoom * pointToDraw.x + centerX), (int)(centerY - zoom * pointToDraw.y));
+            idxI = (int)(zoom * pointToDraw.x + centerX);
+            idxJ = (int)(centerY - zoom * pointToDraw.y);
+            field(idxI, idxJ) = pointToDraw.z;
+            normAmp = max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1);
+            //p.MoveTo(data, (int)(zoom * pointToDraw.x + centerX), (int)(centerY - zoom * pointToDraw.y));
+            p.MoveTo(data, idxI, idxJ);
             p.Red() = (*colorMap)[normAmp][0];
             p.Green() = (*colorMap)[normAmp][1];
             p.Blue() = (*colorMap)[normAmp][2];
           }
         }
       }
+      // write informations
+      info << "f = " << m_simu3d->simuParams().freqField << " Hz" << endl;
+
       dc.DrawBitmap(bmp, 0, 0, 0);
+
+      // export field
+      ofstream ofs("tField.txt");
+      ofs << field << endl;
+      ofs.close();
 		}
 	}
 	else

@@ -78,8 +78,6 @@ void SegmentsPicture::draw(wxDC& dc)
 
     int xBig, yBig, xEnd, yEnd;
 
-    dc.SetPen(*wxBLACK_PEN);
-
     pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
 
     //***************************************************************
@@ -205,6 +203,13 @@ void SegmentsPicture::draw(wxDC& dc)
       {
         //log << "draw section " << i << endl;
 
+        // draw centerline point
+        ptInMin = sec->ctrLinePtIn();
+        xBig = (int)(zoom * ptInMin.x() + centerX);
+        yBig = height - (int)(zoom * ptInMin.y() + centerY);
+        dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
+        dc.DrawCircle(xBig, yBig, 1);
+
         sec = m_simu3d->crossSection(i);
         bbox = sec->contour().bbox();
 
@@ -223,6 +228,8 @@ void SegmentsPicture::draw(wxDC& dc)
         Transformation translateOutMax(CGAL::TRANSLATION,
           sec->scaleOut() * bbox.ymax() * sec->normalOut());
         ptOutMax = translateOutMax(sec->ctrLinePtOut());
+
+        dc.SetPen(*wxBLACK_PEN);
 
         // draw first line
         xBig = (int)(zoom * ptInMin.x() + centerX);

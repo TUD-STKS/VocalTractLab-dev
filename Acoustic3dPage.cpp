@@ -142,8 +142,8 @@ void Acoustic3dPage::updateWidgets()
   chkShowTransField->SetValue(picPropModes->fieldSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
 
-  //picAreaFunction->Refresh();
   picPropModes->Refresh();
+  picSpectrum->Refresh();
   segPic->Refresh();
 }
 
@@ -538,7 +538,7 @@ void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
   // update pictures
   updateWidgets();
   //picAreaFunction->Update();
-  picPropModes->Update();
+  //picPropModes->Update();
 
   OnPlayLongVowel();
 }

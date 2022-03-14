@@ -74,6 +74,7 @@ private:
   void OnComputeModes(wxCommandEvent& event);
   void OnComputeAcousticField(wxCommandEvent& event);
   void OnExportTf(wxCommandEvent& event);
+  void OnExportField(wxCommandEvent& event);
 
   // event handlers for main panel control
   void OnShowLowerOrderMode(wxCommandEvent& event);

@@ -41,6 +41,7 @@ static const int IDB_PLAY_LONG_VOWEL = 6005;
 static const int IDB_PLAY_NOISE_SOURCE = 6006;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD = 6007;
 static const int IDB_EXPORT_TF = 6008;
+static const int IDB_EXPORT_FIELD = 6009;
 
 // Main panel controls
 static const int IDB_SHOW_LOWER_ORDER_MODE = 6010;
@@ -89,6 +90,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
   EVT_BUTTON(IDB_EXPORT_TF, Acoustic3dPage::OnExportTf)
+  EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
   // Main panel controls
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
@@ -141,6 +143,10 @@ void Acoustic3dPage::updateWidgets()
   chkShowMode->SetValue(picPropModes->modeSelected());
   chkShowTransField->SetValue(picPropModes->fieldSelected());
   //chkShowF->SetValue(picPropModes->fSelected());
+
+  // options for segment picture
+  segPic->setShowSegments(chkShowSegments->GetValue());
+  segPic->setShowField(chkShowField->GetValue());
 
   picPropModes->Refresh();
   picSpectrum->Refresh();
@@ -217,6 +223,11 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   
   button = new wxButton(this, IDB_EXPORT_TF, "Export transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_EXPORT_FIELD, "Export acoustic field");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  leftSizer->AddSpacer(20);
   
   button = new wxButton(this, IDB_PLAY_LONG_VOWEL, "Play long vowel");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -290,6 +301,7 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   chkShowSegments = new wxCheckBox(topPanel, IDB_SHOW_SEGMENTS, "Show segments");
   sizer->Add(chkShowSegments, 0, wxALIGN_BOTTOM | wxALL, 2);
+  chkShowSegments->SetValue(true);
 
   sizer->AddStretchSpacer(1);
 
@@ -582,6 +594,10 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
 
 void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 {
+  // hide the previous field if it exists
+  chkShowField->SetValue(false);
+  updateWidgets();
+
   Data* data = Data::getInstance();
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
   VocalTract* tract = data->vocalTract;
@@ -589,8 +605,8 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
   simu3d->computeAcousticField(tract);
 
   // update pictures
+  chkShowField->SetValue(true);
   updateWidgets();
-  //picAreaFunction->Update();
   picPropModes->Update();
 }
 
@@ -599,16 +615,25 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 
 void Acoustic3dPage::OnExportTf(wxCommandEvent& event)
 {
-  //ofstream log("log.txt", ofstream::app);
-  //log << "Export tf" << endl;
-
   wxFileName fileName;
   wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
-    fileName.GetFullName(), ".txt", "Geometry file (*.txt)|*.txt",
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
     wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 
   simu3d->exportTransferFucntions(name.ToStdString());
-  //log.close();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnExportField(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  simu3d->exportAcousticField(name.ToStdString());
 }
 
 // ****************************************************************************
@@ -646,6 +671,22 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
   simu3d->setGeometryImported(true);
   simu3d->setContourInterpolationMethod(FROM_FILE);
   simu3d->setGeometryFile(name.ToStdString());
+
+  VocalTract* tract = data->vocalTract;
+
+  ofstream log("log.txt", ofstream::app);
+
+  if (simu3d->createCrossSections(tract, false))
+  {
+    log << "Geometry successfully imported" << endl;
+  }
+  else
+  {
+    log << "Importation failed" << endl;
+  }
+
+  log.close();
+
   segPic->resetActiveSegment();
 }
 

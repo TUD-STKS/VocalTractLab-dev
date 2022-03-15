@@ -421,8 +421,6 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   this->SetSizer(topLevelSizer);
 }
 
-
-
 // ****************************************************************************
 /// Is called, when one of the child windows has requested the update of
 /// other child windows.
@@ -430,16 +428,20 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
 void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 {
+  ofstream log("log.txt", ofstream::app);
+  log << "OnUpdateRequest" << endl;
+  log.close();
+
   if (event.GetInt() == REFRESH_PICTURES)
   {
-    //picAreaFunction->Refresh();
+    segPic->Refresh();
     picPropModes->Refresh();
   }
   else
   if (event.GetInt() == UPDATE_PICTURES)
   {
-    //picAreaFunction->Refresh();
-    //picAreaFunction->Update();
+    segPic->Refresh();
+    segPic->Update();
     picPropModes->Refresh();
     picPropModes->Update();
   }
@@ -452,14 +454,14 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   if (event.GetInt() == UPDATE_PICTURES_AND_CONTROLS)
   {
     updateWidgets();
-    //picAreaFunction->Update();
+    segPic->Update();
     picPropModes->Update();
   }
   else
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
     updateWidgets();
-    //picAreaFunction->Update();
+    segPic->Update();
     picPropModes->Update();
   }
 }
@@ -532,7 +534,7 @@ void Acoustic3dPage::OnRunTestElephant(wxCommandEvent& event)
   string fileName("file");
   simu3d->runTest(ELEPHANT_TRUNK, fileName);
   updateWidgets();
-  //picAreaFunction->Update();
+  segPic->Update();
   picPropModes->Update();
 }
 
@@ -545,7 +547,7 @@ void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
   VocalTract* tract = data->vocalTract;
 
-  simu3d->staticSimulation(tract);
+  simu3d->computeTransferFunction(tract);
 
   // update pictures
   updateWidgets();
@@ -654,8 +656,15 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
 {
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
+
   simu3d->setGeometryImported(false);
-  segPic->resetActiveSegment();
+  simu3d->requestModesAndJunctionComputation();
+
+  importGeometry();
+
+  updateWidgets();
+
+  //segPic->resetActiveSegment();
 }
 
 // ****************************************************************************
@@ -671,23 +680,11 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
   simu3d->setGeometryImported(true);
   simu3d->setContourInterpolationMethod(FROM_FILE);
   simu3d->setGeometryFile(name.ToStdString());
+  simu3d->requestModesAndJunctionComputation();
 
-  VocalTract* tract = data->vocalTract;
+  importGeometry();
 
-  ofstream log("log.txt", ofstream::app);
-
-  if (simu3d->createCrossSections(tract, false))
-  {
-    log << "Geometry successfully imported" << endl;
-  }
-  else
-  {
-    log << "Importation failed" << endl;
-  }
-
-  log.close();
-
-  segPic->resetActiveSegment();
+  updateWidgets();
 }
 
 // ****************************************************************************
@@ -922,3 +919,25 @@ void Acoustic3dPage::OnFrequencyRangePlus(wxCommandEvent &event)
   picSpectrum->Refresh();
 }
 
+// ****************************************************************************
+
+void Acoustic3dPage::importGeometry()
+{
+
+  VocalTract* tract = data->vocalTract;
+
+  ofstream log("log.txt", ofstream::app);
+
+  if (simu3d->createCrossSections(tract, false))
+  {
+    log << "Geometry successfully imported" << endl;
+  }
+  else
+  {
+    log << "Importation failed" << endl;
+  }
+
+  log.close();
+
+  segPic->resetActiveSegment();
+}

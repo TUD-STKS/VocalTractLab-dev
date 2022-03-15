@@ -98,6 +98,8 @@ private:
   void OnFrequencyRangeMinus(wxCommandEvent& event);
   void OnFrequencyRangePlus(wxCommandEvent& event);
 
+  void importGeometry();
+
 // ****************************************************************************
  // Declare the event table right at the end
  // ****************************************************************************

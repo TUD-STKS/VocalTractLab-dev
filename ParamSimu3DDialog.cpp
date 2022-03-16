@@ -105,11 +105,11 @@ ParamSimu3DDialog *ParamSimu3DDialog::instance = NULL;
 // ****************************************************************************
 
 ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
-    Acoustic3dSimulation* inSimu3d)
+    Acoustic3dSimulation* inSimu3d, VocalTract* tract)
 {
     if (instance == NULL)
     {
-        instance = new ParamSimu3DDialog(parent, inSimu3d);
+        instance = new ParamSimu3DDialog(parent, inSimu3d, tract);
     }
 
     return instance;
@@ -131,7 +131,7 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%2.1f", m_meshDensity);
   txtMeshDensity->SetValue(st);
 
-  st = wxString::Format("%6.f", m_maxCutOnFreq);
+  st = wxString::Format("%6.f", m_simuParams.maxCutOnFreq);
   txtMaxCutOnFreq->SetValue(st);
 
   st = wxString::Format("%5.f", m_simuParams.maxComputedFreq);
@@ -241,7 +241,7 @@ void ParamSimu3DDialog::updateWidgets()
 
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
-  simu3d->setSimulationParameters(m_meshDensity, m_maxCutOnFreq, m_secNoiseSource, 
+  m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
 		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
 }
 
@@ -261,18 +261,18 @@ void ParamSimu3DDialog::setUpdateRequestReceiver(wxWindow* receiver)
 // ****************************************************************************
 
 ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent, 
-    Acoustic3dSimulation *inSimu3d) :
+    Acoustic3dSimulation *inSimu3d, VocalTract* tract) :
 wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
-  simu3d = inSimu3d;
-  m_meshDensity = simu3d->meshDensity();
-  m_maxCutOnFreq = simu3d->maxCutOnFreq();
-  m_secNoiseSource = simu3d->idxSecNoiseSource();
-	m_secConstriction = simu3d->idxConstriction();
-  m_expSpectrumLgth = simu3d->spectrumLgthExponent();
-  m_mouthBoundaryCond = simu3d->mouthBoundaryCond();
-	m_simuParams = simu3d->simuParams();
+  m_simu3d = inSimu3d;
+  m_tract = tract;
+  m_meshDensity = m_simu3d->meshDensity();
+  m_secNoiseSource = m_simu3d->idxSecNoiseSource();
+	m_secConstriction = m_simu3d->idxConstriction();
+  m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
+  m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
+	m_simuParams = m_simu3d->simuParams();
 
   this->Move(100, 100);
 
@@ -822,7 +822,7 @@ void ParamSimu3DDialog::OnMaxCutOnEnter(wxCommandEvent& event)
     wxString st = txtMaxCutOnFreq->GetValue();
     if ((st.ToDouble(&x)) && (x >= 0.0) && (x <= 500000.0))
     {
-        m_maxCutOnFreq = x;
+        m_simuParams.maxCutOnFreq = x;
     }
     m_simuParams.needToComputeModesAndJunctions = true;
     m_simuParams.radImpedPrecomputed = false;
@@ -1064,7 +1064,7 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   ofstream log("log.txt", ofstream::app);
   log << "Load tf points from file:" << endl;
   log << name.ToStdString() << endl;
-  bool success = simu3d->setTFPointsFromCsvFile(name.ToStdString());
+  bool success = m_simu3d->setTFPointsFromCsvFile(name.ToStdString());
   if (success)
   {
     log << "Importation successfull" << endl;
@@ -1151,6 +1151,7 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 	m_simuParams.curved = false;
     m_simuParams.varyingArea = false;
 	chkMagnus->SetValue(false);
+  m_simu3d->importGeometry(m_tract);
     updateWidgets();
 }
 
@@ -1170,6 +1171,7 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
 	m_simuParams.curved = !m_simuParams.curved;
+  m_simu3d->importGeometry(m_tract);
 	updateWidgets();
 }
 
@@ -1260,7 +1262,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   {
     m_meshDensity = 5.;
 
-    m_maxCutOnFreq = 20000.;
+    m_simuParams.maxCutOnFreq = 20000.;
 
     m_simuParams.maxComputedFreq = 10000.;
 
@@ -1271,7 +1273,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   {
     m_meshDensity = 15.;
 
-    m_maxCutOnFreq = 40000.;
+    m_simuParams.maxCutOnFreq = 40000.;
 
     m_simuParams.maxComputedFreq = 20000.;
 

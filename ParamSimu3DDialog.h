@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 #include <wx/dialog.h>
+//#include "Backend/VocalTract.h"
 
 #include "Backend/Acoustic3dSimulation.h"
 
@@ -15,7 +16,7 @@ class ParamSimu3DDialog : public wxDialog
 
 public:
     static ParamSimu3DDialog* getInstance(wxWindow *parent, 
-        Acoustic3dSimulation* inSimu3d);
+        Acoustic3dSimulation* inSimu3d, VocalTract* tract);
     void updateWidgets();
     void setUpdateRequestReceiver(wxWindow* receiver);
 
@@ -65,9 +66,9 @@ private:
   wxComboBox* lstMouthBcond;
   wxComboBox* lstFreqRes;
     
-  Acoustic3dSimulation* simu3d;
+  Acoustic3dSimulation* m_simu3d;
+  VocalTract* m_tract;
   double m_meshDensity;
-  double m_maxCutOnFreq;
   int m_secNoiseSource;
 	int m_secConstriction;
   int m_expSpectrumLgth;
@@ -83,7 +84,7 @@ private:
 // **************************************************************************
 
 private:
-  ParamSimu3DDialog(wxWindow *parent, Acoustic3dSimulation* inSimu3d);
+  ParamSimu3DDialog(wxWindow *parent, Acoustic3dSimulation* inSimu3d, VocalTract* tract);
   void initWidgets();
 
   void OnTemperatureEnter(wxCommandEvent& event);

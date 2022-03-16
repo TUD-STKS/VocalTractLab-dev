@@ -586,7 +586,8 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   // update pictures
   updateWidgets();
   //picAreaFunction->Update();
-  picPropModes->Update();
+  //segPic->Update();
+  //picPropModes->Update();
 
   log.close();
 }
@@ -643,7 +644,9 @@ void Acoustic3dPage::OnExportField(wxCommandEvent& event)
 
 void Acoustic3dPage::OnParamSimuDialog(wxCommandEvent& event)
 {
-  ParamSimu3DDialog *dialog = ParamSimu3DDialog::getInstance(NULL, simu3d);
+
+  ParamSimu3DDialog *dialog = ParamSimu3DDialog::getInstance(
+    NULL, simu3d, data->vocalTract);
   dialog->SetParent(this);
   dialog->Show(true);
   dialog->Raise();
@@ -926,18 +929,7 @@ void Acoustic3dPage::importGeometry()
 
   VocalTract* tract = data->vocalTract;
 
-  ofstream log("log.txt", ofstream::app);
-
-  if (simu3d->createCrossSections(tract, false))
-  {
-    log << "Geometry successfully imported" << endl;
-  }
-  else
-  {
-    log << "Importation failed" << endl;
-  }
-
-  log.close();
+  simu3d->importGeometry(tract);
 
   segPic->resetActiveSegment();
 }

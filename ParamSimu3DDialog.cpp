@@ -807,6 +807,8 @@ void ParamSimu3DDialog::OnMeshDensityEnter(wxCommandEvent& event)
     {
         m_meshDensity = x;
     }
+    m_simuParams.needToComputeModesAndJunctions = true;
+    m_simuParams.radImpedPrecomputed = false;
 
     updateWidgets();
 }
@@ -822,6 +824,8 @@ void ParamSimu3DDialog::OnMaxCutOnEnter(wxCommandEvent& event)
     {
         m_maxCutOnFreq = x;
     }
+    m_simuParams.needToComputeModesAndJunctions = true;
+    m_simuParams.radImpedPrecomputed = false;
 
     updateWidgets();
 }

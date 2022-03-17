@@ -128,6 +128,8 @@ private:
   void OnSetDefaultParamsAccurate(wxCommandEvent& event);
   void SetDefaultParams(bool fast);
 
+  void OnClose(wxCommandEvent& event);
+
 // **************************************************************************
 // Declare the event table.
 // **************************************************************************

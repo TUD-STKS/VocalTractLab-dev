@@ -1,4 +1,5 @@
 #include "ParamSimu3DDialog.h"
+#include "Data.h"
 #include <fstream>
 #include "Backend/Constants.h"
 #include <wx/filename.h>
@@ -95,6 +96,7 @@ EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_FAST, ParamSimu3DDialog::OnSetDefaultParamsFast)
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_ACCURATE, ParamSimu3DDialog::OnSetDefaultParamsAccurate)
+
 END_EVENT_TABLE()
 
 // The single instance of this class.
@@ -1170,9 +1172,26 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
+  //ofstream log("log.txt", ofstream::app);
+
 	m_simuParams.curved = !m_simuParams.curved;
-  m_simu3d->importGeometry(m_tract);
 	updateWidgets();
+  m_simu3d->importGeometry(m_tract);
+
+  //log << "Geometry refreshed" << endl;
+
+  //// Refresh the pictures of the parent window.
+  //if (updateRequestReceiver != NULL)
+  //{
+  //  log << "Before sending event" << endl;
+  //  wxCommandEvent event(updateRequestEvent);
+  //  log << "Event created" << endl;
+  //  event.SetInt(UPDATE_VOCAL_TRACT);
+  //  log << "Event vocal tract" << endl;
+  //  wxPostEvent(updateRequestReceiver, event);
+  //  log << "Event sent" << endl;
+  //}
+  //log.close();
 }
 
 // ****************************************************************************
@@ -1182,6 +1201,7 @@ void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
 	m_simuParams.varyingArea = !m_simuParams.varyingArea;
 	updateWidgets();
+  m_simu3d->importGeometry(m_tract);
 }
 
 // ****************************************************************************

@@ -932,4 +932,9 @@ void Acoustic3dPage::importGeometry()
   simu3d->importGeometry(tract);
 
   segPic->resetActiveSegment();
+
+  // clean the log file
+  ofstream log;
+  log.open("log.txt", ofstream::out | ofstream::trunc);
+  log.close();
 }

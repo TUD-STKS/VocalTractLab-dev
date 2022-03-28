@@ -41,6 +41,43 @@ l = 0.25;
 
 %% zero pressure at the opening
 
+%% compare with FEM
+
+load stabilized_elephant_p0_fs2_mesh2_out_3D
+He = H;
+
+load elephant_p0_stabilized_out_3D.mat
+
+load elephant_ac_press_MM_p0_mn_53_nPt_200_d_30.txt
+pMM = elephant_ac_press_MM_p0_mn_53_nPt_200_d_30;
+
+h = figure('position', [680   751   518   227]);
+hold on
+
+HFEM = 20*log10(abs(H(f <= 10000)));
+HFEMe = 20*log10(abs(He(f <= 10000)));
+f = f(f <= 10000);
+
+HMM = 20*log10(abs(interp1(pMM(:,1), pMM(:,2), f, 'spline')));
+
+plot(f/1000, HMM)
+plot(f/1000, HFEM, 'linewidth', lWidth)
+plot(f/1000, HFEMe, 'linewidth', lWidth)
+
+xlim([0 10])
+ylim([70 140])
+xlabel('f (kHz)')
+ylabel('|H| (dB)')
+grid on
+
+h = legend('MM', 'FEM orig', 'FEM new');
+
+set(h, 'fontsize', ftSize);
+legend boxoff
+set(gca, 'fontsize', ftSize);
+
+%% plot effect of different parameters
+
 load elephant_p0_out_3D.mat
 Hp0_orig = H;
 load elephant_p0_stabilized_out_3D.mat

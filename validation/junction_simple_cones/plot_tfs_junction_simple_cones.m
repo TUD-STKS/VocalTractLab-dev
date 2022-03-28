@@ -10,9 +10,11 @@
 %load tfFEM.txt;
 %tf3 = tfFEM;
 load tfMM.txt;
-load tfFEM.txt
+load tfFEM_0_01.txt
+load press_lj_0_005.txt;
+load press_0_01.txt
+load press_lj_0_01.txt
 load press.txt;
-load press_2.txt;
 
 ftSize = 16;
 lSize = 1;
@@ -24,7 +26,7 @@ fac = 1;
 figure
 subplot(2,1,1)
 hold on
-plot(tfFEM(:,1), 20*log10(tfFEM(:,2)), 'lineWidth', lSize)
+plot(tfFEM_0_01(:,1), 20*log10(tfFEM_0_01(:,2)), 'lineWidth', lSize)
 plot(tfMM(:,1), 20*log10(fac*tfMM(:,2)), 'lineWidth', lSize)
 %plot(tf1(:,1), 20*log10(tf1(:,2)), 'lineWidth', lSize)
 %plot(tf2(:,1), 20*log10(tf2(:,2)), 'lineWidth', lSize)
@@ -43,7 +45,7 @@ set(gca, 'fontSize', ftSize)
 
 subplot(2,1,2)
 hold on
-plot(tfFEM(:,1), tfFEM(:,3), 'lineWidth', lSize)
+plot(tfFEM_0_01(:,1), tfFEM_0_01(:,3), 'lineWidth', lSize)
 plot(tfMM(:,1), tfMM(:,3), 'lineWidth', lSize)
 %plot(tf1(:,1), tf1(:,3), 'lineWidth', lSize)
 %plot(tf2(:,1), tf2(:,3), 'lineWidth', lSize)
@@ -62,31 +64,33 @@ set(gca, 'fontSize', ftSize)
 
 %% plot P/V tf
 
-fac = 10;
+fac = 10^(-0.89/20)*10*(16/9/sqrt(pi)/1.5);
 
 figure
 
 subplot(2,1,1)
 hold on
-plot(tfFEM(:,1), 20*log10(tfFEM(:,4)), 'lineWidth', 2*lSize)
-plot(tfMM(:,1), 20*log10(fac*tfMM(:,4)), 'lineWidth', lSize)
-plot(press(:,1), 20*log10((16/9/sqrt(pi)/1.5)*fac*press(:,6)), 'lineWidth', lSize)
-plot(press_2(:,1), 20*log10((16/9/sqrt(pi)/1.5)*fac*press_2(:,6)), 'lineWidth', lSize)
+plot(tfFEM_0_01(:,1), 20*log10(tfFEM_0_01(:,4)), 'lineWidth', lSize)
+% plot(tfMM(:,1), 20*log10(fac*tfMM(:,4)), 'lineWidth', lSize)
+plot(press_0_01(:,1), 20*log10(10^(4.34/20)*fac*press_0_01(:,2)), 'lineWidth', lSize)
+plot(press_lj_0_01(:,1), 20*log10(10^(-2.58/20)*10*(16/9/sqrt(pi)/1.5)*press_lj_0_01(:,6)), 'lineWidth', lSize)
+plot(press(:,1), 20*log10(10^(-1.69/20)*fac*press(:,2)), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'
 ylabel '|H| (dB)'
 
-h = legend('FEM (FeniCS)', 'MM ref', 'MM new', 'MM loss junc', 'location', 'southeast',...
+h = legend('FEM (FeniCS)', 'MM', 'MM loss junc', 'location', 'southeast',...
   'orientation', 'horizontal');
 legend boxoff
 % set(h, 'fontSize', ftSize) 
 
 subplot(2,1,2)
 hold on
-plot(tfFEM(:,1), tfFEM(:,5), 'lineWidth', lSize)
-plot(tfMM(:,1), tfMM(:,5), 'lineWidth', lSize)
-plot(press(:,1), press(:,7), 'lineWidth', lSize)
+plot(tfFEM_0_01(:,1), tfFEM_0_01(:,5), 'lineWidth', lSize)
+% plot(tfMM(:,1), tfMM(:,5), 'lineWidth', lSize)
+plot(press_0_01(:,1), press_0_01(:,3), 'lineWidth', lSize)
+plot(press_lj_0_01(:,1), press_lj_0_01(:,7), 'lineWidth', lSize)
 
 xlim([0 10000])
 xlabel 'f (Hz)'

@@ -114,7 +114,7 @@ for v = 1:3
 end
 fclose(fid);
 
-% print('-painters', '-dsvg', h, 'vowels.svg')
+% print('-painters', '-dsvg', h, 'vowels_orig.svg')
 
 stringSave = [stringSave ');'];
 eval(stringSave);

@@ -577,9 +577,16 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   simu3d->computeMeshAndModes();
 
   ofstream ofs("modes.txt");
+  int nm;
   for (int i(0); i < simu3d->numCrossSections(); i++)
   {
-    ofs << simu3d->crossSection(i)->numberOfModes() << endl;
+    nm = simu3d->crossSection(i)->numberOfModes();
+    ofs << nm;
+    if (nm >= 2)
+    {
+      ofs << "  " << simu3d->crossSection(i)->eigenFrequency(1);
+    }
+    ofs << endl;
   }
   ofs.close();
 

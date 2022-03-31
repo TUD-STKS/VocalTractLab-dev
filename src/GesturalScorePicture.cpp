@@ -1485,8 +1485,9 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
 
     if (moveTarget)
     {
-      Gesture *g = data->getSelectedGesture();
-      if ((g != NULL) && (gestureType == data->selectedGestureType))
+      //Gesture *g = data->getSelectedGesture();
+      //if ((g != NULL) && (gestureType == data->selectedGestureType))
+      if (gestureType == data->selectedGestureType)
       {
         int dy = my - lastMy;
 
@@ -1501,8 +1502,7 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
           rowHeight = 0.000001;
         }
 
-        g->dVal-= dy*(max - min) / rowHeight;
-        gs->getGestures()[data->selectedGestureType].limitGestureParams(*g);
+        data->gesturalScore.changeTargetValue(data->selectedGestureType, data->selectedGestureIndex, dy* (max - min) / rowHeight);
         updatePage(UPDATE_PICTURES_AND_CONTROLS);
       }
       else

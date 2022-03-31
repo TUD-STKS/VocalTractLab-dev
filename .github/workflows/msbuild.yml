@@ -30,8 +30,10 @@ jobs:
         path: wxWidgets-3.1.3
         key: ${{ runner.os }}-wx
 
-    - name: Add MSBuild to PATH
+    - name: Add MSBuild to PATH (Visual Studio 2019)
       uses: microsoft/setup-msbuild@v1.0.2
+      with:
+        vs-version: '[16.4,16.5)'
     
     - name: Build wxWidgets
       if: steps.cache-wx.outputs.cache-hit != 'true'

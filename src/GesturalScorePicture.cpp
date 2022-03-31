@@ -57,7 +57,7 @@ GesturalScorePicture::GesturalScorePicture(wxWindow *parent, wxWindow *updatePar
 {
   this->updateParent = updateParent;
   data = Data::getInstance();
-  gs = data->gesturalScore;
+  gs = &data->gesturalScore;
 
   int i;
   for (i=0; i < GesturalScore::NUM_GESTURE_TYPES; i++)

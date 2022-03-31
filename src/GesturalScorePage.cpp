@@ -389,7 +389,7 @@ void GesturalScorePage::initWidgets()
   int maxWidth{ 0 };
   for (int i = 0; i < GesturalScore::NUM_GESTURE_TYPES; ++i)
   {
-      wxString label = data->gesturalScore->gestures[i].name;
+      wxString label = data->gesturalScore.gestures[i].name;
       maxWidth = std::max(maxWidth, GetTextExtent(label).GetWidth());
   }
   data->LEFT_SCORE_MARGIN = maxWidth + FromDIP(10);
@@ -483,7 +483,7 @@ void GesturalScorePage::updateWidgets()
   // Calculate the targets and time functions of the parameters.
   // ****************************************************************
 
-  data->gesturalScore->calcCurves();
+  data->gesturalScore.calcCurves();
 
   // Label for the mark position
 
@@ -596,7 +596,7 @@ void GesturalScorePage::updateWidgets()
     txtDuration->Enable(true);
     scrTimeConstant->Enable(true);
 
-    GestureSequence *sequence = &data->gesturalScore->gestures[ data->selectedGestureType ];
+    GestureSequence *sequence = &data->gesturalScore.gestures[ data->selectedGestureType ];
     int pos;
     wxString st;
 
@@ -824,7 +824,7 @@ void GesturalScorePage::lengthenGesturalScore()
   int i;
   int index;
   double pos_s = data->gesturalScoreMark_s;
-  GesturalScore *gs = data->gesturalScore;
+  GesturalScore *gs = &data->gesturalScore;
 
   for (i=0; i < GesturalScore::NUM_GESTURE_TYPES; i++)
   {
@@ -853,7 +853,7 @@ void GesturalScorePage::shortenGesturalScore()
   GestureSequence *s;
   Gesture *g;
   double pos_s = data->gesturalScoreMark_s;
-  GesturalScore *gs = data->gesturalScore;
+  GesturalScore *gs = &data->gesturalScore;
 
   for (i=0; i < GesturalScore::NUM_GESTURE_TYPES; i++)
   {
@@ -916,7 +916,7 @@ void GesturalScorePage::fillGestureValueList(bool forced)
   if ((gesture != NULL) && 
       ((data->selectedGestureType != prevSelectedGestureType) || (forced)))
   {
-    GestureSequence *sequence = &data->gesturalScore->gestures[ data->selectedGestureType ];
+    GestureSequence *sequence = &data->gesturalScore.gestures[ data->selectedGestureType ];
     wxArrayString stringList;
 
     // **************************************************************
@@ -1217,7 +1217,7 @@ void GesturalScorePage::OnContinualValueChanged(wxFocusEvent &event)
   Gesture *g = data->getSelectedGesture();
   if (g != NULL)
   {
-    GestureSequence *sequence = &data->gesturalScore->gestures[data->selectedGestureType];
+    GestureSequence *sequence = &data->gesturalScore.gestures[data->selectedGestureType];
     wxString st = txtContinualValue->GetValue();
     g->dVal = atof((const char*)st.c_str());
     sequence->limitGestureParams(*g);
@@ -1243,7 +1243,7 @@ void GesturalScorePage::OnContinualValueEntered(wxCommandEvent &event)
   Gesture *g = data->getSelectedGesture();
   if (g != NULL)
   {
-    GestureSequence *sequence = &data->gesturalScore->gestures[data->selectedGestureType];
+    GestureSequence *sequence = &data->gesturalScore.gestures[data->selectedGestureType];
     wxString st = txtContinualValue->GetValue();
     g->dVal = atof((const char*)st.c_str());
     sequence->limitGestureParams(*g);
@@ -1312,7 +1312,7 @@ void GesturalScorePage::OnTimeConstantChanged(wxScrollEvent &event)
   Gesture *g = data->getSelectedGesture();
   if (g != NULL)
   {
-    GestureSequence *sequence = &data->gesturalScore->gestures[ data->selectedGestureType ];
+    GestureSequence *sequence = &data->gesturalScore.gestures[ data->selectedGestureType ];
     int pos = event.GetPosition();
     g->tau_s = sequence->minTau_s + pos*(sequence->maxTau_s - sequence->minTau_s) / 100.0;
 
@@ -1337,7 +1337,7 @@ void GesturalScorePage::OnSlopeChanged(wxScrollEvent &event)
 
   if (g != NULL)
   {
-    GestureSequence *sequence = &data->gesturalScore->gestures[ data->selectedGestureType ];
+    GestureSequence *sequence = &data->gesturalScore.gestures[ data->selectedGestureType ];
     // Can a slope be adjusted at all?
     if (sequence->minSlope < sequence->maxSlope)
     {
@@ -1479,14 +1479,14 @@ void GesturalScorePage::OnSynthesize(wxCommandEvent &event)
   // ****************************************************************
 
   data->synthesisType = Data::SYNTHESIS_GESMOD;
-  TubeSequence *tubeSequence = data->gesturalScore;
+  TubeSequence *tubeSequence = &data->gesturalScore;
 
   // Keep in mind the user settings for F0 and lung pressure
   data->userPressure_dPa = data->getSelectedGlottis()->controlParam[ Glottis::PRESSURE ].x;
   data->userF0_Hz = data->getSelectedGlottis()->controlParam[ Glottis::FREQUENCY ].x;
 
   // Set the currently selected glottis model.
-  data->gesturalScore->glottis = data->getSelectedGlottis();
+  data->gesturalScore.glottis = data->getSelectedGlottis();
 
   tubeSequence->resetSequence();
   data->tdsModel->resetMotion();

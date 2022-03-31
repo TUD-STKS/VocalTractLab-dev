@@ -304,7 +304,7 @@ void SignalComparisonPicture::paintSignals(wxDC &dc)
     if (showModelF0Curve)
     {
       // Paint the model F0 curve for the main track (from the gestural score).
-      vector<double> *modelF0Curve = &data->gesturalScore->glottisParamCurve[Glottis::FREQUENCY];
+      vector<double> *modelF0Curve = &data->gesturalScore.glottisParamCurve[Glottis::FREQUENCY];
       spectrogramPlot->drawCurve(dc, LEFT_MARGIN, rowY[index], windowWidth-LEFT_MARGIN, rowH[index], 
         *modelF0Curve, 1.0/GesturalScore::CURVE_SAMPLING_RATE, startTime_s, duration_s,
         0.0, 600.0, mainF0Color, true);

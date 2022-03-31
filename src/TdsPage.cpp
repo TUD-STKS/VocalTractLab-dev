@@ -164,7 +164,7 @@ void TdsPage::updateWidgets()
     labTime->Enable();
 
     // Pos. and range of the scroll bar are in ms.
-    int range = 1000.0*(double)data->gesturalScore->getScoreDuration_s();
+    int range = 1000.0*(double)data->gesturalScore.getScoreDuration_s();
     if (range < 1)
     {
       range = 1;
@@ -708,7 +708,7 @@ void TdsPage::OnStartSynthesis(wxCommandEvent &event)
 
     case Data::SYNTHESIS_GESMOD:
       // Set the currently selected glottis model.
-      data->gesturalScore->glottis = data->getSelectedGlottis();
+      data->gesturalScore.glottis = data->getSelectedGlottis();
       break;
 
     default: break;

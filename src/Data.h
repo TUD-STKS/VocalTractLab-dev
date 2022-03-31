@@ -272,7 +272,8 @@ public:
   ImpulseExcitation *subglottalInputImpedance;
   ImpulseExcitation *supraglottalInputImpedance;
   ImpulseExcitation *transferFunction;
-  GesturalScore *gesturalScore;
+
+  GesturalScore gesturalScore;
 
   // The color scale
   static const int NUM_TDS_SCALE_COLORS = 256;

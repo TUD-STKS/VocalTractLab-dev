@@ -284,7 +284,7 @@ void Data::init(const wxString &arg0)
   subglottalInputImpedance = new ImpulseExcitation();
   supraglottalInputImpedance = new ImpulseExcitation();
   transferFunction = new ImpulseExcitation();
-  gesturalScore = new GesturalScore(vocalTract, glottis[selectedGlottis]);
+  gesturalScore = GesturalScore(vocalTract, glottis[selectedGlottis]);
 
   // ****************************************************************
   // Gestural score variables.
@@ -1122,14 +1122,14 @@ bool Data::exportEmaTrajectories(const wxString &fileName)
   Point3D Q;
 
   const double EMA_SAMPLING_RATE_HZ = 200.0;
-  int numFrames = (int)(gesturalScore->getScoreDuration_s() * EMA_SAMPLING_RATE_HZ);
+  int numFrames = (int)(gesturalScore.getScoreDuration_s() * EMA_SAMPLING_RATE_HZ);
 
   os << setprecision(8);
 
   for (k=0; k < numFrames; k++)
   {
     t_s = (double)k / (double)EMA_SAMPLING_RATE_HZ;
-    gesturalScore->getParams(t_s, tractParams, glottisParams);
+    gesturalScore.getParams(t_s, tractParams, glottisParams);
 
     for (i=0; i < VocalTract::NUM_PARAMS; i++)
     {
@@ -1176,7 +1176,7 @@ bool Data::exportEmaTrajectories(const wxString &fileName)
 bool Data::exportVocalTractVideoFrames(const wxString &folderName)
 {
   const int VIDEO_FRAME_RATE = 30;
-  double duration_s = gesturalScore->getDuration_pt() / (double)SAMPLING_RATE;
+  double duration_s = gesturalScore.getDuration_pt() / (double)SAMPLING_RATE;
   int numFrames = (int)(duration_s*VIDEO_FRAME_RATE);
   int i;
   int frameIndex;
@@ -1205,7 +1205,7 @@ bool Data::exportVocalTractVideoFrames(const wxString &folderName)
     // Calculate the vocal tract shape at the current frame.
 
     time_s = (double)frameIndex / (double)VIDEO_FRAME_RATE;
-    gesturalScore->getParams(time_s, vocalTractParams, glottisParams);
+    gesturalScore.getParams(time_s, vocalTractParams, glottisParams);
 
     for (i=0; i < VocalTract::NUM_PARAMS; i++)
     {
@@ -1266,7 +1266,7 @@ bool Data::exportTransferFunctionsFromScore(const wxString &fileName)
 {
   const int SPECTRUM_LENGTH = 8192;
   const int FRAME_RATE = 1000;
-  double duration_s = gesturalScore->getDuration_pt() / (double)SAMPLING_RATE;
+  double duration_s = gesturalScore.getDuration_pt() / (double)SAMPLING_RATE;
   int numFrames = (int)(duration_s*FRAME_RATE);
   int i;
   int frameIndex;
@@ -1332,7 +1332,7 @@ bool Data::exportTransferFunctionsFromScore(const wxString &fileName)
     // Calculate the vocal tract shape at the current frame.
 
     time_s = (double)frameIndex / (double)FRAME_RATE;
-    gesturalScore->getParams(time_s, vocalTractParams, glottisParams);
+    gesturalScore.getParams(time_s, vocalTractParams, glottisParams);
 
     for (i = 0; i < VocalTract::NUM_PARAMS; i++)
     {
@@ -2738,7 +2738,7 @@ TubeSequence *Data::getSelectedTubeSequence()
     case SYNTHESIS_TRANSFER_FUNCTION:             ts = transferFunction; break;
     case SYNTHESIS_LF_VOWEL:                      ts = vowelLf; break;
     case SYNTHESIS_PHONE:                         ts = staticPhone; break;
-    case SYNTHESIS_GESMOD:                        ts = gesturalScore; break;
+    case SYNTHESIS_GESMOD:                        ts = &gesturalScore; break;
     default: break;
   }
 
@@ -2755,7 +2755,7 @@ Gesture *Data::getSelectedGesture()
 {
   if ((selectedGestureType >= 0) && (selectedGestureType < GesturalScore::NUM_GESTURE_TYPES))
   {
-    GestureSequence *s = &gesturalScore->gestures[selectedGestureType];
+    GestureSequence *s = &gesturalScore.gestures[selectedGestureType];
     if ((selectedGestureIndex >= 0) && (selectedGestureIndex < s->numGestures()))
     {
       return s->getGesture(selectedGestureIndex);
@@ -2801,7 +2801,7 @@ void Data::selectGlottis(int index)
 
   selectedGlottis = index;
   // Also set the glottis for the gestural score !
-  gesturalScore->glottis = glottis[index];
+  gesturalScore.glottis = glottis[index];
 }
 
 
@@ -2824,7 +2824,7 @@ void Data::updateTlModelGeometry(VocalTract *tract)
 void Data::updateModelsFromGesturalScore()
 {
   int i;
-  int numGlottisParams = (int)gesturalScore->glottis->controlParam.size();
+  int numGlottisParams = (int)gesturalScore.glottis->controlParam.size();
   double tractParams[VocalTract::NUM_PARAMS];
   double glottisParams[128];
 
@@ -2832,19 +2832,19 @@ void Data::updateModelsFromGesturalScore()
   // Set the parameters for the glottis and vocal tract model.
   // ****************************************************************
 
-  gesturalScore->getParams(gesturalScoreMark_s, tractParams, glottisParams);
+  gesturalScore.getParams(gesturalScoreMark_s, tractParams, glottisParams);
 
   for (i=0; i < VocalTract::NUM_PARAMS; i++)
   {
-    gesturalScore->vocalTract->param[i].x = tractParams[i];
+    gesturalScore.vocalTract->param[i].x = tractParams[i];
   }
-  gesturalScore->vocalTract->calculateAll();
+  gesturalScore.vocalTract->calculateAll();
 
   for (i=0; i < numGlottisParams; i++)
   {
-    gesturalScore->glottis->controlParam[i].x = glottisParams[i];
+    gesturalScore.glottis->controlParam[i].x = glottisParams[i];
   }
-  gesturalScore->glottis->calcGeometry();
+  gesturalScore.glottis->calcGeometry();
 
   // ****************************************************************
   // Update the pictures in the glottis/vocal tract dialogs.

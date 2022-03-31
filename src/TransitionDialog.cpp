@@ -593,7 +593,7 @@ void TransitionDialog::get2dVowelParams(const wxString &vowel,
     {
       vtParams[i] = vt->shapes[shapeIndex].param[i];
     }
-    data->gesturalScore->mapToVowelSubspace(vt, vtParams, alphaTongue, betaTongue, alphaLips, betaLips);
+    GesturalScore::mapToVowelSubspace(vt, vtParams, alphaTongue, betaTongue, alphaLips, betaLips);
   }
 }
 

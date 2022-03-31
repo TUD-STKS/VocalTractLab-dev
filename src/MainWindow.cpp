@@ -1148,7 +1148,7 @@ void MainWindow::OnLoadGesturalScore(wxCommandEvent &event)
   {
     bool allValuesInRange = true;
     data->gesturalScoreFileName = name;
-    if (data->gesturalScore->loadGesturesXml(name.ToStdString(), allValuesInRange) == false)
+    if (data->gesturalScore.loadGesturesXml(name.ToStdString(), allValuesInRange) == false)
     {
       wxMessageBox("Loading the gestural score failed!", "Error!");
     }
@@ -1177,7 +1177,7 @@ void MainWindow::OnSaveGesturalScore(wxCommandEvent &event)
   if (name.empty() == false)
   {
     data->gesturalScoreFileName = name;
-    if (data->gesturalScore->saveGesturesXml(name.ToStdString()) == false)
+    if (data->gesturalScore.saveGesturesXml(name.ToStdString()) == false)
     {
       wxMessageBox("Saving the gestural score failed!", "Error!");
     }
@@ -1514,7 +1514,7 @@ void MainWindow::OnChangeGesturalScoreF0Offset(wxCommandEvent &event)
   double f0Sd_st;
   double f0Mean_Hz;
   double f0Sd_Hz;
-  data->gesturalScore->getF0Statistic(f0Mean_st, f0Sd_st, f0Mean_Hz, f0Sd_Hz);
+  data->gesturalScore.getF0Statistic(f0Mean_st, f0Sd_st, f0Mean_Hz, f0Sd_Hz);
 
   // ****************************************************************
 
@@ -1534,7 +1534,7 @@ void MainWindow::OnChangeGesturalScoreF0Offset(wxCommandEvent &event)
     return;
   }
 
-  data->gesturalScore->changeF0Offset(deltaF0_st);
+  data->gesturalScore.changeF0Offset(deltaF0_st);
   updateWidgets();
 
   // Obtain the new F0 statistics.
@@ -1543,7 +1543,7 @@ void MainWindow::OnChangeGesturalScoreF0Offset(wxCommandEvent &event)
   double newF0Sd_st;
   double newF0Mean_Hz;
   double newF0Sd_Hz;
-  data->gesturalScore->getF0Statistic(newF0Mean_st, newF0Sd_st, newF0Mean_Hz, newF0Sd_Hz);
+  data->gesturalScore.getF0Statistic(newF0Mean_st, newF0Sd_st, newF0Mean_Hz, newF0Sd_Hz);
 
   wxPrintf("New mean F0 - old mean F0 in st: %2.2f\n", newF0Mean_st - f0Mean_st);
 }
@@ -1570,7 +1570,7 @@ void MainWindow::OnChangeGesturalScoreF0Range(wxCommandEvent &event)
     return;
   }
 
-  data->gesturalScore->changeF0Range(factor);
+  data->gesturalScore.changeF0Range(factor);
   updateWidgets();
 }
 
@@ -1596,7 +1596,7 @@ void MainWindow::OnChangeGesturalScoreF0TargetSlopes(wxCommandEvent &event)
   return;
   }
 
-  data->gesturalScore->changeF0TargetSlope(summand);
+  data->gesturalScore.changeF0TargetSlope(summand);
   updateWidgets();
 }
 
@@ -1624,7 +1624,7 @@ void MainWindow::OnSubstituteGesturalScoreGlottalShapes(wxCommandEvent &event)
     return;
   }
 
-  data->gesturalScore->substituteGlottalShapes(oldShapeName.ToStdString(), newShapeName.ToStdString());
+  data->gesturalScore.substituteGlottalShapes(oldShapeName.ToStdString(), newShapeName.ToStdString());
   updateWidgets();
 }
 
@@ -1650,7 +1650,7 @@ void MainWindow::OnChangeGesturalScoreSubglottalPressure(wxCommandEvent &event)
   return;
   }
 
-  data->gesturalScore->changeSubglottalPressure(factor);
+  data->gesturalScore.changeSubglottalPressure(factor);
   updateWidgets();
 }
 
@@ -1665,7 +1665,7 @@ void MainWindow::OnGetGesturalScoreF0Statistics(wxCommandEvent &event)
   double f0Mean_Hz;
   double f0Sd_Hz;
 
-  data->gesturalScore->getF0Statistic(f0Mean_st, f0Sd_st, f0Mean_Hz, f0Sd_Hz);
+  data->gesturalScore.getF0Statistic(f0Mean_st, f0Sd_st, f0Mean_Hz, f0Sd_Hz);
 
   wxString st = wxString::Format(
     "F0 mean (SD) with a Hz scale: %2.2f (%2.2f) Hz\n"
@@ -1700,7 +1700,7 @@ void MainWindow::OnChangeGesturalScoreDuration(wxCommandEvent &event)
     return;
   }
 
-  data->gesturalScore->changeDuration(factor);
+  data->gesturalScore.changeDuration(factor);
   updateWidgets();
 }
 
@@ -1727,7 +1727,7 @@ void MainWindow::OnChangeGesturalScoreTimeConstants(wxCommandEvent &event)
     return;
   }
 
-  data->gesturalScore->changeTimeConstants(factor);
+  data->gesturalScore.changeTimeConstants(factor);
   updateWidgets();
 }
 
@@ -2203,7 +2203,7 @@ void MainWindow::OnGesturalScoreToTubeSequenceFile(wxCommandEvent &event)
     return;
   }
 
-  if (Synthesizer::gesturalScoreToTubeSequenceFile(data->gesturalScore, name.ToStdString()) == false)
+  if (Synthesizer::gesturalScoreToTubeSequenceFile(&data->gesturalScore, name.ToStdString()) == false)
   {
     wxMessageBox("The tube sequence file could not be saved.", "Error");
   }
@@ -2226,7 +2226,7 @@ void MainWindow::OnGesturalScoreToTractSequenceFile(wxCommandEvent &event)
     return;
   }
 
-  if (Synthesizer::gesturalScoreToTractSequenceFile(data->gesturalScore, name.ToStdString()) == false)
+  if (Synthesizer::gesturalScoreToTractSequenceFile(&data->gesturalScore, name.ToStdString()) == false)
   {
     wxMessageBox("The tract sequence file could not be saved.", "Error");
   }
@@ -2439,7 +2439,7 @@ void MainWindow::OnClearAudioTracks(wxCommandEvent &event)
 
 void MainWindow::OnClearGesturalScore(wxCommandEvent &event)
 {
-  data->gesturalScore->clear();
+  data->gesturalScore.clear();
   updateWidgets();
 }
 

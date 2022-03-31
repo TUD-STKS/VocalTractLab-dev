@@ -1172,10 +1172,7 @@ void GesturalScorePage::OnSplitterPosChanged(wxSplitterEvent &event)
 
 void GesturalScorePage::OnNominalValueSelected(wxCommandEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    g->sVal = lstNominalValue->GetValue();
+    data->gesturalScore.setGestureValue(data->selectedGestureType, data->selectedGestureIndex, lstNominalValue->GetValue().ToStdString());
     updateWidgets();
     gesturalScorePicture->Refresh();
     gesturalScorePicture->Update();
@@ -1183,7 +1180,6 @@ void GesturalScorePage::OnNominalValueSelected(wxCommandEvent &event)
     signalComparisonPicture->Update();
     data->updateModelsFromGesturalScore();
     wxYield();
-  }
 }
 
 
@@ -1193,20 +1189,16 @@ void GesturalScorePage::OnNominalValueSelected(wxCommandEvent &event)
 
 void GesturalScorePage::OnNominalValueEntered(wxCommandEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    g->sVal = lstNominalValue->GetValue();
-    // Refill the list (forced)!
-    fillGestureValueList(true);
-    updateWidgets();
-    gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
-    signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
-    data->updateModelsFromGesturalScore();
-    wxYield();
-  }
+  data->gesturalScore.setGestureValue(data->selectedGestureType, data->selectedGestureIndex, lstNominalValue->GetValue().ToStdString());
+  // Refill the list (forced)!
+  fillGestureValueList(true);
+  updateWidgets();
+  gesturalScorePicture->Refresh();
+  gesturalScorePicture->Update();
+  signalComparisonPicture->Refresh();
+  signalComparisonPicture->Update();
+  data->updateModelsFromGesturalScore();
+  wxYield();
 }
 
 // ****************************************************************************

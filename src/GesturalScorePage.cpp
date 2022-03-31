@@ -1284,11 +1284,9 @@ void GesturalScorePage::OnContinualValueEntered(wxCommandEvent &event)
 
 void GesturalScorePage::OnDurationChanged(wxSpinEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
     int val_ms = event.GetValue();
-    g->duration_s = 0.001 * (double)val_ms;
+    data->gesturalScore.setGestureDuration(data->selectedGestureType, data->selectedGestureIndex,
+        0.001 * (double)val_ms);
 
     updateWidgets();
     gesturalScorePicture->Refresh();
@@ -1297,7 +1295,6 @@ void GesturalScorePage::OnDurationChanged(wxSpinEvent &event)
     signalComparisonPicture->Update();
     data->updateModelsFromGesturalScore();
     wxYield();
-  }
 }
 
 
@@ -1311,7 +1308,8 @@ void GesturalScorePage::OnDurationEntered(wxCommandEvent &event)
   if (g != NULL)
   {
     int val_ms = txtDuration->GetValue();
-    g->duration_s = 0.001 * (double)val_ms;
+    data->gesturalScore.setGestureDuration(data->selectedGestureType, data->selectedGestureIndex,
+        0.001 * (double)val_ms);
 
     updateWidgets();
     gesturalScorePicture->Refresh();

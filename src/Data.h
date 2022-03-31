@@ -258,7 +258,7 @@ public:
   IirFilter outputPressureFilter;
 
   // List with glottis models
-  Glottis *glottis[NUM_GLOTTIS_MODELS];
+  Glottis* glottis[NUM_GLOTTIS_MODELS];
   bool saveGlottisSignals;
   wxString glottisSignalsFileName;
 

@@ -28,13 +28,16 @@
 #include <iomanip>
 #include <iostream>
 
-#include "Data.h"
-#include "GlottisDialog.h"
-#include "VocalTractDialog.h"
 #include "VocalTractLabBackend/Dsp.h"
 #include "VocalTractLabBackend/XmlNode.h"
-#include "SoundLib.h"
+#include "VocalTractLabBackend/Speaker.h"
 #include "VocalTractLabBackend/Synthesizer.h"
+
+#include "Data.h"
+#include "GlottisDialog.h"
+#include "SoundLib.h"
+#include "VocalTractDialog.h"
+
 
 
 // Define a custom event type to be used for command events.
@@ -3147,84 +3150,24 @@ void Data::normalizeAudioAmplitude(int trackIndex)
 bool Data::loadSpeaker(const wxString &fileName)
 {
     speakerFileName = fileName;
-
-    // ****************************************************************
-     // Load the XML data from the speaker file.
-     // ****************************************************************
-
-    vector<XmlError> xmlErrors;
-    XmlNode* rootNode = xmlParseFile(string(speakerFileName), "speaker", &xmlErrors);
-    if (rootNode == NULL)
-    {
-        xmlPrintErrors(xmlErrors);
-        return false;
-    }
-
-    // ****************************************************************
-    // Load the data for the glottis models.
-    // ****************************************************************
-
-    // This may be overwritten later.
-    selectedGlottis = GEOMETRIC_GLOTTIS;
-
-    XmlNode* glottisModelsNode = rootNode->getChildElement("glottis_models");
-    if (glottisModelsNode != NULL)
-    {
-        int i;
-        XmlNode* glottisNode;
-
-        for (i = 0; (i < (int)glottisModelsNode->childElement.size()) && (i < NUM_GLOTTIS_MODELS); i++)
-        {
-            glottisNode = glottisModelsNode->childElement[i];
-            if (glottisNode->getAttributeString("type") == glottis[i]->getName())
-            {
-                if (glottisNode->getAttributeInt("selected") == 1)
-                {
-                    selectedGlottis = i;
-                }
-                if (glottis[i]->readFromXml(*glottisNode) == false)
-                {
-                    wxPrintf("Error: Failed to read glottis data for glottis model %d!\n", i);
-                    delete rootNode;
-                    return false;
-                }
-            }
-            else
-            {
-                wxPrintf("Error: The type of the glottis model %d in the speaker file is '%s' "
-                    "but should be '%s'!\n", i,
-                    glottisNode->getAttributeString("type").c_str(),
-                    glottis[i]->getName().c_str());
-
-                delete rootNode;
-                return false;
-            }
-        }
-    }
-    else
-    {
-        wxPrintf("Warning: No glottis model data found in the speaker file %s!\n", speakerFileName);
-    }
-
-    // Free the memory of the XML tree !
-    delete rootNode;
-
-    // ****************************************************************
-    // Load the vocal tract anatomy and vocal tract shapes.
-    // ****************************************************************
-
     try
     {
-        vocalTract->readFromXml(string(speakerFileName));
-        vocalTract->calculateAll();
+        const Speaker speaker(speakerFileName.ToStdString());
+
+        for (size_t i = 0; i < speaker.getGlottisModels().size(); ++i)
+        {
+            glottis[i] = speaker.getGlottisModels()[i];
+        }
+        selectedGlottis = speaker.getSelectedGlottis();
+
+        vocalTract = speaker.getVocalTract();
     }
-    catch (std::string st)
+    catch (XmlException& e)
     {
-        wxPrintf("%s\n", st.c_str());
-        wxPrintf("Error reading the anatomy data from %s.\n", speakerFileName);
+        wxMessageBox(wxString(e.what()), "Speaker file error", wxICON_ERROR);
         return false;
     }
-
+    
     return true;
 }
 

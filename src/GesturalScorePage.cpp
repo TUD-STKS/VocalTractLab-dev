@@ -26,6 +26,7 @@
 #include "SoundLib.h"
 
 #include <stdio.h>
+#include <wx/artprov.h>
 #include <wx/config.h>
 #include <wx/statline.h>
 #include <wx/splitter.h>
@@ -77,6 +78,8 @@ static const int IDB_CALC_F0          = 4065;
 static const int IDB_CALC_VOICE_QUALITY = 4066;
 static const int IDB_ANALYSIS_RESULTS = 4067;
 static const int IDB_ANNOTATION_DIALOG = 4068;
+static const int IDB_UNDO = 4069;
+static const int IDB_REDO = 4070;
 
 
 // ****************************************************************************
@@ -335,7 +338,7 @@ void GesturalScorePage::initWidgets()
   button = new wxButton(this, IDB_SHOW_GLOTTIS, "Show glottis");
   leftSizer->Add(button, 0, wxALL | wxGROW, 3);
 
-  leftSizer->AddSpacer(10);
+  leftSizer->AddSpacer(FromDIP(10));
 
   button = new wxButton(this, IDB_CALC_F0, "Calculate F0");
   leftSizer->Add(button, 0, wxALL | wxGROW, 3);
@@ -351,6 +354,19 @@ void GesturalScorePage::initWidgets()
 
   button = new wxButton(this, IDB_ANNOTATION_DIALOG, "Annotation dialog");
   leftSizer->Add(button, 0, wxALL | wxGROW, 3);
+
+  leftSizer->AddSpacer(FromDIP(10));
+
+  auto* leftInnerSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  button = new wxButton(this, IDB_UNDO, wxEmptyString);
+  button->SetBitmap(wxArtProvider::GetBitmap(wxART_UNDO));
+  leftInnerSizer->Add(button, 1, wxALL | wxGROW, 3);
+  button = new wxButton(this, IDB_REDO, wxEmptyString);
+  button->SetBitmap(wxArtProvider::GetBitmap(wxART_REDO));
+  leftInnerSizer->Add(button, 1, wxALL | wxGROW, 3);
+
+  leftSizer->Add(leftInnerSizer, 0, wxALL | wxGROW, 0);
 
   // ****************************************************************
   // Static line to separate the left and right part.

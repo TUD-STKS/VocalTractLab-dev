@@ -1618,16 +1618,7 @@ void GesturalScorePicture::OnDeleteGesture(wxCommandEvent &event)
     return; 
   }
 
-  GestureSequence *sequence = &gs->getGestures()[gestureType];
-  if (sequence->isValidIndex(gestureIndex))
-  {
-    double duration_s = sequence->getGesture(gestureIndex)->duration_s;
-    sequence->deleteGesture(gestureIndex);
-    if (gestureIndex > 0) 
-    { 
-      sequence->getGesture(gestureIndex-1)->duration_s+= duration_s; 
-    }
-  }
+  gs->deleteGesture(gestureType, gestureIndex);
 
   updatePage(UPDATE_PICTURES_AND_CONTROLS);
   data->updateModelsFromGesturalScore();

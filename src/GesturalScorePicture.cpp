@@ -1596,48 +1596,7 @@ void GesturalScorePicture::OnInsertGesture(wxCommandEvent &event)
     return; 
   }
 
-  GestureSequence *sequence = &gs->getGestures()[gestureType];
-  gestureIndex = sequence->getIndexAt(cursorPos_s);
-
-  // ****************************************************************
-  // Split the existing gesture.
-  // ****************************************************************
-
-  if (sequence->isValidIndex(gestureIndex))
-  {
-    Gesture *gesture = sequence->getGesture(gestureIndex);
-    double startPos_s = sequence->getGestureBegin_s(gestureIndex);
-    gesture->duration_s = startPos_s + gesture->duration_s - cursorPos_s;
-
-    Gesture newGesture = *gesture;
-    newGesture.duration_s = cursorPos_s - startPos_s;
-    sequence->insertGesture(newGesture, gestureIndex);
-
-    sequence->limitGestureParams( *sequence->getGesture(gestureIndex) );
-    sequence->limitGestureParams( *sequence->getGesture(gestureIndex+1) );
-
-    data->selectedGestureIndex = gestureIndex;
-  }
-  else
-
-  // ****************************************************************
-  // Add a new gesture to the end of the sequence.
-  // ****************************************************************
-
-  {
-    Gesture newGesture;
-    sequence->initGestureParams(newGesture);
-    newGesture.duration_s = cursorPos_s - sequence->getDuration_s();
-    // For f0 gestures, assign a greater time constant than the default.
-    if (gestureType == GesturalScore::F0_GESTURE)
-    {
-      newGesture.tau_s = 0.020;   // 20 ms
-    }
-    sequence->limitGestureParams(newGesture);
-    sequence->appendGesture(newGesture);
-
-    data->selectedGestureIndex = sequence->numGestures() - 1;
-  }
+  data->selectedGestureIndex = gs->insertGesture(gestureType, cursorPos_s, gestureIndex);
 
   updatePage(UPDATE_PICTURES_AND_CONTROLS);
   data->updateModelsFromGesturalScore();

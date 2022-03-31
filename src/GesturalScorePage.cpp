@@ -1214,10 +1214,7 @@ void GesturalScorePage::OnNominalValueEntered(wxCommandEvent &event)
 
 void GesturalScorePage::OnNeutralGesture(wxCommandEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    g->neutral = !g->neutral;
+	data->gesturalScore.setGestureNeutral(data->selectedGestureType, data->selectedGestureIndex, event.GetSelection());
     updateWidgets();
     gesturalScorePicture->Refresh();
     gesturalScorePicture->Update();
@@ -1225,7 +1222,6 @@ void GesturalScorePage::OnNeutralGesture(wxCommandEvent &event)
     signalComparisonPicture->Update();
     data->updateModelsFromGesturalScore();
     wxYield();
-  }
 }
 
 // ****************************************************************************

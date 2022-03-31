@@ -1473,49 +1473,9 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
 
     if (moveBorder)
     {
-      Gesture *gesture = data->getSelectedGesture();
-      if (gesture != NULL)
-      {
-        GestureSequence *sequence = &gs->getGestures()[data->selectedGestureType];
-
-        // There are two modi to move the border (with or without SHIFT)
-
-        if ((event.ShiftDown()) && (sequence->numGestures() > data->selectedGestureIndex + 1))
-        {
-          Gesture *nextGesture = sequence->getGesture(data->selectedGestureIndex + 1);
-          double cursorPos_s = data->gsTimeAxisGraph->getAbsXValue(mx);
-          double gesturePos_s = sequence->getGestureBegin_s(data->selectedGestureIndex);
-          const double EPSILON = 0.001;     // = 1 ms
-
-          if (cursorPos_s < gesturePos_s + EPSILON) 
-          { 
-            cursorPos_s = gesturePos_s + EPSILON; 
-          }
-
-          if (cursorPos_s > gesturePos_s + gesture->duration_s + nextGesture->duration_s - EPSILON) 
-          { 
-            cursorPos_s = gesturePos_s + gesture->duration_s + nextGesture->duration_s - EPSILON; 
-          }
-
-          if (cursorPos_s < gesturePos_s) 
-          { 
-            cursorPos_s = gesturePos_s; 
-          }
-
-          double deltaPos_s = cursorPos_s - (gesturePos_s + gesture->duration_s);
-          gesture->duration_s+= deltaPos_s;
-          nextGesture->duration_s-= deltaPos_s;
-        }
-        else
-        {
-          gesture->duration_s = data->gsTimeAxisGraph->getAbsXValue(mx) - 
-            sequence->getGestureBegin_s(data->selectedGestureIndex);
-         
-          sequence->limitGestureParams(*gesture);
-        }
-
-        updatePage(UPDATE_PICTURES_AND_CONTROLS);
-      }
+      data->gesturalScore.changeGestureEnd(data->selectedGestureType, 
+          data->selectedGestureIndex, data->gsTimeAxisGraph->getAbsXValue(mx), event.ShiftDown());
+      updatePage(UPDATE_PICTURES_AND_CONTROLS);
     }
     else
 

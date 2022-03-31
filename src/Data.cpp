@@ -2756,7 +2756,7 @@ Gesture *Data::getSelectedGesture()
   if ((selectedGestureType >= 0) && (selectedGestureType < GesturalScore::NUM_GESTURE_TYPES))
   {
     GestureSequence *s = &gesturalScore.get()->getGestures()[selectedGestureType];
-    if ((selectedGestureIndex >= 0) && (selectedGestureIndex < s->numGestures()))
+    if (s->isValidIndex(selectedGestureIndex))
     {
       return s->getGesture(selectedGestureIndex);
     }

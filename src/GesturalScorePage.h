@@ -164,6 +164,11 @@ private:
 
   void OnResize(wxSizeEvent& event);
 
+  void OnUndo(wxCommandEvent& event);
+  void OnRedo(wxCommandEvent& event);
+
+  void OnUpdateUIEvent(wxUpdateUIEvent& event);
+
   // ****************************************************************************
   // Declare the event table right at the end
   // ****************************************************************************

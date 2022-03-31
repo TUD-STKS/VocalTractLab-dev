@@ -120,9 +120,13 @@ BEGIN_EVENT_TABLE(GesturalScorePage, wxPanel)
   EVT_BUTTON(IDB_CALC_VOICE_QUALITY, GesturalScorePage::OnCalcVoiceQuality)
   EVT_BUTTON(IDB_ANALYSIS_RESULTS, GesturalScorePage::OnAnalysisResults)
   EVT_BUTTON(IDB_ANNOTATION_DIALOG, GesturalScorePage::OnAnnotationDialog)
+
+  EVT_BUTTON(IDB_UNDO, GesturalScorePage::OnUndo)
+  EVT_BUTTON(IDB_REDO, GesturalScorePage::OnRedo)
   
   EVT_SPLITTER_SASH_POS_CHANGING(IDS_SPLITTER, GesturalScorePage::OnSplitterPosChanged)
   EVT_SIZE(GesturalScorePage::OnResize)
+  EVT_UPDATE_UI(wxID_ANY, GesturalScorePage::OnUpdateUIEvent)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -1755,6 +1759,29 @@ void GesturalScorePage::OnResize(wxSizeEvent& event)
 {
   event.Skip();
   updateWidgets();
+  
+}
+
+void GesturalScorePage::OnUndo(wxCommandEvent& event)
+{
+    data->gesturalScore.Undo();
+    updateWidgets();
+    Refresh();
+}
+
+void GesturalScorePage::OnRedo(wxCommandEvent& event)
+{
+    data->gesturalScore.Redo();
+    updateWidgets();
+    Refresh();
+}
+
+void GesturalScorePage::OnUpdateUIEvent(wxUpdateUIEvent& event)
+{
+    FindWindow(IDB_UNDO)->Enable(data->gesturalScore.CanUndo());
+    FindWindow(IDB_REDO)->Enable(data->gesturalScore.CanRedo());
+
+    event.Skip();    
 }
 
 

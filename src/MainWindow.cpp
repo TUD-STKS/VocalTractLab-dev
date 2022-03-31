@@ -2203,7 +2203,7 @@ void MainWindow::OnGesturalScoreToTubeSequenceFile(wxCommandEvent &event)
     return;
   }
 
-  if (Synthesizer::gesturalScoreToTubeSequenceFile(&data->gesturalScore, name.ToStdString()) == false)
+  if (Synthesizer::gesturalScoreToTubeSequenceFile(&*data->gesturalScore.get(), name.ToStdString()) == false)
   {
     wxMessageBox("The tube sequence file could not be saved.", "Error");
   }
@@ -2226,7 +2226,7 @@ void MainWindow::OnGesturalScoreToTractSequenceFile(wxCommandEvent &event)
     return;
   }
 
-  if (Synthesizer::gesturalScoreToTractSequenceFile(&data->gesturalScore, name.ToStdString()) == false)
+  if (Synthesizer::gesturalScoreToTractSequenceFile(&*data->gesturalScore.get(), name.ToStdString()) == false)
   {
     wxMessageBox("The tract sequence file could not be saved.", "Error");
   }

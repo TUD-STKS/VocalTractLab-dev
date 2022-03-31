@@ -284,7 +284,7 @@ void Data::init(const wxString &arg0)
   subglottalInputImpedance = new ImpulseExcitation();
   supraglottalInputImpedance = new ImpulseExcitation();
   transferFunction = new ImpulseExcitation();
-  gesturalScore = GesturalScore(vocalTract, glottis[selectedGlottis]);
+  gesturalScore = GesturalScoreWithHistory(vocalTract, glottis[selectedGlottis]);
 
   // ****************************************************************
   // Gestural score variables.
@@ -2738,7 +2738,7 @@ TubeSequence *Data::getSelectedTubeSequence()
     case SYNTHESIS_TRANSFER_FUNCTION:             ts = transferFunction; break;
     case SYNTHESIS_LF_VOWEL:                      ts = vowelLf; break;
     case SYNTHESIS_PHONE:                         ts = staticPhone; break;
-    case SYNTHESIS_GESMOD:                        ts = &gesturalScore; break;
+    case SYNTHESIS_GESMOD:                        ts = &*gesturalScore.get(); break;
     default: break;
   }
 
@@ -2755,7 +2755,7 @@ Gesture *Data::getSelectedGesture()
 {
   if ((selectedGestureType >= 0) && (selectedGestureType < GesturalScore::NUM_GESTURE_TYPES))
   {
-    GestureSequence *s = &gesturalScore.gestures[selectedGestureType];
+    GestureSequence *s = &gesturalScore.get()->getGestures()[selectedGestureType];
     if ((selectedGestureIndex >= 0) && (selectedGestureIndex < s->numGestures()))
     {
       return s->getGesture(selectedGestureIndex);
@@ -2801,7 +2801,7 @@ void Data::selectGlottis(int index)
 
   selectedGlottis = index;
   // Also set the glottis for the gestural score !
-  gesturalScore.glottis = glottis[index];
+  gesturalScore.setGlottis(glottis[index]);
 }
 
 
@@ -2824,7 +2824,7 @@ void Data::updateTlModelGeometry(VocalTract *tract)
 void Data::updateModelsFromGesturalScore()
 {
   int i;
-  int numGlottisParams = (int)gesturalScore.glottis->controlParam.size();
+  int numGlottisParams = (int)gesturalScore.getGlottis()->controlParam.size();
   double tractParams[VocalTract::NUM_PARAMS];
   double glottisParams[128];
 
@@ -2836,15 +2836,15 @@ void Data::updateModelsFromGesturalScore()
 
   for (i=0; i < VocalTract::NUM_PARAMS; i++)
   {
-    gesturalScore.vocalTract->param[i].x = tractParams[i];
+    gesturalScore.getVocalTract()->param[i].x = tractParams[i];
   }
-  gesturalScore.vocalTract->calculateAll();
+  gesturalScore.getVocalTract()->calculateAll();
 
   for (i=0; i < numGlottisParams; i++)
   {
-    gesturalScore.glottis->controlParam[i].x = glottisParams[i];
+    gesturalScore.getGlottis()->controlParam[i].x = glottisParams[i];
   }
-  gesturalScore.glottis->calcGeometry();
+  gesturalScore.getGlottis()->calcGeometry();
 
   // ****************************************************************
   // Update the pictures in the glottis/vocal tract dialogs.

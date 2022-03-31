@@ -60,7 +60,7 @@ private:
   static const int MAX_PARAMS = 100;
 
   Data *data;
-  GesturalScore *gs;
+  GesturalScoreWithHistory *gs;
   wxWindow *updateParent;
   double verticalOffset_percent;
   int gestureRowY[GesturalScore::NUM_GESTURE_TYPES];

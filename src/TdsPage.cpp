@@ -708,7 +708,7 @@ void TdsPage::OnStartSynthesis(wxCommandEvent &event)
 
     case Data::SYNTHESIS_GESMOD:
       // Set the currently selected glottis model.
-      data->gesturalScore.glottis = data->getSelectedGlottis();
+      data->gesturalScore.setGlottis(data->getSelectedGlottis());
       break;
 
     default: break;

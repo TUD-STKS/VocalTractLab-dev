@@ -116,7 +116,7 @@ void GesturalScorePicture::draw(wxDC &dc)
 
 int GesturalScorePicture::getNumControlParams()
 {
-  int x = VocalTract::NUM_PARAMS + (int)gs->glottis->controlParam.size();
+  int x = VocalTract::NUM_PARAMS + (int)gs->getGlottis()->controlParam.size();
   return x;
 }
 
@@ -223,7 +223,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
   {
     y = gestureRowY[i];
     h = gestureRowH[i];
-    label = gs->gestures[i].name;
+    label = gs->getGestures()[i].name;
   	// Only draw the label if it is visible
     if ((y+h >= 0) && (y < windowHeight))
     {
@@ -252,7 +252,7 @@ void GesturalScorePicture::paintGesturalScore(wxDC &dc)
     h = gestureRowH[i];
     if ((y+h >= 0) && (y < windowHeight))
     {
-      sequence = &gs->gestures[i];
+      sequence = &gs->getGestures()[i];
       numGestures = sequence->numGestures();
 
       // ************************************************************
@@ -578,20 +578,20 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
 
   for (i=0; i < VocalTract::NUM_PARAMS; i++)
   {
-    minVal[i] = gs->vocalTract->param[i].min;
-    maxVal[i] = gs->vocalTract->param[i].max;
+    minVal[i] = gs->getVocalTract()->param[i].min;
+    maxVal[i] = gs->getVocalTract()->param[i].max;
   }
 
   for (i=VocalTract::NUM_PARAMS; i < N; i++)
   {
     k = i - VocalTract::NUM_PARAMS;
     // Should not happen:
-    if (k >= (int)gs->glottis->controlParam.size())
+    if (k >= (int)gs->getGlottis()->controlParam.size())
     {
-      k = (int)gs->glottis->controlParam.size() - 1;
+      k = (int)gs->getGlottis()->controlParam.size() - 1;
     }
-    minVal[i] = gs->glottis->controlParam[k].min;
-    maxVal[i] = gs->glottis->controlParam[k].max;
+    minVal[i] = gs->getGlottis()->controlParam[k].min;
+    maxVal[i] = gs->getGlottis()->controlParam[k].max;
   }
 
   for (i=0; i < N; i++)
@@ -631,17 +631,17 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
     {
       if (i < VocalTract::NUM_PARAMS)
       {
-        sequence = &gs->tractParamTargets[i];
+        sequence = &gs->getTractParamTargets()[i];
       }
       else
       {
         k = i - VocalTract::NUM_PARAMS;
         // Should not happen:
-        if (k >= (int)gs->glottis->controlParam.size())
+        if (k >= (int)gs->getGlottis()->controlParam.size())
         {
-          k = (int)gs->glottis->controlParam.size() - 1;
+          k = (int)gs->getGlottis()->controlParam.size() - 1;
         }
-        sequence = &gs->glottisParamTargets[k];
+        sequence = &gs->getGlottisParamTargets()[k];
       }
 
       // ************************************************************
@@ -755,7 +755,7 @@ void GesturalScorePicture::paintMotorProgram(wxDC &dc)
       }
       else
       {
-        label = gs->glottis->controlParam[i - VocalTract::NUM_PARAMS].description;
+        label = gs->getGlottis()->controlParam[i - VocalTract::NUM_PARAMS].description;
       }
 
       cutString(dc, label, LEFT_MARGIN - FromDIP(10));
@@ -948,7 +948,7 @@ void GesturalScorePicture::getUnderlyingGesture(int localX, int localY,
   {
     if ((my >= gestureRowY[i]) && (my < gestureRowY[i] + gestureRowH[i]))
     {
-      sequence = &gs->gestures[i];
+      sequence = &gs->getGestures()[i];
       gestureType = i;
       size = sequence->numGestures();
       startTime_s = 0.0;
@@ -1025,7 +1025,7 @@ void GesturalScorePicture::getTargetLineCoord(int gestureType, int leftBorderX, 
   double t0, double v0, double t1, double v1, double &x0, double &y0, double &x1, double &y1)
 {
   int i = gestureType;
-  GestureSequence *sequence = &gs->gestures[gestureType];
+  GestureSequence *sequence = &gs->getGestures()[gestureType];
 
   x0 = data->gsTimeAxisGraph->getXPos(t0);
   x1 = data->gsTimeAxisGraph->getXPos(t1);
@@ -1154,7 +1154,7 @@ void GesturalScorePicture::getTargetLineCoord(int gestureType, int leftBorderX, 
 
 void GesturalScorePicture::getParamCurveMinMax(int paramIndex, double &min, double &max)
 {
-  int numParams = VocalTract::NUM_PARAMS + (int)gs->glottis->controlParam.size();
+  int numParams = VocalTract::NUM_PARAMS + (int)gs->getGlottis()->controlParam.size();
   min = 0.0;
   max = 1.0;
 
@@ -1169,8 +1169,8 @@ void GesturalScorePicture::getParamCurveMinMax(int paramIndex, double &min, doub
 
   if (paramIndex < VocalTract::NUM_PARAMS)
   {
-    min = gs->vocalTract->param[paramIndex].min;
-    max = gs->vocalTract->param[paramIndex].max;
+    min = gs->getVocalTract()->param[paramIndex].min;
+    max = gs->getVocalTract()->param[paramIndex].max;
   }
   else
 
@@ -1180,14 +1180,14 @@ void GesturalScorePicture::getParamCurveMinMax(int paramIndex, double &min, doub
 
   {
     int k = paramIndex - VocalTract::NUM_PARAMS;
-    min = gs->glottis->controlParam[k].min;
-    max = gs->glottis->controlParam[k].max;
+    min = gs->getGlottis()->controlParam[k].min;
+    max = gs->getGlottis()->controlParam[k].max;
 
     // For the F0 parameters, take the limits in semitones of the gesture type.
     if (k == Glottis::FREQUENCY)
     {
-      min = gs->gestures[GesturalScore::F0_GESTURE].minValue;
-      max = gs->gestures[GesturalScore::F0_GESTURE].maxValue;
+      min = gs->getGestures()[GesturalScore::F0_GESTURE].minValue;
+      max = gs->getGestures()[GesturalScore::F0_GESTURE].maxValue;
     }
   }
 
@@ -1211,7 +1211,7 @@ int GesturalScorePicture::getRepresentativeParam(int gestureType)
     VocalTract::TTY,
     VocalTract::TBY,
     VocalTract::VO,
-    VocalTract::NUM_PARAMS + gs->glottis->getApertureParamIndex(),
+    VocalTract::NUM_PARAMS + gs->getGlottis()->getApertureParamIndex(),
     VocalTract::NUM_PARAMS + 0,    // F0 gestures
     VocalTract::NUM_PARAMS + 1,    // Pressure gestures
   };
@@ -1373,7 +1373,7 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
       // Gesture value can only be moved for non-neutral, non-nominal gestures
       if ((gestureType >= 0) && (gestureType < GesturalScore::NUM_GESTURE_TYPES))
       {
-        GestureSequence *s = &gs->gestures[gestureType];
+        GestureSequence *s = &gs->getGestures()[gestureType];
         if (s->nominalValues)
         {
           moveTarget = false;
@@ -1476,7 +1476,7 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
       Gesture *gesture = data->getSelectedGesture();
       if (gesture != NULL)
       {
-        GestureSequence *sequence = &gs->gestures[data->selectedGestureType];
+        GestureSequence *sequence = &gs->getGestures()[data->selectedGestureType];
 
         // There are two modi to move the border (with or without SHIFT)
 
@@ -1542,7 +1542,7 @@ void GesturalScorePicture::OnMouseEvent(wxMouseEvent &event)
         }
 
         g->dVal-= dy*(max - min) / rowHeight;
-        gs->gestures[data->selectedGestureType].limitGestureParams(*g);
+        gs->getGestures()[data->selectedGestureType].limitGestureParams(*g);
         updatePage(UPDATE_PICTURES_AND_CONTROLS);
       }
       else
@@ -1596,7 +1596,7 @@ void GesturalScorePicture::OnInsertGesture(wxCommandEvent &event)
     return; 
   }
 
-  GestureSequence *sequence = &gs->gestures[gestureType];
+  GestureSequence *sequence = &gs->getGestures()[gestureType];
   gestureIndex = sequence->getIndexAt(cursorPos_s);
 
   // ****************************************************************
@@ -1659,7 +1659,7 @@ void GesturalScorePicture::OnDeleteGesture(wxCommandEvent &event)
     return; 
   }
 
-  GestureSequence *sequence = &gs->gestures[gestureType];
+  GestureSequence *sequence = &gs->getGestures()[gestureType];
   if (sequence->isValidIndex(gestureIndex))
   {
     double duration_s = sequence->getGesture(gestureIndex)->duration_s;

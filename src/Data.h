@@ -48,7 +48,7 @@
 #include "VocalTractLabBackend/StaticPhone.h"
 #include "VocalTractLabBackend/VowelLf.h"
 #include "VocalTractLabBackend/ImpulseExcitation.h"
-#include "VocalTractLabBackend/GesturalScore.h"
+#include "VocalTractLabBackend/GesturalScoreWithHistory.h"
 #include "VocalTractLabBackend/SegmentSequence.h"
 #include "VocalTractLabBackend/AnatomyParams.h"
 
@@ -273,7 +273,7 @@ public:
   ImpulseExcitation *supraglottalInputImpedance;
   ImpulseExcitation *transferFunction;
 
-  GesturalScore gesturalScore;
+  GesturalScoreWithHistory gesturalScore;
 
   // The color scale
   static const int NUM_TDS_SCALE_COLORS = 256;

@@ -1222,21 +1222,15 @@ void GesturalScorePage::OnNeutralGesture(wxCommandEvent &event)
 
 void GesturalScorePage::OnContinualValueChanged(wxFocusEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    GestureSequence *sequence = &data->gesturalScore.getGestures()[data->selectedGestureType];
-    wxString st = txtContinualValue->GetValue();
-    g->dVal = atof((const char*)st.c_str());
-    sequence->limitGestureParams(*g);
-
-    updateWidgets();
-    gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
-    signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
-    data->updateModelsFromGesturalScore();
-  }
+  double newVal;
+  auto success = txtContinualValue->GetValue().ToDouble(&newVal);
+  data->gesturalScore.setGestureValue(data->selectedGestureType, data->selectedGestureIndex, newVal);
+  updateWidgets();
+  gesturalScorePicture->Refresh();
+  gesturalScorePicture->Update();
+  signalComparisonPicture->Refresh();
+  signalComparisonPicture->Update();
+  data->updateModelsFromGesturalScore();
 
   // Important: Also call the base class handler.
   event.Skip();
@@ -1248,22 +1242,17 @@ void GesturalScorePage::OnContinualValueChanged(wxFocusEvent &event)
 
 void GesturalScorePage::OnContinualValueEntered(wxCommandEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    GestureSequence *sequence = &data->gesturalScore.getGestures()[data->selectedGestureType];
-    wxString st = txtContinualValue->GetValue();
-    g->dVal = atof((const char*)st.c_str());
-    sequence->limitGestureParams(*g);
-
-    updateWidgets();
-    gesturalScorePicture->Refresh();
-    gesturalScorePicture->Update();
-    signalComparisonPicture->Refresh();
-    signalComparisonPicture->Update();
-    data->updateModelsFromGesturalScore();
-    wxYield();
-  }
+  double newVal;
+  auto success = txtContinualValue->GetValue().ToDouble(&newVal);
+  data->gesturalScore.setGestureValue(data->selectedGestureType, data->selectedGestureIndex, newVal);
+  
+  updateWidgets();
+  gesturalScorePicture->Refresh();
+  gesturalScorePicture->Update();
+  signalComparisonPicture->Refresh();
+  signalComparisonPicture->Update();
+  data->updateModelsFromGesturalScore();
+  wxYield();
 }
 
 // ****************************************************************************

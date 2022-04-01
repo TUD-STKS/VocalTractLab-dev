@@ -1328,26 +1328,14 @@ void GesturalScorePage::OnTimeConstantChanged(wxScrollEvent &event)
 
 void GesturalScorePage::OnSlopeChanged(wxScrollEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-
-  if (g != NULL)
-  {
-    GestureSequence *sequence = &data->gesturalScore.getGestures()[ data->selectedGestureType ];
-    // Can a slope be adjusted at all?
-    if (sequence->minSlope < sequence->maxSlope)
-    {
-      int pos = event.GetPosition();
-      g->slope = sequence->minSlope + 0.001*pos*(sequence->maxSlope - sequence->minSlope);
-
-      updateWidgets();
-      gesturalScorePicture->Refresh();
-      gesturalScorePicture->Update();
-      signalComparisonPicture->Refresh();
-      signalComparisonPicture->Update();
-      data->updateModelsFromGesturalScore();
-      wxYield();
-    }
-  }
+  data->gesturalScore.setGestureSlope(data->selectedGestureType, data->selectedGestureIndex, event.GetPosition() * 0.001);
+  updateWidgets();
+  gesturalScorePicture->Refresh();
+  gesturalScorePicture->Update();
+  signalComparisonPicture->Refresh();
+  signalComparisonPicture->Update();
+  data->updateModelsFromGesturalScore();
+  wxYield();
 }
 
 

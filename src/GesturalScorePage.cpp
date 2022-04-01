@@ -1304,12 +1304,7 @@ void GesturalScorePage::OnDurationEntered(wxCommandEvent &event)
 
 void GesturalScorePage::OnTimeConstantChanged(wxScrollEvent &event)
 {
-  Gesture *g = data->getSelectedGesture();
-  if (g != NULL)
-  {
-    GestureSequence *sequence = &data->gesturalScore.getGestures()[ data->selectedGestureType ];
-    int pos = event.GetPosition();
-    g->tau_s = sequence->minTau_s + pos*(sequence->maxTau_s - sequence->minTau_s) / 100.0;
+    data->gesturalScore.setGestureTimeConstant(data->selectedGestureType, data->selectedGestureIndex, 0.01 * event.GetPosition());
 
     updateWidgets();
     gesturalScorePicture->Refresh();
@@ -1318,7 +1313,6 @@ void GesturalScorePage::OnTimeConstantChanged(wxScrollEvent &event)
     signalComparisonPicture->Update();
     data->updateModelsFromGesturalScore();
     wxYield();
-  }
 }
 
 

@@ -46,6 +46,7 @@ private:
   wxCheckBox* chkShowMesh;
   wxCheckBox* chkShowMode;
   wxCheckBox* chkShowTransField;
+  wxCheckBox* chkShowNoiseSourceSpec;
   //wxCheckBox* chkShowF;
 
 // ****************************************************************
@@ -73,7 +74,8 @@ private:
   void OnPlayNoiseSource(wxCommandEvent& event);
   void OnComputeModes(wxCommandEvent& event);
   void OnComputeAcousticField(wxCommandEvent& event);
-  void OnExportTf(wxCommandEvent& event);
+  void OnExportGlottalSourceTf(wxCommandEvent& event);
+  void OnExportNoiseSourceTf(wxCommandEvent& event);
   void OnExportField(wxCommandEvent& event);
 
   // event handlers for main panel control
@@ -97,6 +99,7 @@ private:
   void OnLowerSpectrumLimitMinus(wxCommandEvent& event);
   void OnFrequencyRangeMinus(wxCommandEvent& event);
   void OnFrequencyRangePlus(wxCommandEvent& event);
+  void OnShowNoiseSourceSpec(wxCommandEvent& event);
 
   void importGeometry();
 

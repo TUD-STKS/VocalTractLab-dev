@@ -14,6 +14,9 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
 
   this->simu3d = simu3d;
 
+  m_showGlottalTf = true;
+  m_showNoiseTf = true;
+
   // ****************************************************************
   // The spectrum graph
   // ****************************************************************
@@ -54,33 +57,89 @@ void Spectrum3dPicture::draw(wxDC &dc)
 
 void Spectrum3dPicture::paintSpectrum(wxDC &dc)
 {
+  if (m_showGlottalTf)
+  {
+    drawTf(dc, GLOTTAL);
+  }
+
+  if (m_showNoiseTf)
+  {
+    drawTf(dc, NOISE);
+  }
+
+//  int graphX, graphY, graphW, graphH, y, lastY;
+//  double freq, val;
+//
+//  graph.getDimensions(graphX, graphY, graphW, graphH);
+//
+//  dc.SetPen(wxPen(*wxBLACK, lineWidth));
+//  
+//// 
+//  for (int i(0); i < graphW; i++)
+//  {
+//    freq = graph.getAbsXValue(graphX + i);
+//    val = abs(simu3d->interpolateTransferFunction(freq, 0, GLOTTAL));
+//
+//    y = graph.getYPos(val);
+//
+//    if (y < graphY) 
+//    { 
+//      y = graphY; 
+//    }
+//    if (y >= graphY + graphH) 
+//    { 
+//      y = graphY + graphH - 1; 
+//    }
+//
+//    if (i > 0) 
+//    { 
+//      dc.DrawLine(graphX+i-1, lastY, graphX+i, y); 
+//    }
+//
+//    lastY = y;
+//  }
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
+{
   int graphX, graphY, graphW, graphH, y, lastY;
   double freq, val;
 
   graph.getDimensions(graphX, graphY, graphW, graphH);
 
-  dc.SetPen(wxPen(*wxBLACK, lineWidth));
-  
-// 
+  switch (type)
+  {
+  case GLOTTAL:
+    dc.SetPen(wxPen(*wxBLACK, lineWidth));
+    break;
+  case NOISE:
+    dc.SetPen(wxPen(*wxRED, lineWidth));
+    break;
+  }
+
+  // 
   for (int i(0); i < graphW; i++)
   {
     freq = graph.getAbsXValue(graphX + i);
-    val = abs(simu3d->interpolateTransferFunction(freq, 0));
+    val = abs(simu3d->interpolateTransferFunction(freq, 0, type));
 
     y = graph.getYPos(val);
 
-    if (y < graphY) 
-    { 
-      y = graphY; 
+    if (y < graphY)
+    {
+      y = graphY;
     }
-    if (y >= graphY + graphH) 
-    { 
-      y = graphY + graphH - 1; 
+    if (y >= graphY + graphH)
+    {
+      y = graphY + graphH - 1;
     }
 
-    if (i > 0) 
-    { 
-      dc.DrawLine(graphX+i-1, lastY, graphX+i, y); 
+    if (i > 0)
+    {
+      dc.DrawLine(graphX + i - 1, lastY, graphX + i, y);
     }
 
     lastY = y;

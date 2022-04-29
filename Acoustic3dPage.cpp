@@ -40,22 +40,23 @@ static const int IDB_PARAM_SIMU_DIALOG = 6004;
 static const int IDB_PLAY_LONG_VOWEL = 6005;
 static const int IDB_PLAY_NOISE_SOURCE = 6006;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD = 6007;
-static const int IDB_EXPORT_TF = 6008;
-static const int IDB_EXPORT_FIELD = 6009;
+static const int IDB_EXPORT_GLOTTAL_SOURCE_TF = 6008;
+static const int IDB_EXPORT_NOISE_SOURCE_TF = 6009;
+static const int IDB_EXPORT_FIELD = 6010;
 
 // Main panel controls
-static const int IDB_SHOW_LOWER_ORDER_MODE = 6010;
-static const int IDB_SHOW_MESH = 6011;
-static const int IDB_SHOW_MODE = 6012;
-static const int IDB_SHOW_TRANSVERS_FIELD = 6013;
+static const int IDB_SHOW_LOWER_ORDER_MODE = 6020;
+static const int IDB_SHOW_MESH = 6021;
+static const int IDB_SHOW_MODE = 6022;
+static const int IDB_SHOW_TRANSVERS_FIELD = 6023;
 //static const int IDB_SHOW_F = 6013;
-static const int IDB_SHOW_HIGHER_ORDER_MODE = 6014;
+static const int IDB_SHOW_HIGHER_ORDER_MODE = 6024;
 
 // segments picture controls
-static const int IDB_SHOW_PREVIOUS_SEGMENT = 6015;
-static const int IDB_SHOW_NEXT_SEGMENT = 6016;
-static const int IDB_SHOW_SEGMENTS = 6017;
-static const int IDB_SHOW_FIELD = 6018;
+static const int IDB_SHOW_PREVIOUS_SEGMENT = 6025;
+static const int IDB_SHOW_NEXT_SEGMENT = 6026;
+static const int IDB_SHOW_SEGMENTS = 6027;
+static const int IDB_SHOW_FIELD = 6028;
 
 // Spectrum panel controls
 static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
@@ -64,6 +65,8 @@ static const int IDB_LOWER_SPECTRUM_LIMIT_PLUS		= 7002;
 static const int IDB_LOWER_SPECTRUM_LIMIT_MINUS		= 7003;
 static const int IDB_FREQUENCY_RANGE_MINUS			  = 7006;
 static const int IDB_FREQUENCY_RANGE_PLUS 		  	= 7007;
+
+static const int IDB_SHOW_NOISE_SOURCE_SPEC       = 7008;
 
 // ****************************************************************************
 // The event table.
@@ -89,7 +92,8 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
-  EVT_BUTTON(IDB_EXPORT_TF, Acoustic3dPage::OnExportTf)
+  EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
+  EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
   EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
   // Main panel controls
@@ -113,6 +117,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_LOWER_SPECTRUM_LIMIT_MINUS, Acoustic3dPage::OnLowerSpectrumLimitMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_MINUS, Acoustic3dPage::OnFrequencyRangeMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_PLUS, Acoustic3dPage::OnFrequencyRangePlus)
+  EVT_CHECKBOX(IDB_SHOW_NOISE_SOURCE_SPEC, Acoustic3dPage::OnShowNoiseSourceSpec)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -142,6 +147,7 @@ void Acoustic3dPage::updateWidgets()
   chkShowMesh->SetValue(picPropModes->meshSelected());
   chkShowMode->SetValue(picPropModes->modeSelected());
   chkShowTransField->SetValue(picPropModes->fieldSelected());
+  chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
   //chkShowF->SetValue(picPropModes->fSelected());
 
   // options for segment picture
@@ -221,7 +227,10 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   leftSizer->AddSpacer(20);
   
-  button = new wxButton(this, IDB_EXPORT_TF, "Export transfer function");
+  button = new wxButton(this, IDB_EXPORT_GLOTTAL_SOURCE_TF, "Export glottal transfer function");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_EXPORT_NOISE_SOURCE_TF, "Export noise transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_EXPORT_FIELD, "Export acoustic field");
@@ -399,6 +408,10 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   // the bottom side
 
   sizer = new wxBoxSizer(wxVERTICAL);
+
+  chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise source");
+  sizer->Add(chkShowNoiseSourceSpec, 0, wxALL, 2);
+
   sizer->AddStretchSpacer(1);
 
   wxBoxSizer* subSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -623,14 +636,27 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnExportTf(wxCommandEvent& event)
+void Acoustic3dPage::OnExportGlottalSourceTf(wxCommandEvent& event)
 {
   wxFileName fileName;
   wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
     fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
     wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 
-  simu3d->exportTransferFucntions(name.ToStdString());
+  simu3d->exportTransferFucntions(name.ToStdString(), GLOTTAL);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnExportNoiseSourceTf(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  simu3d->exportTransferFucntions(name.ToStdString(), NOISE);
 }
 
 // ****************************************************************************
@@ -926,6 +952,14 @@ void Acoustic3dPage::OnFrequencyRangeMinus(wxCommandEvent &event)
 void Acoustic3dPage::OnFrequencyRangePlus(wxCommandEvent &event)
 {
   picSpectrum->graph.zoomOutAbscissa(false, true);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowNoiseSourceSpec(wxCommandEvent& event)
+{
+  picSpectrum->setShowNoiseTf(chkShowNoiseSourceSpec->GetValue());
   picSpectrum->Refresh();
 }
 

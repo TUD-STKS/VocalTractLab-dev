@@ -74,8 +74,6 @@ void SegmentsPicture::draw(wxDC& dc)
 
     getZoomAndCenter(width, height, centerX, centerY, zoom);
 
-    //log << "centerX " << centerX << " centerY " << centerY << endl;
-
     int xBig, yBig, xEnd, yEnd;
 
     pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
@@ -393,10 +391,15 @@ void SegmentsPicture::getZoomAndCenter(int& width, int& height, double& centerX,
   double maxLength;
   pair<Point2D, Point2D> bboxSagittalPlane = m_simu3d->bboxSagittalPlane();
 
+  log << "bbox " << bboxSagittalPlane.first.x << "  "
+    << bboxSagittalPlane.second.x << "  "
+    << bboxSagittalPlane.first.y << "  "
+    << bboxSagittalPlane.second.y << endl;
+
   // get the dimensions of the picture
   this->GetSize(&width, &height);
 
-  //log << "Width " << width << " height " << height << endl;
+  log << "Width " << width << " height " << height << endl;
 
   maxLength = 1.1 * max(bboxSagittalPlane.second.x - bboxSagittalPlane.first.x,
     bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
@@ -407,7 +410,7 @@ void SegmentsPicture::getZoomAndCenter(int& width, int& height, double& centerX,
   centerY = (double)height * abs(bboxSagittalPlane.first.y) /
     (bboxSagittalPlane.second.y - bboxSagittalPlane.first.y);
 
-  //log << "Zoom " << zoom << " centerX " << centerX << " centerY " << centerY << endl;
+  log << "Zoom " << zoom << " centerX " << centerX << " centerY " << centerY << endl;
 
   log.close();
 }

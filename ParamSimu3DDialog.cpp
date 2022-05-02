@@ -21,10 +21,10 @@ static const int IDE_PERCENT_LOSSES		  = 4008;
 // acoustic field computation options
 static const int IDE_FREQ_COMPUTE_FIELD = 4009;
 static const int IDE_RESOLUTION_FIELD = 4010;
-//static const int IDE_BBOX_MIN_X       = 4011;
-//static const int IDE_BBOX_MIN_Y       = 4012;
-//static const int IDE_BBOX_MAX_X       = 4013;
-//static const int IDE_BBOX_MAX_Y       = 4014;
+static const int IDE_BBOX_MIN_X       = 4011;
+static const int IDE_BBOX_MIN_Y       = 4012;
+static const int IDE_BBOX_MAX_X       = 4013;
+static const int IDE_BBOX_MAX_Y       = 4014;
 
 // transfer function point
 static const int IDE_TF_POINT_X       = 4015;
@@ -69,10 +69,10 @@ EVT_TEXT_ENTER(IDE_SEC_CONSTRICTION, ParamSimu3DDialog::OnSecConstrictionEnter)
 EVT_TEXT_ENTER(IDE_PERCENT_LOSSES, ParamSimu3DDialog::OnPercentLosses)
 EVT_TEXT_ENTER(IDE_FREQ_COMPUTE_FIELD, ParamSimu3DDialog::OnFreqComputeField)
 EVT_TEXT_ENTER(IDE_RESOLUTION_FIELD, ParamSimu3DDialog::OnResolutionField)
-//EVT_TEXT_ENTER(IDE_BBOX_MIN_X, ParamSimu3DDialog::OnBboxMinX)
-//EVT_TEXT_ENTER(IDE_BBOX_MIN_Y, ParamSimu3DDialog::OnBboxMinY)
-//EVT_TEXT_ENTER(IDE_BBOX_MAX_X, ParamSimu3DDialog::OnBboxMaxX)
-//EVT_TEXT_ENTER(IDE_BBOX_MAX_Y, ParamSimu3DDialog::OnBboxMaxY)
+EVT_TEXT_ENTER(IDE_BBOX_MIN_X, ParamSimu3DDialog::OnBboxMinX)
+EVT_TEXT_ENTER(IDE_BBOX_MIN_Y, ParamSimu3DDialog::OnBboxMinY)
+EVT_TEXT_ENTER(IDE_BBOX_MAX_X, ParamSimu3DDialog::OnBboxMaxX)
+EVT_TEXT_ENTER(IDE_BBOX_MAX_Y, ParamSimu3DDialog::OnBboxMaxY)
 
 EVT_TEXT_ENTER(IDE_TF_POINT_X, ParamSimu3DDialog::OnTfPointX)
 EVT_TEXT_ENTER(IDE_TF_POINT_Y, ParamSimu3DDialog::OnTfPointY)
@@ -114,6 +114,13 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
         instance = new ParamSimu3DDialog(parent, inSimu3d, tract);
     }
 
+    ofstream log("log.txt", ofstream::app);
+    log << "ParamSimu3DDialog::getInstance " << endl;
+    log.close();
+
+    instance->updateParams();
+    instance->updateWidgets();
+
     return instance;
 }
 
@@ -122,8 +129,9 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
 
 void ParamSimu3DDialog::updateWidgets()
 {
-  //ofstream log("log.txt", ofstream::app);
-  //log << "Start update param 3D dialogue" << endl;
+  ofstream log("log.txt", ofstream::app);
+  log << "Start update param 3D dialogue" << endl;
+  log.close();
 
   wxString st;
 
@@ -196,17 +204,17 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%d", m_simuParams.fieldResolution);
   txtResolutionField->SetValue(st);
 
-  //st = wxString::Format("%1.1f", m_simuParams.bboxField[0].x());
-  //txtBboxMinX->SetValue(st);
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].x());
+  txtBboxMinX->SetValue(st);
 
-  //st = wxString::Format("%1.1f", m_simuParams.bboxField[0].y());
-  //txtBboxMinY->SetValue(st);
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].y());
+  txtBboxMinY->SetValue(st);
 
-  //st = wxString::Format("%1.1f", m_simuParams.bboxField[1].x());
-  //txtBboxMaxX->SetValue(st);
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].x());
+  txtBboxMaxX->SetValue(st);
 
-  //st = wxString::Format("%1.1f", m_simuParams.bboxField[1].y());
-  //txtBboxMaxY->SetValue(st);
+  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].y());
+  txtBboxMaxY->SetValue(st);
 
   // transfer function point
   st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].x());
@@ -250,6 +258,18 @@ void ParamSimu3DDialog::updateWidgets()
 		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
 
   //log.close();
+}
+
+// ****************************************************************************
+
+void ParamSimu3DDialog::updateParams()
+{
+  m_meshDensity = m_simu3d->meshDensity();
+  m_secNoiseSource = m_simu3d->idxSecNoiseSource();
+  m_secConstriction = m_simu3d->idxConstriction();
+  m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
+  m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
+  m_simuParams = m_simu3d->simuParams();
 }
 
 // ****************************************************************************
@@ -689,7 +709,7 @@ void ParamSimu3DDialog::initWidgets()
   // Set the bounding box to compute the acoustic field
   // ****************************************************************
 
-  /*topLevelSizer->AddSpacer(10);
+  topLevelSizer->AddSpacer(10);
 
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -721,7 +741,7 @@ void ParamSimu3DDialog::initWidgets()
     wxSize(50, -1), wxTE_PROCESS_ENTER);
   lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
 
-  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);*/
+  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
   // ****************************************************************
   // Set if the radiated field must be computed or not
@@ -733,6 +753,7 @@ void ParamSimu3DDialog::initWidgets()
 
   chkComputeRad = new wxCheckBox(this, IDB_COMPUTE_RAD_FIELD,
     "Compute radiated field");
+  chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
   lineSizer->Add(chkComputeRad, 0, wxALL, 2);
 
   topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
@@ -848,6 +869,9 @@ void ParamSimu3DDialog::OnMaxSimFreq(wxCommandEvent& event)
     {
         m_simuParams.maxComputedFreq = x;
     }
+    //m_simuParams.needToComputeModesAndJunctions = false;
+    //m_simuParams.radImpedPrecomputed = false;
+
     updateWidgets();
 }
 
@@ -957,58 +981,58 @@ void ParamSimu3DDialog::OnResolutionField(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-//void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
-//{
-//  double x(0.);
-//  wxString st = txtBboxMinX->GetValue();
-//  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
-//  {
-//    m_simuParams.bboxField[0] = Point(x, m_simuParams.bboxField[0].y());
-//  }
-//  updateWidgets();
-//}
+void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMinX->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[0] = Point(x, m_simuParams.bboxField[0].y());
+  }
+  updateWidgets();
+}
 
 // ****************************************************************************
 // ****************************************************************************
 
-//void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
-//{
-//  double x(0.);
-//  wxString st = txtBboxMinY->GetValue();
-//  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
-//  {
-//    m_simuParams.bboxField[0] = Point(m_simuParams.bboxField[0].x(), x);
-//  }
-//  updateWidgets();
-//}
+void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMinY->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[0] = Point(m_simuParams.bboxField[0].x(), x);
+  }
+  updateWidgets();
+}
 
 // ****************************************************************************
 // ****************************************************************************
 
-//void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
-//{
-//  double x(0.);
-//  wxString st = txtBboxMaxX->GetValue();
-//  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
-//  {
-//    m_simuParams.bboxField[1] = Point(x, m_simuParams.bboxField[1].y());
-//  }
-//  updateWidgets();
-//}
+void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMaxX->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[1] = Point(x, m_simuParams.bboxField[1].y());
+  }
+  updateWidgets();
+}
 
 // ****************************************************************************
 // ****************************************************************************
 
-//void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
-//{
-//  double x(0.);
-//  wxString st = txtBboxMaxY->GetValue();
-//  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
-//  {
-//    m_simuParams.bboxField[1] = Point(m_simuParams.bboxField[1].x(), x);
-//  }
-//  updateWidgets();
-//}
+void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
+{
+  double x(0.);
+  wxString st = txtBboxMaxY->GetValue();
+  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  {
+    m_simuParams.bboxField[1] = Point(m_simuParams.bboxField[1].x(), x);
+  }
+  updateWidgets();
+}
 
 // ****************************************************************************
 // ****************************************************************************

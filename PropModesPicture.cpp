@@ -32,7 +32,7 @@ typedef int(*ColorMap)[256][3];
 PropModesPicture::PropModesPicture(wxWindow* parent,
 	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
 	: BasicPicture(parent),
-	m_objectToDisplay(1),
+	m_objectToDisplay(MESH),
 	m_modeIdx(0)
 {
 	//this->m_picVocalTract = picVocalTract;
@@ -48,12 +48,10 @@ void PropModesPicture::draw(wxDC& dc)
 {
 
 	int width, height;
-	//int meshWidth, meshHeight;
-	double zoom;
+	//double zoom;
 	int xBig, yBig, xEnd, yEnd;
 	Data *data = Data::getInstance();
 	VocalTract *tract = data->vocalTract;
-	//double pos = m_picVocalTract->cutPlanePos_cm;
 	double cumLength(0.), minDist(1e-15);
 	int sectionIdx(0);
   ostringstream info;
@@ -87,8 +85,8 @@ void PropModesPicture::draw(wxDC& dc)
 
 	// get the dimensions of the picture
 	this->GetSize(&width, &height);
-	double centerX = width / 2;
-	double centerY = height / 2;
+	m_centerX = width / 2;
+	m_centerY = height / 2;
 	double maxLength;
 	pair<Point2D, Point2D> bbox(m_simu3d->maxCSBoundingBox());
 
@@ -107,18 +105,20 @@ void PropModesPicture::draw(wxDC& dc)
 
 	if (width < height)
 	{
-		zoom = (double)width * 1 / maxLength;
+		m_zoom = (double)width * 1 / maxLength;
 	}
 	else
 	{
-		zoom = (double)height * 1 / maxLength;
+    m_zoom = (double)height * 1 / maxLength;
 	}
 
 // ****************************************************************
 // plot the segments of the mesh
 // ****************************************************************
 
-	if (((m_simu3d->crossSection(sectionIdx))->numberOfFaces() > 0)) {
+  if (((m_simu3d->crossSection(sectionIdx))->numberOfFaces() == 0)) {
+    m_objectToDisplay = CONTOUR;
+  }
 
     info << "Section " << sectionIdx;
     info << "      area  " << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
@@ -129,8 +129,10 @@ void PropModesPicture::draw(wxDC& dc)
     info << "Scaling in  " << m_simu3d->crossSection(sectionIdx)->scaleIn()
       << "      scaling out  " << m_simu3d->crossSection(sectionIdx)->scaleOut() << endl;
 
+    vector<int> surf = (m_simu3d->crossSection(sectionIdx))->surfaceIdx();
+
 		switch (m_objectToDisplay) {
-		case 1: {
+		case MESH: {
 
 			array<int, 3> tri;
 
@@ -139,8 +141,6 @@ void PropModesPicture::draw(wxDC& dc)
 			vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
 			
 			//log << "\nDraw mesh" << endl;
-
-			vector<int> surf = (m_simu3d->crossSection(sectionIdx))->surfaceIdx();
 
 			auto start = std::chrono::system_clock::now();
 			auto end = std::chrono::system_clock::now();
@@ -159,55 +159,17 @@ void PropModesPicture::draw(wxDC& dc)
 				for (int v(0); v < 3; v++)
 				{
 					start = std::chrono::system_clock::now();
-					xBig = (int)(zoom * (pts[tri[v]][0]) + centerX);
-					yBig = (int)(centerY - zoom * (pts[tri[v]][1]));
-					xEnd = (int)(zoom * (pts[tri[(v + 1) % 3]][0]) + centerX);
-					yEnd = (int)(centerY - zoom * (pts[tri[(v + 1) % 3]][1]));
+					xBig = (int)(m_zoom * (pts[tri[v]][0]) + m_centerX);
+					yBig = (int)(m_centerY - m_zoom * (pts[tri[v]][1]));
+					xEnd = (int)(m_zoom * (pts[tri[(v + 1) % 3]][0]) + m_centerX);
+					yEnd = (int)(m_centerY - m_zoom * (pts[tri[(v + 1) % 3]][1]));
 					end = std::chrono::system_clock::now();
 					tCoord += end - start;
 					dc.DrawLine(xBig, yBig, xEnd, yEnd);
 				}
 			}
 
-			// draw contour
-			Polygon_2 contour = (m_simu3d->crossSection(sectionIdx))->contour();
-			CGAL::Polygon_2<K>::Edge_const_iterator vit;
-			int s;
-			for (s = 0, vit = contour.edges_begin(); vit != contour.edges_end(); ++vit, ++s)
-			{
-				switch (surf[s])
-				{
-				case 2: case 3: case 23: case 24:		// covers
-					dc.SetPen(wxPen(*wxCYAN, 2, wxPENSTYLE_SOLID));
-					break;
-				case 16:						// tongue
-					dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
-					break;
-				case 0: case 1:					// teeth
-					dc.SetPen(wxPen(*wxYELLOW, 2, wxPENSTYLE_SOLID));
-					break;
-				case 29:						// epiglotis
-					dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
-					break;
-				case 26:						// uvula
-					dc.SetPen(wxPen(*wxLIGHT_GREY, 2, wxPENSTYLE_SOLID));
-					break;
-				case 4: case 5:					// lips
-					dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
-					break;
-				case 31:						// radiation
-					dc.SetPen(wxPen(wxColour(128, 0, 128, 255), 2, wxPENSTYLE_SOLID));
-					break;
-				default:
-					dc.SetPen(wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID));
-				}
-
-				xBig = (int)(zoom * (vit->point(0).x()) + centerX);
-				yBig = (int)(centerY - zoom * (vit->point(0).y()));
-				dc.DrawCircle(xBig, yBig, 1);
-			}
-			//log << endl;
-			//log.close();
+      drawContour(sectionIdx, surf, dc);
 
 			//// if it exists, draw the next contour
 			//if ((sectionIdx+1) < (m_simu3d->sectionNumber() - 1))
@@ -217,34 +179,12 @@ void PropModesPicture::draw(wxDC& dc)
 			//	CGAL::Polygon_2<K>::Edge_const_iterator vit;
 			//	for (vit = contour.edges_begin(); vit != contour.edges_end(); ++vit)
 			//	{
-			//		xBig = (int)(zoom * (vit->point(0).x()) + centerX);
-			//		yBig = (int)(centerY - zoom * (vit->point(0).y()));
-			//		xEnd = (int)(zoom * (vit->point(1).x()) + centerX);
-			//		yEnd = (int)(centerY - zoom * (vit->point(1).y()));
+			//		xBig = (int)(m_zoom * (vit->point(0).x()) + m_centerX);
+			//		yBig = (int)(m_centerY - m_zoom * (vit->point(0).y()));
+			//		xEnd = (int)(m_zoom * (vit->point(1).x()) + m_centerX);
+			//		yEnd = (int)(m_centerY - m_zoom * (vit->point(1).y()));
 			//		dc.DrawLine(xBig, yBig, xEnd, yEnd);
 			//	}
-			//}
-
-			//if (sectionIdx == 57)
-			//{
-			//	double xB, xE, yB, yE;
-			//	ofstream mesh;
-			//	mesh.open("mesh.txt");
-			//	for (Finite_faces_iterator it = cdt.finite_faces_begin();
-			//		it != cdt.finite_faces_end(); ++it)
-			//	{
-			//		for (int v(0); v < 3; v++)
-			//		{
-			//			xB = (zoom * (it->vertex(v)->point().x()) + centerX);
-			//			yB = (centerY - zoom * (it->vertex(v)->point().y()));
-			//			xE = (zoom * (it->vertex((v + 1) % 3)->point().x()) + centerX);
-			//			yE = (centerY - zoom * (it->vertex((v + 1) % 3)->point().y()));
-			//			mesh << xB << "  " << yB << endl;
-			//			mesh << xE << "  " << yE << endl;
-			//			mesh << 10000 << "  " << 10000 << endl;
-			//		}
-			//	}
-			//	mesh.close();
 			//}
 
 			// display number of vertex, segments and triangles
@@ -263,7 +203,7 @@ void PropModesPicture::draw(wxDC& dc)
 			// ****************************************************************
 			// plot the modes
 			// ****************************************************************
-		case 2: {
+		case TRANSVERSE_MODE: {
 
 			auto start = std::chrono::system_clock::now();
 			auto end = std::chrono::system_clock::now();
@@ -363,7 +303,7 @@ void PropModesPicture::draw(wxDC& dc)
 				maxDist = max(sqrt(pow(vecTri[1].x - vecTri[0].x, 2) + pow(vecTri[1].y - vecTri[0].y, 2)),
 					max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
 						sqrt(pow(vecTri[1].x - vecTri[2].x, 2) + pow(vecTri[1].y - vecTri[2].y, 2))));
-				numPtSide = (int)ceil(maxDist * zoom) + 1;
+				numPtSide = (int)ceil(maxDist * m_zoom) + 1;
 
 				for (int i(0); i < numPtSide; i++)
 				{
@@ -374,7 +314,7 @@ void PropModesPicture::draw(wxDC& dc)
 						pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
 							(1. - alpha - beta) * vecTri[0];
 						normAmp = max(1, (int)(256 * (pointToDraw.z / max(maxAmp, -minAmp) + 1.) / 2.) - 1);
-						p.MoveTo(data, (int)(zoom * pointToDraw.x + centerX), (int)(centerY - zoom * pointToDraw.y));
+						p.MoveTo(data, (int)(m_zoom* pointToDraw.x + m_centerX), (int)(m_centerY - m_zoom * pointToDraw.y));
 						p.Red() = (*colorMap)[normAmp][0];
 						p.Green() = (*colorMap)[normAmp][1];
 						p.Blue() = (*colorMap)[normAmp][2];
@@ -409,7 +349,7 @@ void PropModesPicture::draw(wxDC& dc)
     // plot the junction matrix
     // ****************************************************************
 
-		case 3: {
+		case JUNCTION_MATRIX: {
 			vector<Matrix> F = (m_simu3d->crossSection(sectionIdx))->getMatrixF();
 			int numCont(F.size());
 			int maxNumF(0);
@@ -476,126 +416,134 @@ void PropModesPicture::draw(wxDC& dc)
     // plot the acoustic field
     // ****************************************************************
 
-    case 4:
+    case ACOUSTIC_FIELD: {
 
-      ColorMap colorMap = ColorScale::getColorMap();
-      double maxAmp;
-      double minAmp;
-      Point3D vecTri[3];
-      Point3D pointToDraw;
-      int numPtSide;
-      double alpha;
-      double beta;
-      double maxDist;
-      int normAmp;
-
-      Matrix field(width, height);
-      int idxI, idxJ;
-
-      // initialise white bitmap
-      wxBitmap bmp(width, height, 24);
-      wxNativePixelData data(bmp);
-      wxNativePixelData::Iterator p(data);
-      for (int i = 0; i < height; ++i)
+      if (m_simu3d->crossSection(sectionIdx)->Pout().rows() > 0)
       {
-        wxNativePixelData::Iterator rowStart = p;
-        for (int j = 0; j < width; ++j, ++p)
+        ColorMap colorMap = ColorScale::getColorMap();
+        double maxAmp;
+        double minAmp;
+        Point3D vecTri[3];
+        Point3D pointToDraw;
+        int numPtSide;
+        double alpha;
+        double beta;
+        double maxDist;
+        int normAmp;
+
+        Matrix field(width, height);
+        int idxI, idxJ;
+
+        // initialise white bitmap
+        wxBitmap bmp(width, height, 24);
+        wxNativePixelData data(bmp);
+        wxNativePixelData::Iterator p(data);
+        for (int i = 0; i < height; ++i)
         {
-          p.Red() = 254;
-          p.Green() = 254;
-          p.Blue() = 254;
-        }
-        p = rowStart;
-        p.OffsetY(data, 1);
-      }
-
-      int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
-      int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
-      vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
-      vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
-      Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
-      int mn(modes.cols());
-
-      log << "Mode number " << mn << endl;
-
-      auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
-      auto bid = modes * modesAmpl;
-
-      Vec amplitudes((modes* modesAmpl).cwiseAbs());
-
-      maxAmp = amplitudes.maxCoeff();
-      minAmp = amplitudes.minCoeff();
-
-      log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
-
-      // draw the acoustic field
-      //
-      // The triangles are interpolated by adding the the fraction a and b 
-      // of the vector formed by two sides and the corresponding vertex amplitude.
-      // The corresponding values are attributed to the location of the nearest 
-      // pixel in the bitmap grid. 
-      // This avoid searching to which triangle a pixel belongs, which has a higher
-      // computational cost.
-      //
-      //
-      //   ^ P1
-      //   |
-      //   |   P?
-      //   |________\ P2
-      //  O         /
-      //
-      //  P = a*P1 + b*P2 + (1 - a - b)*O 
-      //  
-      //  with 0 <= a <= 1 and 0 <= b <= 1
-
-      for (int it(0); it < numFaces; ++it)
-      {
-        for (int i(0); i < 3; i++)
-        {
-          vecTri[i] = Point3D(pts[triangles[it][i]][0], pts[triangles[it][i]][1],
-            amplitudes(triangles[it][i]));
-        }
-
-        maxDist = max(sqrt(pow(vecTri[1].x - vecTri[0].x, 2) + pow(vecTri[1].y - vecTri[0].y, 2)),
-          max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
-            sqrt(pow(vecTri[1].x - vecTri[2].x, 2) + pow(vecTri[1].y - vecTri[2].y, 2))));
-        numPtSide = (int)ceil(maxDist * zoom) + 1;
-
-        for (int i(0); i < numPtSide; i++)
-        {
-          for (int j(0); j < (numPtSide - i); j++)
+          wxNativePixelData::Iterator rowStart = p;
+          for (int j = 0; j < width; ++j, ++p)
           {
-            alpha = ((double)(i) / (double)(numPtSide - 1));
-            beta = ((double)(j) / (double)(numPtSide - 1));
-            pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
-              (1. - alpha - beta) * vecTri[0];
-            idxI = (int)(zoom * pointToDraw.x + centerX);
-            idxJ = (int)(centerY - zoom * pointToDraw.y);
-            field(idxI, idxJ) = pointToDraw.z;
-            normAmp = max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1);
-            //p.MoveTo(data, (int)(zoom * pointToDraw.x + centerX), (int)(centerY - zoom * pointToDraw.y));
-            p.MoveTo(data, idxI, idxJ);
-            p.Red() = (*colorMap)[normAmp][0];
-            p.Green() = (*colorMap)[normAmp][1];
-            p.Blue() = (*colorMap)[normAmp][2];
+            p.Red() = 254;
+            p.Green() = 254;
+            p.Blue() = 254;
+          }
+          p = rowStart;
+          p.OffsetY(data, 1);
+        }
+
+        int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
+        int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
+        vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
+        vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
+        Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
+        int mn(modes.cols());
+
+        log << "Mode number " << mn << endl;
+
+        auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
+        auto bid = modes * modesAmpl;
+
+        Vec amplitudes((modes * modesAmpl).cwiseAbs());
+
+        maxAmp = amplitudes.maxCoeff();
+        minAmp = amplitudes.minCoeff();
+
+        log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
+
+        // draw the acoustic field
+        //
+        // The triangles are interpolated by adding the the fraction a and b 
+        // of the vector formed by two sides and the corresponding vertex amplitude.
+        // The corresponding values are attributed to the location of the nearest 
+        // pixel in the bitmap grid. 
+        // This avoid searching to which triangle a pixel belongs, which has a higher
+        // computational cost.
+        //
+        //
+        //   ^ P1
+        //   |
+        //   |   P?
+        //   |________\ P2
+        //  O         /
+        //
+        //  P = a*P1 + b*P2 + (1 - a - b)*O 
+        //  
+        //  with 0 <= a <= 1 and 0 <= b <= 1
+
+        for (int it(0); it < numFaces; ++it)
+        {
+          for (int i(0); i < 3; i++)
+          {
+            vecTri[i] = Point3D(pts[triangles[it][i]][0], pts[triangles[it][i]][1],
+              amplitudes(triangles[it][i]));
+          }
+
+          maxDist = max(sqrt(pow(vecTri[1].x - vecTri[0].x, 2) + pow(vecTri[1].y - vecTri[0].y, 2)),
+            max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
+              sqrt(pow(vecTri[1].x - vecTri[2].x, 2) + pow(vecTri[1].y - vecTri[2].y, 2))));
+          numPtSide = (int)ceil(maxDist * m_zoom) + 1;
+
+          for (int i(0); i < numPtSide; i++)
+          {
+            for (int j(0); j < (numPtSide - i); j++)
+            {
+              alpha = ((double)(i) / (double)(numPtSide - 1));
+              beta = ((double)(j) / (double)(numPtSide - 1));
+              pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
+                (1. - alpha - beta) * vecTri[0];
+              idxI = (int)(m_zoom * pointToDraw.x + m_centerX);
+              idxJ = (int)(m_centerY - m_zoom * pointToDraw.y);
+              field(idxI, idxJ) = pointToDraw.z;
+              normAmp = max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1);
+              p.MoveTo(data, idxI, idxJ);
+              p.Red() = (*colorMap)[normAmp][0];
+              p.Green() = (*colorMap)[normAmp][1];
+              p.Blue() = (*colorMap)[normAmp][2];
+            }
           }
         }
+        // write informations
+        info << "f = " << m_simu3d->simuParams().freqField << " Hz" << endl;
+
+        dc.DrawBitmap(bmp, 0, 0, 0);
+
+        //// export field
+        //ofstream ofs("tField.txt");
+        //ofs << field << endl;
+        //ofs.close();
+        break;
       }
-      // write informations
-      info << "f = " << m_simu3d->simuParams().freqField << " Hz" << endl;
+    }
 
-      dc.DrawBitmap(bmp, 0, 0, 0);
-
-      // export field
-      ofstream ofs("tField.txt");
-      ofs << field << endl;
-      ofs.close();
+      default:
+        drawContour(sectionIdx, surf, dc);
+        break;
 		}
-	}
-	else
-	{
-  info << "No modes computed." << endl;
-	}
+	//}
+	//else
+	//{
+ // info << "No modes computed." << endl;
+	//}
 
   dc.SetPen(*wxBLACK_PEN);
   dc.SetBackgroundMode(wxTRANSPARENT);
@@ -610,7 +558,7 @@ void PropModesPicture::draw(wxDC& dc)
 
 void PropModesPicture::showMesh()
 {
-	m_objectToDisplay = 1;
+	m_objectToDisplay = MESH;
 	Refresh();
 }
 
@@ -618,7 +566,7 @@ void PropModesPicture::showMesh()
 
 void PropModesPicture::showMode()
 {
-	m_objectToDisplay = 2;
+	m_objectToDisplay = TRANSVERSE_MODE;
 	Refresh();
 }
 
@@ -626,7 +574,7 @@ void PropModesPicture::showMode()
 
 void PropModesPicture::showF()
 {
-	m_objectToDisplay = 3;
+	m_objectToDisplay = JUNCTION_MATRIX;
 	Refresh();
 }
 
@@ -634,7 +582,7 @@ void PropModesPicture::showF()
 
 void PropModesPicture::showField()
 {
-  m_objectToDisplay = 4;
+  m_objectToDisplay = ACOUSTIC_FIELD;
   Refresh();
 }
 
@@ -674,4 +622,52 @@ void PropModesPicture::setModeIdx(int idx)
 	//	idx));
 	m_modeIdx = idx;
 	Refresh();
+}
+
+// ****************************************************************************
+
+void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
+{
+  Polygon_2 contour = (m_simu3d->crossSection(sectionIdx))->contour();
+  CGAL::Polygon_2<K>::Edge_const_iterator vit;
+  int s, xBig, yBig, xEnd, yEnd;
+  for (s = 0, vit = contour.edges_begin(); vit != contour.edges_end(); ++vit, ++s)
+  {
+    switch (surf[s])
+    {
+    case 2: case 3: case 23: case 24:		// covers
+      dc.SetPen(wxPen(*wxCYAN, 2, wxPENSTYLE_SOLID));
+      break;
+    case 16:						// tongue
+      dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
+      break;
+    case 0: case 1:					// teeth
+      dc.SetPen(wxPen(*wxYELLOW, 2, wxPENSTYLE_SOLID));
+      break;
+    case 29:						// epiglotis
+      dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
+      break;
+    case 26:						// uvula
+      dc.SetPen(wxPen(*wxLIGHT_GREY, 2, wxPENSTYLE_SOLID));
+      break;
+    case 4: case 5:					// lips
+      dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
+      break;
+    case 31:						// radiation
+      dc.SetPen(wxPen(wxColour(128, 0, 128, 255), 2, wxPENSTYLE_SOLID));
+      break;
+    default:
+      dc.SetPen(wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID));
+    }
+
+    xBig = (int)(m_zoom * (vit->point(0).x()) + m_centerX);
+    yBig = (int)(m_centerY - m_zoom * (vit->point(0).y()));
+    dc.DrawCircle(xBig, yBig, 1);
+
+    xEnd = (int)(m_zoom * (vit->point(1).x()) + m_centerX);
+    yEnd = (int)(m_centerY - m_zoom * (vit->point(1).y()));
+
+    dc.SetPen(*wxBLACK_PEN);
+    dc.DrawLine(xBig, yBig, xEnd, yEnd);
+  }
 }

@@ -129,6 +129,7 @@ Acoustic3dPage::Acoustic3dPage(wxWindow* parent, VocalTractPicture *picVocalTrac
 {
   initVars();
   initWidgets(picVocalTract);
+  importGeometry();
   updateWidgets();
 }
 
@@ -473,6 +474,10 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   else
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
+    simu3d->setGeometryImported(false);
+    simu3d->requestModesAndJunctionComputation();
+    simu3d->cleanAcousticField();
+    importGeometry();
     updateWidgets();
     segPic->Update();
     picPropModes->Update();
@@ -677,9 +682,7 @@ void Acoustic3dPage::OnExportField(wxCommandEvent& event)
 
 void Acoustic3dPage::OnParamSimuDialog(wxCommandEvent& event)
 {
-
-  ParamSimu3DDialog *dialog = ParamSimu3DDialog::getInstance(
-    NULL, simu3d, data->vocalTract);
+  ParamSimu3DDialog *dialog = ParamSimu3DDialog::getInstance(NULL);
   dialog->SetParent(this);
   dialog->Show(true);
   dialog->Raise();
@@ -693,14 +696,7 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
 
-  simu3d->setGeometryImported(false);
-  simu3d->requestModesAndJunctionComputation();
-
-  importGeometry();
-
   updateWidgets();
-
-  //segPic->resetActiveSegment();
 }
 
 // ****************************************************************************

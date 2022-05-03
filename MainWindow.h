@@ -44,6 +44,7 @@
 #include "AnnotationDialog.h"
 #include "PoleZeroDialog.h"
 #include "TransitionDialog.h"
+#include "ParamSimu3DDialog.h"
 
 #include "Data.h"
 

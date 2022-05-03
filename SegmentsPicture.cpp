@@ -41,6 +41,21 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   this->updateEventReceiver = updateEventReceiver;
 }
 
+//// ****************************************************************************
+///// Returns the single instance of this picture.
+//// ****************************************************************************
+//
+//SegmentsPicture* SegmentsPicture::getInstance(Acoustic3dSimulation* simu3d,
+//  wxWindow* updateEventReceiver, wxWindow* parent)
+//{
+//  if (m_instance == NULL)
+//  {
+//    m_instance = new SegmentsPicture(parent, simu3d, updateEventReceiver);
+//  }
+//
+//  return m_instance;
+//}
+
 // ****************************************************************************
 /// Draws the picture.
 // ****************************************************************************

@@ -15,11 +15,13 @@ class ParamSimu3DDialog : public wxDialog
 // **************************************************************************
 
 public:
-    static ParamSimu3DDialog* getInstance(wxWindow *parent, 
-        Acoustic3dSimulation* inSimu3d, VocalTract* tract);
+    static ParamSimu3DDialog* getInstance(wxWindow *parent = NULL);
     void updateWidgets();
     void updateParams();
     void setUpdateRequestReceiver(wxWindow* receiver);
+
+    void updateGeometry();
+    void updatePictures();
 
 // **************************************************************************
 // Private data.
@@ -85,7 +87,7 @@ private:
 // **************************************************************************
 
 private:
-  ParamSimu3DDialog(wxWindow *parent, Acoustic3dSimulation* inSimu3d, VocalTract* tract);
+  ParamSimu3DDialog(wxWindow *parent);
   void initWidgets();
 
   void OnTemperatureEnter(wxCommandEvent& event);

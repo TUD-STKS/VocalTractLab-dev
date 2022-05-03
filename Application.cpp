@@ -89,11 +89,14 @@ bool Application::OnInit()
   
   VocalTractDialog *vocalTractDialog = VocalTractDialog::getInstance();
   
-  VocalTractDialog::getInstance()->setUpdateRequestReceiver(mainWindow->vocalTractPage);
+  VocalTractDialog::getInstance()->setUpdateRequestReceiver(mainWindow->vocalTractPage, 
+    mainWindow->acoustic3dPage);
   PhoneticParamsDialog::getInstance()->setUpdateRequestReceiver(vocalTractDialog);
   AnatomyParamsDialog::getInstance()->setUpdateRequestReceiver(vocalTractDialog);
   TransitionDialog::getInstance()->setUpdateRequestReceiver(vocalTractDialog);
-  VocalTractShapesDialog::getInstance()->setUpdateRequestReceiver(vocalTractDialog);
+  VocalTractShapesDialog::getInstance()->setUpdateRequestReceiver(vocalTractDialog, 
+    mainWindow->acoustic3dPage);
+  ParamSimu3DDialog::getInstance()->setUpdateRequestReceiver(mainWindow->acoustic3dPage);
 
   // The vocal tract page always handles update requests from the LF pulse dialog.
   LfPulseDialog::getInstance()->SetParent(mainWindow->vocalTractPage);

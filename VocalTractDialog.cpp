@@ -123,9 +123,11 @@ VocalTractPicture *VocalTractDialog::getVocalTractPicture()
 /// the vocal tract related pictures.
 // ****************************************************************************
 
-void VocalTractDialog::setUpdateRequestReceiver(wxWindow *updateRequestReceiver)
+void VocalTractDialog::setUpdateRequestReceiver(wxWindow* updateRequestReceiver1,
+  wxWindow* updateRequestReceiver2)
 {
-  this->updateRequestReceiver = updateRequestReceiver;
+  this->updateRequestReceiver1 = updateRequestReceiver1;
+  this->updateRequestReceiver2 = updateRequestReceiver2;
 }
 
 
@@ -248,7 +250,8 @@ wxDialog(parent, wxID_ANY, wxString("Vocal tract"),
   // ****************************************************************
 
   data = Data::getInstance();
-  updateRequestReceiver = NULL;
+  updateRequestReceiver1 = NULL;
+  updateRequestReceiver2 = NULL;
 
   // ****************************************************************
   // Init and update the widgets.
@@ -467,11 +470,17 @@ void VocalTractDialog::initWidgets()
 
 void VocalTractDialog::updateVocalTractPage()
 {
-  if (updateRequestReceiver != NULL)
+  if (updateRequestReceiver1 != NULL)
   {
      wxCommandEvent event(updateRequestEvent);
      event.SetInt(UPDATE_PICTURES_AND_CONTROLS);
-     wxPostEvent(updateRequestReceiver, event);
+     wxPostEvent(updateRequestReceiver1, event);
+  }
+  if (updateRequestReceiver2 != NULL)
+  {
+    wxCommandEvent event(updateRequestEvent);
+    event.SetInt(UPDATE_VOCAL_TRACT);
+    wxPostEvent(updateRequestReceiver2, event);
   }
 }
 

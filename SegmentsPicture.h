@@ -13,6 +13,8 @@ class SegmentsPicture : public BasicPicture
 public:
 
   SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d, wxWindow* updateEventReceiver);
+  //static SegmentsPicture *getInstance(Acoustic3dSimulation* simu3d,
+  //  wxWindow* updateEventReceiver, wxWindow* parent = NULL);
   virtual void draw(wxDC& dc);
   void showPreivousSegment();
   void showNextSegment();
@@ -40,6 +42,8 @@ private:
 // **************************************************************************
 
 private:
+
+  static SegmentsPicture* m_instance;
 
   Acoustic3dSimulation* m_simu3d;
   wxWindow* updateEventReceiver;

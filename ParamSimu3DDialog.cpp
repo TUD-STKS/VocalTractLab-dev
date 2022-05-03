@@ -106,17 +106,12 @@ ParamSimu3DDialog *ParamSimu3DDialog::instance = NULL;
 /// Returns the single instance of this dialog.
 // ****************************************************************************
 
-ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
-    Acoustic3dSimulation* inSimu3d, VocalTract* tract)
+ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent)
 {
     if (instance == NULL)
     {
-        instance = new ParamSimu3DDialog(parent, inSimu3d, tract);
+        instance = new ParamSimu3DDialog(parent);
     }
-
-    ofstream log("log.txt", ofstream::app);
-    log << "ParamSimu3DDialog::getInstance " << endl;
-    log.close();
 
     instance->updateParams();
     instance->updateWidgets();
@@ -129,10 +124,6 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent,
 
 void ParamSimu3DDialog::updateWidgets()
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "Start update param 3D dialogue" << endl;
-  log.close();
-
   wxString st;
 
   st = wxString::Format("%2.1f", m_simuParams.temperature);
@@ -284,16 +275,44 @@ void ParamSimu3DDialog::setUpdateRequestReceiver(wxWindow* receiver)
 }
 
 // ****************************************************************************
+// To update the segment picture and reload the geometry
+// ****************************************************************************
+
+void ParamSimu3DDialog::updateGeometry()
+{
+  if (updateRequestReceiver != NULL)
+  {
+    wxCommandEvent event(updateRequestEvent);
+    event.SetInt(UPDATE_VOCAL_TRACT);
+    wxPostEvent(updateRequestReceiver, event);
+  }
+}
+
+// ****************************************************************************
+// To update the pictures
+// ****************************************************************************
+
+void ParamSimu3DDialog::updatePictures()
+{
+  if (updateRequestReceiver != NULL)
+  {
+    wxCommandEvent event(updateRequestEvent);
+    event.SetInt(UPDATE_PICTURES_AND_CONTROLS);
+    wxPostEvent(updateRequestReceiver, event);
+  }
+}
+
+// ****************************************************************************
 /// Constructor.
 // ****************************************************************************
 
-ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent, 
-    Acoustic3dSimulation *inSimu3d, VocalTract* tract) :
+ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
 wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
-  m_simu3d = inSimu3d;
-  m_tract = tract;
+
+  m_simu3d = Acoustic3dSimulation::getInstance();
+  m_tract = Data::getInstance()->vocalTract;
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
 	m_secConstriction = m_simu3d->idxConstriction();
@@ -869,8 +888,6 @@ void ParamSimu3DDialog::OnMaxSimFreq(wxCommandEvent& event)
     {
         m_simuParams.maxComputedFreq = x;
     }
-    //m_simuParams.needToComputeModesAndJunctions = false;
-    //m_simuParams.radImpedPrecomputed = false;
 
     updateWidgets();
 }
@@ -990,6 +1007,7 @@ void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
     m_simuParams.bboxField[0] = Point(x, m_simuParams.bboxField[0].y());
   }
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1004,6 +1022,7 @@ void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
     m_simuParams.bboxField[0] = Point(m_simuParams.bboxField[0].x(), x);
   }
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1018,6 +1037,7 @@ void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
     m_simuParams.bboxField[1] = Point(x, m_simuParams.bboxField[1].y());
   }
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1032,6 +1052,7 @@ void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
     m_simuParams.bboxField[1] = Point(m_simuParams.bboxField[1].x(), x);
   }
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1202,25 +1223,10 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
   //ofstream log("log.txt", ofstream::app);
+  m_simuParams.curved = !m_simuParams.curved;
+  updateWidgets();
 
-	m_simuParams.curved = !m_simuParams.curved;
-	updateWidgets();
-  m_simu3d->importGeometry(m_tract);
-
-  //log << "Geometry refreshed" << endl;
-
-  //// Refresh the pictures of the parent window.
-  //if (updateRequestReceiver != NULL)
-  //{
-  //  log << "Before sending event" << endl;
-  //  wxCommandEvent event(updateRequestEvent);
-  //  log << "Event created" << endl;
-  //  event.SetInt(UPDATE_VOCAL_TRACT);
-  //  log << "Event vocal tract" << endl;
-  //  wxPostEvent(updateRequestReceiver, event);
-  //  log << "Event sent" << endl;
-  //}
-  //log.close();
+  updateGeometry();
 }
 
 // ****************************************************************************
@@ -1229,8 +1235,9 @@ void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
 	m_simuParams.varyingArea = !m_simuParams.varyingArea;
-	updateWidgets();
-  m_simu3d->importGeometry(m_tract);
+  updateWidgets();
+
+  updateGeometry();
 }
 
 // ****************************************************************************

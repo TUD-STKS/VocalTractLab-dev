@@ -48,7 +48,7 @@ public:
   static VocalTractShapesDialog *getInstance(wxWindow *parent = NULL);
   void updateWidgets();
   void fillShapeList();
-  void setUpdateRequestReceiver(wxWindow *receiver);
+  void setUpdateRequestReceiver(wxWindow* receiver1, wxWindow* receiver2);
 
   // **************************************************************************
   // Private data.
@@ -59,7 +59,8 @@ private:
 
   Data *data;
   VocalTract *tract;
-  wxWindow *updateRequestReceiver;
+  wxWindow *updateRequestReceiver1;
+  wxWindow* updateRequestReceiver2;
 
   wxListBox *lstShapes;
   wxTextCtrl *txtValue[VocalTract::NUM_PARAMS];

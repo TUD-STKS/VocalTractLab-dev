@@ -42,7 +42,8 @@ class VocalTractDialog : public wxDialog
 public:
   static VocalTractDialog *getInstance(wxWindow *parent = NULL);
   VocalTractPicture *getVocalTractPicture();
-  void setUpdateRequestReceiver(wxWindow *updateRequestReceiver);
+  void setUpdateRequestReceiver(wxWindow *updateRequestReceiver1, 
+    wxWindow* updateRequestReceiver2);
   void updateWidgets();
 
   // **************************************************************************
@@ -55,7 +56,8 @@ private:
   // The single instance of this Singleton
   static VocalTractDialog *instance;
 
-  wxWindow *updateRequestReceiver;  
+  wxWindow *updateRequestReceiver1;  
+  wxWindow *updateRequestReceiver2;
   Data *data;
   wxSize minSizeWithControls;
   wxSize minSizeWithoutControls;

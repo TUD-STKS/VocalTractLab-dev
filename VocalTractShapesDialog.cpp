@@ -129,9 +129,10 @@ void VocalTractShapesDialog::fillShapeList()
 /// parameter was changed.
 // ****************************************************************************
 
-void VocalTractShapesDialog::setUpdateRequestReceiver(wxWindow *receiver)
+void VocalTractShapesDialog::setUpdateRequestReceiver(wxWindow *receiver1, wxWindow* receiver2)
 {
-  updateRequestReceiver = receiver;
+  updateRequestReceiver1 = receiver1;
+  updateRequestReceiver2 = receiver2;
 }
 
 // ****************************************************************************
@@ -153,7 +154,8 @@ VocalTractShapesDialog::VocalTractShapesDialog(wxWindow *parent) :
 
   data = Data::getInstance();
   tract = data->vocalTract;
-  updateRequestReceiver = NULL;
+  updateRequestReceiver1 = NULL;
+  updateRequestReceiver2 = NULL;
 
   // ****************************************************************
   // Init and update the widgets.
@@ -393,11 +395,17 @@ void VocalTractShapesDialog::updateVocalTract()
   data->updateTlModelGeometry(tract);
 
   // Refresh the pictures of the parent window.
-  if (updateRequestReceiver != NULL)
+  if (updateRequestReceiver1 != NULL)
   {
     wxCommandEvent event(updateRequestEvent);
     event.SetInt(UPDATE_VOCAL_TRACT);
-    wxPostEvent(updateRequestReceiver, event);
+    wxPostEvent(updateRequestReceiver1, event);
+  }
+  if (updateRequestReceiver2 != NULL)
+  {
+    wxCommandEvent event(updateRequestEvent);
+    event.SetInt(UPDATE_VOCAL_TRACT);
+    wxPostEvent(updateRequestReceiver2, event);
   }
 }
 

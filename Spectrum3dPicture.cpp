@@ -29,7 +29,8 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
     8, 0, false, false, true);
 
   graph.initLogOrdinate(1.0, 5.0,
-    -100.0, -10.0, -30, 10.0, 100.0, 50.0,
+    -100.0, -10.0, -100, 
+    10.0, 100.0, 50.0,
     true, 10);
 
   graph.isLinearOrdinate = false;

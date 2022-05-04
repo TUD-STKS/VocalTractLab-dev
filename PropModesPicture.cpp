@@ -523,7 +523,7 @@ void PropModesPicture::draw(wxDC& dc)
           }
         }
         // write informations
-        info << "f = " << m_simu3d->simuParams().freqField << " Hz" << endl;
+        info << "f = " << m_simu3d->lastFreqComputed() << " Hz" << endl;
 
         dc.DrawBitmap(bmp, 0, 0, 0);
 
@@ -539,11 +539,6 @@ void PropModesPicture::draw(wxDC& dc)
         drawContour(sectionIdx, surf, dc);
         break;
 		}
-	//}
-	//else
-	//{
- // info << "No modes computed." << endl;
-	//}
 
   dc.SetPen(*wxBLACK_PEN);
   dc.SetBackgroundMode(wxTRANSPARENT);

@@ -1,0 +1,48 @@
+\documentclass[]{article}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts} 
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathtools}
+%\usepackage{breqn}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{soul}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{bold-extra}
+\usepackage{tcolorbox}
+
+\newcommand*{\transp}[2][-3mu]{\ensuremath{\mskip1mu\prescript{\smash{\mathrm t\mkern#1}}{}{\mathstrut#2}}}
+\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+%opening
+\title{User guide for VocalTractLab3D}
+\author{R{\'e}mi Blandin}
+
+\begin{document}
+	\maketitle
+	
+	\section{Introduction}
+	
+	VocalTractLab3D is an articulatory synthesiser closely related to VocalTractLab 2.3. It has, to some very little differences, the same functionalities as 
+	VocalTractLab 2.3, but it integrates a module that performs 3D acoustic 
+	simulations, hence its name VocalTractLab3D.
+	
+	\subsection{What are 3D acoustic simulations?}
+	
+	Vocal tract acoustic simulations consists in descibing how acoustic waves travel
+	inside the vocal tract volume, are reflected at the discontinuities, such as 
+	changes of cross-section or the mouth opening and create resonances. 
+	This allows one to compute transfer functions, as an exemple between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips.
+	
+	Up to about 4-5 kHz, the acoustic waves consist in variations of the acoustic 
+	pressure which are almost uniform over the transverse cross-section of the vocal tract. Therefore, they are often refered to as \emph{plane waves}.
+	Their properties depend only on the cross-sectional area and it is not necessary to take into account the cross-sectional contour shape and the curvature of the vocal tract to describe them. 
+	That is why it is sufficient to describe the vocal tract as a 1D area function 
+	when plane wave propagation is assumed. 
+	This is type of simulation is one-dimensional, it cannot account for transverse 
+	variation of the acoustic field or of the precise 3D shape of the vocal tract.
+\end{document}

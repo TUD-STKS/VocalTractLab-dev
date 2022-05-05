@@ -13,8 +13,7 @@ class SegmentsPicture : public BasicPicture
 public:
 
   SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d, wxWindow* updateEventReceiver);
-  //static SegmentsPicture *getInstance(Acoustic3dSimulation* simu3d,
-  //  wxWindow* updateEventReceiver, wxWindow* parent = NULL);
+
   virtual void draw(wxDC& dc);
   void showPreivousSegment();
   void showNextSegment();
@@ -29,15 +28,6 @@ public:
   bool showField() const { return m_showField; }
 
 // **************************************************************************
-// Private functions.
-// **************************************************************************
-
-private:
-
-  void getZoomAndCenter(int& width, int& height, double& centerX, double& centerY,
-    double& zoom);
-
-// **************************************************************************
 // Private data.
 // **************************************************************************
 
@@ -50,6 +40,30 @@ private:
   int m_activeSegment;
   bool m_showSegments;
   bool m_showField;
+  bool m_showSndSourceSeg;
+
+  int m_width;
+  int m_height;
+  double m_zoom;
+  double m_halfWidth;
+  double m_halfHeight;
+  double m_bboxHalfWidth;
+  double m_bboxHalfHeight;
+  pair<Point2D, Point2D> m_bbox;
+
+
+// **************************************************************************
+// Private functions.
+// **************************************************************************
+
+private:
+
+  void getZoomAndBbox();
+  int getPixelCoordX(double x);
+  int getPixelCoordY(double y);
+  double getCoordXFromPixel(int Xpix);
+  double getCoordYFromPixel(int Ypix);
+  void drawSegment(CrossSection2d *sec, CGAL::Bbox_2 &bbox, wxDC& dc);
 
  // ****************************************************************************
  // Declare the event table right at the end

@@ -195,16 +195,16 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%d", m_simuParams.fieldResolution);
   txtResolutionField->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].x());
+  st = wxString::Format("%1.1f", m_simuParams.bbox[0].x());
   txtBboxMinX->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.bboxField[0].y());
+  st = wxString::Format("%1.1f", m_simuParams.bbox[0].y());
   txtBboxMinY->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].x());
+  st = wxString::Format("%1.1f", m_simuParams.bbox[1].x());
   txtBboxMaxX->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.bboxField[1].y());
+  st = wxString::Format("%1.1f", m_simuParams.bbox[1].y());
   txtBboxMaxY->SetValue(st);
 
   // transfer function point
@@ -924,6 +924,7 @@ void ParamSimu3DDialog::OnSecNoiseSourceEnter(wxCommandEvent& event)
     }
 
     updateWidgets();
+    updatePictures();
 }
 
 // ****************************************************************************
@@ -1008,7 +1009,7 @@ void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
   wxString st = txtBboxMinX->GetValue();
   if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
   {
-    m_simuParams.bboxField[0] = Point(x, m_simuParams.bboxField[0].y());
+    m_simuParams.bbox[0] = Point(x, m_simuParams.bbox[0].y());
   }
   updateWidgets();
   updatePictures();
@@ -1023,7 +1024,7 @@ void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
   wxString st = txtBboxMinY->GetValue();
   if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
   {
-    m_simuParams.bboxField[0] = Point(m_simuParams.bboxField[0].x(), x);
+    m_simuParams.bbox[0] = Point(m_simuParams.bbox[0].x(), x);
   }
   updateWidgets();
   updatePictures();
@@ -1038,7 +1039,7 @@ void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
   wxString st = txtBboxMaxX->GetValue();
   if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
   {
-    m_simuParams.bboxField[1] = Point(x, m_simuParams.bboxField[1].y());
+    m_simuParams.bbox[1] = Point(x, m_simuParams.bbox[1].y());
   }
   updateWidgets();
   updatePictures();
@@ -1053,7 +1054,7 @@ void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
   wxString st = txtBboxMaxY->GetValue();
   if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
   {
-    m_simuParams.bboxField[1] = Point(m_simuParams.bboxField[1].x(), x);
+    m_simuParams.bbox[1] = Point(m_simuParams.bbox[1].x(), x);
   }
   updateWidgets();
   updatePictures();
@@ -1377,9 +1378,6 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   m_simuParams.freqField = 5000.;
 
   m_simuParams.fieldResolution = 30;
-
-  m_simuParams.bboxField[0] = Point(-5., -10.);
-  m_simuParams.bboxField[1] = Point(10., 5.);
 
   m_simuParams.computeRadiatedField = false;
 

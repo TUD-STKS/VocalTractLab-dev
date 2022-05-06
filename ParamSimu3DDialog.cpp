@@ -1074,6 +1074,7 @@ void ParamSimu3DDialog::OnTfPointX(wxCommandEvent& event)
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1090,6 +1091,7 @@ void ParamSimu3DDialog::OnTfPointY(wxCommandEvent& event)
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1106,6 +1108,7 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************
@@ -1126,6 +1129,7 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   {
     log << "Importation successfull" << endl;
     chkMultiTFPts->SetValue(true);
+    updatePictures();
   }
   else
   {

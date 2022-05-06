@@ -19,11 +19,22 @@ typedef Eigen::VectorXd                 Vec;
 typedef int(*ColorMap)[256][3];   // for the colormap
 
 // ****************************************************************************
+// IDs.
+// ****************************************************************************
+
+static const int IDM_DEFINE_BBOX_LOWER_CORNER = 1000;
+static const int IDM_DEFINE_BBOX_UPPER_CORNER = 1001;
+static const int IDM_UPDATE_BBOX              = 1002;
+
+// ****************************************************************************
 // The event table.
 // ****************************************************************************
 
 BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
   EVT_MOUSE_EVENTS(SegmentsPicture::OnMouseEvent)
+  EVT_MENU(IDM_DEFINE_BBOX_LOWER_CORNER, SegmentsPicture::OnDefineBboxLowerCorner)
+  EVT_MENU(IDM_DEFINE_BBOX_UPPER_CORNER, SegmentsPicture::OnDefineBboxUpperCorner)
+  EVT_MENU(IDM_UPDATE_BBOX, SegmentsPicture::OnUpdateBbox)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -36,10 +47,16 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_activeSegment(0),
   m_showSegments(true),
   m_showField(false),
-  m_showSndSourceSeg(true)
+  m_showSndSourceSeg(true),
+  m_fieldInLogScale(true)
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
+
+  m_contextMenu = new wxMenu();
+  m_contextMenu->Append(IDM_DEFINE_BBOX_LOWER_CORNER, "Define bounding box lower corner");
+  m_contextMenu->Append(IDM_DEFINE_BBOX_UPPER_CORNER, "Define bounding box upper corner");
+  m_contextMenu->Append(IDM_UPDATE_BBOX, "Reset bounding box");
 
   getZoomAndBbox();
 }
@@ -85,6 +102,14 @@ void SegmentsPicture::draw(wxDC& dc)
         Matrix field;
         int normAmp;
         double maxAmp(m_simu3d->maxAmpField());
+        double minAmp(m_simu3d->minAmpField());
+        // to avoid singular values when the field is displayed in dB
+        double dbShift(0.5);
+        if (m_fieldInLogScale) { 
+          maxAmp = 20. * log10(maxAmp); 
+          minAmp = 20. * log10(minAmp);
+          maxAmp = maxAmp - minAmp + dbShift;
+        }
 
         // generate the coordinates of the points of the pixel map
         Vec coordX(m_width), coordY(m_height);
@@ -97,6 +122,7 @@ void SegmentsPicture::draw(wxDC& dc)
           coordY(i) = getCoordYFromPixel(i);
         }
         m_simu3d->interpolateAcousticField(coordX, coordY, field);
+        if (m_fieldInLogScale) { field = 20. * field.array().log10() - minAmp + dbShift; }
 
         // initialise white bitmap
         wxBitmap bmp(m_width, m_height, 24);
@@ -141,7 +167,7 @@ void SegmentsPicture::draw(wxDC& dc)
     xEnd = getPixelCoordX(m_bbox.second.x);
     yEnd = yBig;
 
-    dc.SetPen(*wxRED_PEN);
+    dc.SetPen(*wxLIGHT_GREY_PEN);
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
 
     // right line
@@ -192,7 +218,7 @@ void SegmentsPicture::draw(wxDC& dc)
         // Draw the segments 
         //************************************************
 
-        dc.SetPen(*wxBLACK_PEN);
+        dc.SetPen(*wxGREY_PEN);
         drawSegment(sec, bbox, dc);
       }
 
@@ -214,6 +240,18 @@ void SegmentsPicture::draw(wxDC& dc)
         dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
       }
       drawSegment(sec, bbox, dc);
+
+      // plot the reception points of the transfer functions
+      struct simulationParameters simuParams = m_simu3d->simuParams();
+      dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
+      Point_3 pt;
+      for (auto it : simuParams.tfPoint)
+      {
+        pt = m_simu3d->movePointFromExitLandmarkToGeoLandmark(it);
+        xBig = getPixelCoordX(pt.x());
+        yBig = getPixelCoordY(pt.z());
+        dc.DrawCircle(xBig, yBig, 1);
+      }
     }
   }
   log.close();
@@ -241,18 +279,18 @@ void SegmentsPicture::showNextSegment()
 
 void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
 {
-  int mx, my;
   Point ptSelected;
   int idxSeg(-1);
 
+  // left click
   if (event.ButtonDown(wxMOUSE_BTN_LEFT) && (m_simu3d->numCrossSections() > 0))
   {
-    mx = event.GetX();
-    my = event.GetY();
+    m_mousePosX = event.GetX();
+    m_mousePosY = event.GetY();
 
     getZoomAndBbox();
 
-    ptSelected = Point(getCoordXFromPixel(mx), getCoordYFromPixel(my));
+    ptSelected = Point(getCoordXFromPixel(m_mousePosX), getCoordYFromPixel(m_mousePosY));
 
     m_simu3d->findSegmentContainingPoint(ptSelected, idxSeg);
 
@@ -265,6 +303,14 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
       event.SetInt(UPDATE_PICTURES);
       wxPostEvent(updateEventReceiver, event);
     }
+  }
+
+  // Right click
+  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numCrossSections() > 0))
+  {
+    m_mousePosX = event.GetX();
+    m_mousePosY = event.GetY();
+    PopupMenu(m_contextMenu);
   }
 }
 
@@ -279,15 +325,14 @@ void SegmentsPicture::resetActiveSegment()
 
 void SegmentsPicture::getZoomAndBbox()
 {
-  ofstream log("log.txt", ofstream::app);
-  double maxLength;
+  //ofstream log("log.txt", ofstream::app);
 
   m_bbox = m_simu3d->bboxSagittalPlane();
 
-  log << "bbox " << m_bbox.first.x << "  "
-    << m_bbox.second.x << "  "
-    << m_bbox.first.y << "  "
-    << m_bbox.second.y << endl;
+  //log << "bbox " << m_bbox.first.x << "  "
+  //  << m_bbox.second.x << "  "
+  //  << m_bbox.first.y << "  "
+  //  << m_bbox.second.y << endl;
 
   // get the dimensions of the picture
   this->GetSize(&m_width, &m_height);
@@ -295,12 +340,12 @@ void SegmentsPicture::getZoomAndBbox()
   m_halfWidth = (double)(m_width) / 2.;
   m_halfHeight = (double)(m_height) / 2.;
 
-  log << "Width " << m_width << " height " << m_height << endl;
+  //log << "Width " << m_width << " height " << m_height << endl;
 
   double bboxWidth(m_bbox.second.x - m_bbox.first.x);
   double bboxHeight(m_bbox.second.y - m_bbox.first.y);
 
-  log << "bboxWidth " << bboxWidth << " bboxHeight " << bboxHeight << endl;
+  //log << "bboxWidth " << bboxWidth << " bboxHeight " << bboxHeight << endl;
 
   if (bboxHeight > bboxWidth)
   {
@@ -325,16 +370,12 @@ void SegmentsPicture::getZoomAndBbox()
     }
   }
 
+  //log << "Zoom " << m_zoom << endl;
+
   m_bboxHalfWidth = m_zoom * (m_bbox.second.x - m_bbox.first.x) / 2.;
   m_bboxHalfHeight = m_zoom * (m_bbox.second.y - m_bbox.first.y) / 2.;
 
-  //maxLength = 1.01 * max(m_bbox.second.x - m_bbox.first.x,
-  //  m_bbox.second.y - m_bbox.first.y);
-  //m_zoom = (double)min(m_width, m_height) / maxLength;
-
-  log << "Zoom " << m_zoom << " max length " << maxLength << endl;
-
-  log.close();
+  //log.close();
 }
 
 // ****************************************************************************
@@ -417,4 +458,43 @@ void SegmentsPicture::drawSegment(CrossSection2d *sec, CGAL::Bbox_2& bbox, wxDC&
   xEnd = getPixelCoordX(ptInMin.x());
   yEnd = getPixelCoordY(ptInMin.y());
   dc.DrawLine(xBig, yBig, xEnd, yEnd);
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnUpdateBbox(wxCommandEvent& event)
+{
+  m_simu3d->updateBoundingBox();
+
+  wxCommandEvent picUpdateEvent(updateRequestEvent);
+  event.SetInt(UPDATE_PICTURES);
+  wxPostEvent(updateEventReceiver, picUpdateEvent);
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnDefineBboxLowerCorner(wxCommandEvent& event)
+{
+  pair<Point2D, Point2D> newBbox(m_simu3d->bboxSagittalPlane());
+  newBbox.first.x = getCoordXFromPixel(m_mousePosX);
+  newBbox.first.y = getCoordYFromPixel(m_mousePosY);
+  m_simu3d->setBoundingBox(newBbox);
+
+  wxCommandEvent picUpdateEvent(updateRequestEvent);
+  event.SetInt(UPDATE_PICTURES);
+  wxPostEvent(updateEventReceiver, picUpdateEvent);
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnDefineBboxUpperCorner(wxCommandEvent& event)
+{
+  pair<Point2D, Point2D> newBbox(m_simu3d->bboxSagittalPlane());
+  newBbox.second.x = getCoordXFromPixel(m_mousePosX);
+  newBbox.second.y = getCoordYFromPixel(m_mousePosY);
+  m_simu3d->setBoundingBox(newBbox);
+
+  wxCommandEvent picUpdateEvent(updateRequestEvent);
+  event.SetInt(UPDATE_PICTURES);
+  wxPostEvent(updateEventReceiver, picUpdateEvent);
 }

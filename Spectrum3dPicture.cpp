@@ -6,7 +6,8 @@
 // ****************************************************************************
 
 Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent, 
-    Acoustic3dSimulation *simu3d): BasicPicture(parent)
+    Acoustic3dSimulation *simu3d): BasicPicture(parent),
+  m_idxPtTf(0)
 {
   // ****************************************************************
   // Init the variables
@@ -93,7 +94,7 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
   for (int i(0); i < graphW; i++)
   {
     freq = graph.getAbsXValue(graphX + i);
-    val = abs(simu3d->interpolateTransferFunction(freq, 0, type));
+    val = abs(simu3d->interpolateTransferFunction(freq, m_idxPtTf, type));
 
     y = graph.getYPos(val);
 

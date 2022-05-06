@@ -24,6 +24,7 @@ public:
   void paintSpectrum(wxDC &dc);
   void setShowNoiseTf(bool show) { m_showNoiseTf = show; }
   bool showNoise() const { return m_showNoiseTf; }
+  void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
   
   // **************************************************************************
   // Private data.
@@ -34,6 +35,8 @@ private:
   Acoustic3dSimulation *simu3d;
   bool m_showGlottalTf;
   bool m_showNoiseTf;
+
+  int m_idxPtTf;
 
   // **************************************************************************
   // Private functions.

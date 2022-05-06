@@ -52,6 +52,7 @@ public:
 private:
 
   enum objectToDisplay m_objectToDisplay;
+  bool m_fieldInLogScale;
 	int m_modeIdx;
   double m_zoom;
   double m_centerX;

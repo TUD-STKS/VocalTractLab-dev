@@ -32,6 +32,7 @@ typedef int(*ColorMap)[256][3];
 PropModesPicture::PropModesPicture(wxWindow* parent,
 	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
 	: BasicPicture(parent),
+  m_fieldInLogScale(true),
 	m_objectToDisplay(MESH),
 	m_modeIdx(0)
 {
@@ -465,8 +466,18 @@ void PropModesPicture::draw(wxDC& dc)
 
         Vec amplitudes((modes * modesAmpl).cwiseAbs());
 
-        maxAmp = amplitudes.maxCoeff();
-        minAmp = amplitudes.minCoeff();
+        // to avoid singular values when the field is displayed in dB
+        double dbShift(0.5);
+        if (m_fieldInLogScale) {
+          maxAmp = 20. * log10(m_simu3d->maxAmpField());
+          minAmp = 20. * log10(m_simu3d->minAmpField());
+          maxAmp = maxAmp - minAmp + dbShift;
+        }
+        else
+        {
+          maxAmp = amplitudes.maxCoeff();
+          minAmp = amplitudes.minCoeff();
+        }
 
         log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
 
@@ -513,6 +524,10 @@ void PropModesPicture::draw(wxDC& dc)
                 (1. - alpha - beta) * vecTri[0];
               idxI = (int)(m_zoom * pointToDraw.x + m_centerX);
               idxJ = (int)(m_centerY - m_zoom * pointToDraw.y);
+              if (m_fieldInLogScale) 
+              {
+                pointToDraw.z = 20. * log10(pointToDraw.z) - minAmp + dbShift;
+              }
               field(idxI, idxJ) = pointToDraw.z;
               normAmp = max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1);
               p.MoveTo(data, idxI, idxJ);
@@ -527,10 +542,10 @@ void PropModesPicture::draw(wxDC& dc)
 
         dc.DrawBitmap(bmp, 0, 0, 0);
 
-        //// export field
-        //ofstream ofs("tField.txt");
-        //ofs << field << endl;
-        //ofs.close();
+        // export field
+        ofstream ofs("tField.txt");
+        ofs << field << endl;
+        ofs.close();
         break;
       }
     }
@@ -585,36 +600,6 @@ void PropModesPicture::showField()
 
 void PropModesPicture::setModeIdx(int idx)
 {
-	//double pos = m_picVocalTract->cutPlanePos_cm;
-	//double cumLength(0.);
-	//int sectionIdx(0);
-
-	//// ****************************************************************
-	//// Identify the index of the corresponding tube
-	//// ****************************************************************
-
-	//cumLength = 0.;
-	//sectionIdx = -1;
-
-	//for (int i(0); i < m_simu3d->sectionNumber(); i++)
-	//{
-	//	if (((pos - cumLength) >= -Mesh2d::MINIMAL_DISTANCE) &&
-	//		((pos - (cumLength +
-	//			(m_simu3d->crossSection(i)).length()))
-	//			<= Mesh2d::MINIMAL_DISTANCE))
-	//	{
-	//		sectionIdx = i;
-	//		break;
-	//	}
-	//	cumLength += (m_simu3d->crossSection(i)).length();
-	//}
-
-	//// ****************************************************************
-	//// set the index of the mode and update picture
-	//// ****************************************************************
-
-	//m_modeIdx = max(0, min((m_simu3d->crossSection(sectionIdx)).numberOfModes()-1, 
-	//	idx));
 	m_modeIdx = idx;
 	Refresh();
 }

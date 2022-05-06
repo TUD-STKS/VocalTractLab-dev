@@ -67,6 +67,8 @@ static const int IDB_FREQUENCY_RANGE_MINUS			  = 7006;
 static const int IDB_FREQUENCY_RANGE_PLUS 		  	= 7007;
 
 static const int IDB_SHOW_NOISE_SOURCE_SPEC       = 7008;
+static const int IDB_PREVIOUS_TF                  = 7009;
+static const int IDB_NEXT_TF                      = 7010;
 
 // ****************************************************************************
 // The event table.
@@ -118,6 +120,8 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_MINUS, Acoustic3dPage::OnFrequencyRangeMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_PLUS, Acoustic3dPage::OnFrequencyRangePlus)
   EVT_CHECKBOX(IDB_SHOW_NOISE_SOURCE_SPEC, Acoustic3dPage::OnShowNoiseSourceSpec)
+  EVT_BUTTON(IDB_PREVIOUS_TF, Acoustic3dPage::OnPreviousTf)
+  EVT_BUTTON(IDB_NEXT_TF, Acoustic3dPage::OnNextTf)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -125,7 +129,8 @@ END_EVENT_TABLE()
 // ****************************************************************************
 
 Acoustic3dPage::Acoustic3dPage(wxWindow* parent, VocalTractPicture *picVocalTract) :
-  wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN)
+  wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN),
+  m_idxTfPoint(0)
 {
   initVars();
   initWidgets(picVocalTract);
@@ -158,6 +163,10 @@ void Acoustic3dPage::updateWidgets()
   picPropModes->Refresh();
   picSpectrum->Refresh();
   segPic->Refresh();
+
+  m_tfPoint = simu3d->simuParams().tfPoint[m_idxTfPoint];
+  wxString st(wxString::Format("%f  %f  %f", m_tfPoint.x(), m_tfPoint.y(), m_tfPoint.z()));
+  txtTfPoint->SetLabelText(st);
 }
 
 // ****************************************************************************
@@ -168,6 +177,7 @@ void Acoustic3dPage::initVars()
 {
   data = Data::getInstance();
   simu3d = Acoustic3dSimulation::getInstance();
+  m_tfPoint = simu3d->simuParams().tfPoint[m_idxTfPoint];
 }
 
 // ****************************************************************************
@@ -413,13 +423,36 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise source");
   sizer->Add(chkShowNoiseSourceSpec, 0, wxALL, 2);
 
+  // text to display the transfer function point coordinates
+  wxStaticText* label = new wxStaticText(bottomPanel, wxID_ANY, "Transfer function point:");
+  sizer->Add(label, 0, wxALL | wxALIGN_LEFT, 3);
+
+  wxString st(wxString::Format("%1.1f  %1.1f  %1.1f", m_tfPoint.x(), m_tfPoint.y(), m_tfPoint.z()));
+  txtTfPoint = new wxStaticText(bottomPanel, wxID_ANY, st);
+  sizer->Add(txtTfPoint, 0, wxALL | wxALIGN_CENTER, 3);
+
+  // buttons to brows the transfer functions of the different points
+  wxBoxSizer* subSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  button = new wxButton(bottomPanel, IDB_PREVIOUS_TF, "<", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  subSizer->Add(button, 0, wxALL, 5);
+
+  button = new wxButton(bottomPanel, IDB_NEXT_TF, ">", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+  button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
+  subSizer->Add(button, 0, wxALL, 5);
+
+  sizer->Add(subSizer, 0, wxGROW | wxALL, 2);
+
+  // buttons to change the frequency axis
   sizer->AddStretchSpacer(1);
 
-  wxBoxSizer* subSizer = new wxBoxSizer(wxHORIZONTAL);
+  subSizer = new wxBoxSizer(wxHORIZONTAL);
 
   button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_MINUS, "-", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
   button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   subSizer->Add(button, 0, wxALL, 5);
+
   button = new wxButton(bottomPanel, IDB_FREQUENCY_RANGE_PLUS, "+", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
   button->SetMinSize(wxSize(button->GetSize().GetHeight(), button->GetSize().GetHeight()));
   subSizer->Add(button, 0, wxALL, 5);
@@ -957,6 +990,30 @@ void Acoustic3dPage::OnShowNoiseSourceSpec(wxCommandEvent& event)
 {
   picSpectrum->setShowNoiseTf(chkShowNoiseSourceSpec->GetValue());
   picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnPreviousTf(wxCommandEvent& event)
+{
+  m_idxTfPoint = max(0, m_idxTfPoint - 1);
+
+  picSpectrum->setIdxTfPoint(m_idxTfPoint);
+  picSpectrum->Refresh();
+  updateWidgets();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnNextTf(wxCommandEvent& event)
+
+{
+  struct simulationParameters simuParams(simu3d->simuParams());
+  m_idxTfPoint = min((int)(simuParams.tfPoint.size()) - 1, m_idxTfPoint + 1);
+
+  picSpectrum->setIdxTfPoint(m_idxTfPoint);
+  picSpectrum->Refresh();
+  updateWidgets();
 }
 
 // ****************************************************************************

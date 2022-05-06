@@ -49,6 +49,12 @@ private:
   wxCheckBox* chkShowNoiseSourceSpec;
   //wxCheckBox* chkShowF;
 
+  // spectrum picture controls
+  wxStaticText* txtTfPoint;
+
+  int m_idxTfPoint;
+  Point_3 m_tfPoint;
+
 // ****************************************************************
 // Private functions.
 // ****************************************************************
@@ -100,6 +106,8 @@ private:
   void OnFrequencyRangeMinus(wxCommandEvent& event);
   void OnFrequencyRangePlus(wxCommandEvent& event);
   void OnShowNoiseSourceSpec(wxCommandEvent& event);
+  void OnPreviousTf(wxCommandEvent& event);
+  void OnNextTf(wxCommandEvent& event);
 
   void importGeometry();
 

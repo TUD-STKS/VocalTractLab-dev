@@ -107,6 +107,8 @@ Check out the official [manual](https://www.vocaltractlab.de/download-vocaltract
 
 You can also find some example gestural scores and segment sequence files in the folder `examples/`.
 
+Please be aware of the fact that VTL does not support theming currently. So if the layout/designs seems to be off for you, please check if you are using the default (light) theme of your system.
+
 ## Troubleshooting
 If you run into any problems in the build process, make sure all the dependencies are correctly installed. If you still run into any trouble, feel free to open an issue.
 

@@ -54,12 +54,13 @@ sudo ldconfig
 That should be it.
 
 ### Install dependencies on Mac OS X 
-You can install the dependencies and build VocalTractLab by simply running the script `build/osx/build.sh`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
+First of all, you need to have Xcode installed (including the CLI toolkit). An Apple Developer account is mandatory as well as administrative rights on the system you want to run VocalTractLab on. Next, make sure you have git installed. Mac OS X already comes with git installed normally. If you do not have git installed for whatever reason, please do so. In addition, make sure CMake is installed and added to your PATH. Last thing to check is wheter curl is installed on your system. If not, please do so.
+You now should be able to install the dependencies and build VocalTractLab by simply running the script `build/osx/build.sh`. If for whatever reason you want to walk through the steps manually, here is what you need to do.
 
 Mac OS X already ships with OpenGL and OpenAL built-in. You just need to build and install wxWidgets:
 
 ```bash
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
+curl https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2 -O -L
 tar -xf wxWidgets-3.1.3.tar.bz2
 cd wxWidgets-3.1.3
 mkdir buildosx

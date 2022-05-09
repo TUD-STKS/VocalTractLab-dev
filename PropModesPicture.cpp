@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <regex>
 #include "Backend/Geometry.h"
 #include "Data.h"
 #include <wx/rawbmp.h>
@@ -26,6 +27,21 @@ typedef CGAL::Polygon_2<K>                            Polygon_2;
 typedef int(*ColorMap)[256][3];
 
 // ****************************************************************************
+// IDs.
+// ****************************************************************************
+
+static const int IDM_EXPORT_ACOUSTIC_FIELD = 1000;
+
+// ****************************************************************************
+// The event table.
+// ****************************************************************************
+
+BEGIN_EVENT_TABLE(PropModesPicture, BasicPicture)
+  EVT_MOUSE_EVENTS(PropModesPicture::OnMouseEvent)
+  EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, PropModesPicture::OnExportAcousticField)
+END_EVENT_TABLE()
+
+// ****************************************************************************
 /// Constructor. Passes the parent parameter.
 // ****************************************************************************
 
@@ -39,6 +55,9 @@ PropModesPicture::PropModesPicture(wxWindow* parent,
 	//this->m_picVocalTract = picVocalTract;
 	this->m_simu3d = simu3d;
   this->m_segPic = segPic;
+
+  m_contextMenu = new wxMenu();
+  m_contextMenu->Append(IDM_EXPORT_ACOUSTIC_FIELD, "Export acoustic field in text file");
 }
 
 // ****************************************************************************
@@ -424,6 +443,8 @@ void PropModesPicture::draw(wxDC& dc)
         ColorMap colorMap = ColorScale::getColorMap();
         double maxAmp;
         double minAmp;
+        // to avoid singular values when the field is displayed in dB
+        double dbShift(0.5);
         Point3D vecTri[3];
         Point3D pointToDraw;
         int numPtSide;
@@ -432,7 +453,17 @@ void PropModesPicture::draw(wxDC& dc)
         double maxDist;
         int normAmp;
 
-        Matrix field(width, height);
+        auto start = std::chrono::system_clock::now();
+
+
+        m_field.resize(height, width);
+        m_field.setConstant(NAN);
+
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> duration = start - end;
+
+        log << "Time m_field " << duration.count() << endl;
+
         int idxI, idxJ;
 
         // initialise white bitmap
@@ -462,21 +493,24 @@ void PropModesPicture::draw(wxDC& dc)
         log << "Mode number " << mn << endl;
 
         auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
-        auto bid = modes * modesAmpl;
+
+        log << "modesAmpl:\n" << modesAmpl << endl << endl;
 
         Vec amplitudes((modes * modesAmpl).cwiseAbs());
 
-        // to avoid singular values when the field is displayed in dB
-        double dbShift(0.5);
-        if (m_fieldInLogScale) {
-          maxAmp = 20. * log10(m_simu3d->maxAmpField());
-          minAmp = 20. * log10(m_simu3d->minAmpField());
-          maxAmp = maxAmp - minAmp + dbShift;
-        }
-        else
+        maxAmp = m_simu3d->maxAmpField();
+        minAmp = m_simu3d->minAmpField();
+        // if no acoustic field has been computed in the sagittal plane 
+        // the maximum and minimum amplitude are taken from the local transverse field
+        if (maxAmp < 0.)
         {
           maxAmp = amplitudes.maxCoeff();
           minAmp = amplitudes.minCoeff();
+        }
+        if (m_fieldInLogScale) {
+          maxAmp = 20. * log10(maxAmp);
+          minAmp = 20. * log10(minAmp);
+          maxAmp = maxAmp - minAmp + dbShift;
         }
 
         log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
@@ -524,12 +558,13 @@ void PropModesPicture::draw(wxDC& dc)
                 (1. - alpha - beta) * vecTri[0];
               idxI = (int)(m_zoom * pointToDraw.x + m_centerX);
               idxJ = (int)(m_centerY - m_zoom * pointToDraw.y);
+              m_field(height - idxJ -1, idxI) = pointToDraw.z;
               if (m_fieldInLogScale) 
               {
                 pointToDraw.z = 20. * log10(pointToDraw.z) - minAmp + dbShift;
               }
-              field(idxI, idxJ) = pointToDraw.z;
-              normAmp = max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1);
+              normAmp = min(255, max(1, (int)(256. * pointToDraw.z / max(maxAmp, abs(minAmp))) - 1));
+
               p.MoveTo(data, idxI, idxJ);
               p.Red() = (*colorMap)[normAmp][0];
               p.Green() = (*colorMap)[normAmp][1];
@@ -541,11 +576,6 @@ void PropModesPicture::draw(wxDC& dc)
         info << "f = " << m_simu3d->lastFreqComputed() << " Hz" << endl;
 
         dc.DrawBitmap(bmp, 0, 0, 0);
-
-        // export field
-        ofstream ofs("tField.txt");
-        ofs << field << endl;
-        ofs.close();
         break;
       }
     }
@@ -650,4 +680,38 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
     dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
   }
+}
+
+// ****************************************************************************
+
+void PropModesPicture::OnMouseEvent(wxMouseEvent& event)
+{
+  // Right click
+  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numCrossSections() > 0))
+  {
+    PopupMenu(m_contextMenu);
+  }
+}
+
+// ****************************************************************************
+
+void PropModesPicture::OnExportAcousticField(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  // export field
+  ofstream ofs(name.ToStdString());
+  stringstream txtField;
+  txtField << m_field;
+  ofs << regex_replace(txtField.str(), regex("-nan\\(ind\\)"), "nan");
+  ofs.close();
+
+  ofstream log("log.txt", ofstream::app);
+  log << "Transverse acoustic field of segment " 
+    << m_segPic->activeSegment() << " saved in file:" << endl;
+  log << name.ToStdString() << endl;
+  log.close();
 }

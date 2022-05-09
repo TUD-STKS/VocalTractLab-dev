@@ -44,7 +44,7 @@ static const int IDB_EXPORT_GLOTTAL_SOURCE_TF = 6008;
 static const int IDB_EXPORT_NOISE_SOURCE_TF = 6009;
 static const int IDB_EXPORT_FIELD = 6010;
 
-// Main panel controls
+// Modes picture controls
 static const int IDB_SHOW_LOWER_ORDER_MODE = 6020;
 static const int IDB_SHOW_MESH = 6021;
 static const int IDB_SHOW_MODE = 6022;
@@ -165,8 +165,7 @@ void Acoustic3dPage::updateWidgets()
   segPic->Refresh();
 
   m_tfPoint = simu3d->simuParams().tfPoint[m_idxTfPoint];
-  wxString st(wxString::Format("%f  %f  %f", m_tfPoint.x(), m_tfPoint.y(), m_tfPoint.z()));
-  txtTfPoint->SetLabelText(st);
+  txtTfPoint->SetLabelText(generateTfPointCoordString());
 }
 
 // ****************************************************************************
@@ -427,9 +426,8 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxStaticText* label = new wxStaticText(bottomPanel, wxID_ANY, "Transfer function point:");
   sizer->Add(label, 0, wxALL | wxALIGN_LEFT, 3);
 
-  wxString st(wxString::Format("%1.1f  %1.1f  %1.1f", m_tfPoint.x(), m_tfPoint.y(), m_tfPoint.z()));
-  txtTfPoint = new wxStaticText(bottomPanel, wxID_ANY, st);
-  sizer->Add(txtTfPoint, 0, wxALL | wxALIGN_CENTER, 3);
+  txtTfPoint = new wxStaticText(bottomPanel, wxID_ANY, generateTfPointCoordString());
+  sizer->Add(txtTfPoint, 0, wxALL | wxALIGN_LEFT, 3);
 
   // buttons to brows the transfer functions of the different points
   wxBoxSizer* subSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -466,6 +464,14 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   // ****************************************************************
 
   this->SetSizer(topLevelSizer);
+}
+
+// ****************************************************************************
+
+wxString Acoustic3dPage::generateTfPointCoordString()
+{
+  return(wxString::Format("X: %2.1f\nY: %2.1f\nZ: %2.1f",
+    m_tfPoint.x(), m_tfPoint.y(), m_tfPoint.z()));
 }
 
 // ****************************************************************************
@@ -1000,6 +1006,8 @@ void Acoustic3dPage::OnPreviousTf(wxCommandEvent& event)
 
   picSpectrum->setIdxTfPoint(m_idxTfPoint);
   picSpectrum->Refresh();
+  segPic->setIdxTfPoint(m_idxTfPoint);
+  segPic->Refresh();
   updateWidgets();
 }
 
@@ -1013,6 +1021,8 @@ void Acoustic3dPage::OnNextTf(wxCommandEvent& event)
 
   picSpectrum->setIdxTfPoint(m_idxTfPoint);
   picSpectrum->Refresh();
+  segPic->setIdxTfPoint(m_idxTfPoint);
+  segPic->Refresh();
   updateWidgets();
 }
 

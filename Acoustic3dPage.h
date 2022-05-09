@@ -62,6 +62,7 @@ private:
 
   void initVars();
   void initWidgets(VocalTractPicture* picVocalTract);
+  wxString generateTfPointCoordString();
   void OnUpdateRequest(wxCommandEvent& event);
 
   // Event handers for controls at the left side

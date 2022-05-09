@@ -22,6 +22,7 @@ public:
   void resetActiveSegment();
   void setShowSegments(bool showSegs) { m_showSegments = showSegs; }
   void setShowField(bool showField) { m_showField = showField; }
+  void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
@@ -46,6 +47,7 @@ private:
   bool m_showField;
   bool m_showSndSourceSeg;
   bool m_fieldInLogScale;
+  int m_idxPtTf;
 
   int m_width;
   int m_height;
@@ -75,6 +77,8 @@ private:
   void OnUpdateBbox(wxCommandEvent& event);
   void OnDefineBboxLowerCorner(wxCommandEvent& event);
   void OnDefineBboxUpperCorner(wxCommandEvent& event);
+  void OnExportAcousticField(wxCommandEvent& event);
+  void OnDefineNoiseSourceSeg(wxCommandEvent& event);
 
  // ****************************************************************************
  // Declare the event table right at the end

@@ -25,6 +25,8 @@ typedef int(*ColorMap)[256][3];   // for the colormap
 static const int IDM_DEFINE_BBOX_LOWER_CORNER = 1000;
 static const int IDM_DEFINE_BBOX_UPPER_CORNER = 1001;
 static const int IDM_UPDATE_BBOX              = 1002;
+static const int IDM_EXPORT_ACOUSTIC_FIELD    = 1003;
+static const int IDM_DEFINE_NOISE_SRC_SEG     = 1004;
 
 // ****************************************************************************
 // The event table.
@@ -35,6 +37,8 @@ BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
   EVT_MENU(IDM_DEFINE_BBOX_LOWER_CORNER, SegmentsPicture::OnDefineBboxLowerCorner)
   EVT_MENU(IDM_DEFINE_BBOX_UPPER_CORNER, SegmentsPicture::OnDefineBboxUpperCorner)
   EVT_MENU(IDM_UPDATE_BBOX, SegmentsPicture::OnUpdateBbox)
+  EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, SegmentsPicture::OnExportAcousticField)
+  EVT_MENU(IDM_DEFINE_NOISE_SRC_SEG, SegmentsPicture::OnDefineNoiseSourceSeg)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -57,6 +61,8 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_contextMenu->Append(IDM_DEFINE_BBOX_LOWER_CORNER, "Define bounding box lower corner");
   m_contextMenu->Append(IDM_DEFINE_BBOX_UPPER_CORNER, "Define bounding box upper corner");
   m_contextMenu->Append(IDM_UPDATE_BBOX, "Reset bounding box");
+  m_contextMenu->Append(IDM_EXPORT_ACOUSTIC_FIELD, "Export acoustic field as text file");
+  m_contextMenu->Append(IDM_DEFINE_NOISE_SRC_SEG, "Define current segment as noise source location");
 
   getZoomAndBbox();
 }
@@ -229,28 +235,46 @@ void SegmentsPicture::draw(wxDC& dc)
       drawSegment(sec, bbox, dc);
 
       // Plot the sound source segment
-      sec = m_simu3d->crossSection(m_simu3d->idxSecNoiseSource());
-      bbox = sec->contour().bbox();
-      if (m_activeSegment == m_simu3d->idxSecNoiseSource())
+      if (m_showSndSourceSeg)
       {
-        dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
+        sec = m_simu3d->crossSection(m_simu3d->idxSecNoiseSource());
+        bbox = sec->contour().bbox();
+        if (m_activeSegment == m_simu3d->idxSecNoiseSource())
+        {
+          dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
+        }
+        else
+        {
+          dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
+        }
+        drawSegment(sec, bbox, dc);
       }
-      else
-      {
-        dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
-      }
-      drawSegment(sec, bbox, dc);
+
+      //************************************************
+      // Draw transfer fucntion points
+      //************************************************
 
       // plot the reception points of the transfer functions
       struct simulationParameters simuParams = m_simu3d->simuParams();
-      dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
+      dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
       Point_3 pt;
+      int cnt(0);
       for (auto it : simuParams.tfPoint)
       {
         pt = m_simu3d->movePointFromExitLandmarkToGeoLandmark(it);
         xBig = getPixelCoordX(pt.x());
         yBig = getPixelCoordY(pt.z());
-        dc.DrawCircle(xBig, yBig, 1);
+        if (cnt == m_idxPtTf)
+        {
+          dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
+          dc.DrawCircle(xBig, yBig, 1);
+          dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
+        }
+        else
+        {
+          dc.DrawCircle(xBig, yBig, 1);
+        }
+        cnt++;
       }
     }
   }
@@ -493,6 +517,32 @@ void SegmentsPicture::OnDefineBboxUpperCorner(wxCommandEvent& event)
   newBbox.second.x = getCoordXFromPixel(m_mousePosX);
   newBbox.second.y = getCoordYFromPixel(m_mousePosY);
   m_simu3d->setBoundingBox(newBbox);
+
+  wxCommandEvent picUpdateEvent(updateRequestEvent);
+  event.SetInt(UPDATE_PICTURES);
+  wxPostEvent(updateEventReceiver, picUpdateEvent);
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnExportAcousticField(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  m_simu3d->exportAcousticField(name.ToStdString());
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnDefineNoiseSourceSeg(wxCommandEvent& event)
+{
+  ofstream log("log.txt", ofstream::app);
+  m_simu3d->setIdxSecNoiseSource(m_activeSegment);
+  log << "Segment " << m_activeSegment << " defined as active segment" << endl;
+  log.close();
 
   wxCommandEvent picUpdateEvent(updateRequestEvent);
   event.SetInt(UPDATE_PICTURES);

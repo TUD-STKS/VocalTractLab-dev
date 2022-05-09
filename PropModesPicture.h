@@ -51,12 +51,16 @@ public:
 
 private:
 
+  wxMenu* m_contextMenu;
+
   enum objectToDisplay m_objectToDisplay;
   bool m_fieldInLogScale;
 	int m_modeIdx;
   double m_zoom;
   double m_centerX;
   double m_centerY;
+
+  Matrix m_field;
 
 	Acoustic3dSimulation* m_simu3d;
   SegmentsPicture* m_segPic;
@@ -68,6 +72,15 @@ private:
 private:
 
   void drawContour(int sectionIdx, vector<int>& surf, wxDC& dc);
+
+  void OnMouseEvent(wxMouseEvent& event);
+  void OnExportAcousticField(wxCommandEvent& event);
+
+// ****************************************************************************
+// Declare the event table right at the end
+// ****************************************************************************
+
+  DECLARE_EVENT_TABLE()
 };
 
 #endif

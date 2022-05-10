@@ -43,6 +43,7 @@ private:
   wxCheckBox* chkShowField;
 
   // propagation modes controls
+  wxCheckBox* chkShowContour;
   wxCheckBox* chkShowMesh;
   wxCheckBox* chkShowMode;
   wxCheckBox* chkShowTransField;
@@ -69,10 +70,10 @@ private:
 
   //void OnRunTestJunction(wxCommandEvent& event);
   //void OnRunTestRadImp(wxCommandEvent& event);
-  void OnRunTestMatrixE(wxCommandEvent& event);
+  //void OnRunTestMatrixE(wxCommandEvent& event);
   //void OnRunTestDiscontinuity(wxCommandEvent& event);
-  void OnRunTestElephant(wxCommandEvent& event);
-  void OnRunStaticSimulation(wxCommandEvent& event);
+  //void OnRunTestElephant(wxCommandEvent& event);
+  void OnComputeTf(wxCommandEvent& event);
   void OnParamSimuDialog(wxCommandEvent& event);
   void OnShapesDialog(wxCommandEvent& event);
   void OnImportGeometry(wxCommandEvent& event);
@@ -83,10 +84,11 @@ private:
   void OnComputeAcousticField(wxCommandEvent& event);
   void OnExportGlottalSourceTf(wxCommandEvent& event);
   void OnExportNoiseSourceTf(wxCommandEvent& event);
-  void OnExportField(wxCommandEvent& event);
+  //void OnExportField(wxCommandEvent& event);
 
   // event handlers for main panel control
   void OnShowLowerOrderMode(wxCommandEvent& event);
+  void OnShowContour(wxCommandEvent& event);
   void OnShowMesh(wxCommandEvent& event);
   void OnShowMode(wxCommandEvent& event);
   void OnShowTransField(wxCommandEvent& event);
@@ -111,6 +113,7 @@ private:
   void OnNextTf(wxCommandEvent& event);
 
   void importGeometry();
+  void setPicModeObjectTodisplay(enum objectToDisplay object);
 
 // ****************************************************************************
  // Declare the event table right at the end

@@ -29,34 +29,35 @@ using namespace std;
 
 //static const int IDB_RUN_TEST_JUNCTION = 5995;
 //static const int IDB_RUN_RAD_IMP = 5996;
-static const int IDB_RUN_TEST_MATRIX_E = 5997;
-static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
-static const int IDB_RUN_TEST_ELEPHANT = 5999;
-static const int IDB_RUN_STATIC_SIMULATION = 6000;
-static const int IDB_COMPUTE_MODES = 6001;
-static const int IDB_SHAPES_DIALOG = 6002;
-static const int IDB_IMPORT_GEOMETRY = 6003;
-static const int IDB_PARAM_SIMU_DIALOG = 6004;
-static const int IDB_PLAY_LONG_VOWEL = 6005;
-static const int IDB_PLAY_NOISE_SOURCE = 6006;
-static const int IDB_COMPUTE_ACOUSTIC_FIELD = 6007;
-static const int IDB_EXPORT_GLOTTAL_SOURCE_TF = 6008;
-static const int IDB_EXPORT_NOISE_SOURCE_TF = 6009;
-static const int IDB_EXPORT_FIELD = 6010;
+//static const int IDB_RUN_TEST_MATRIX_E = 5997;
+//static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
+//static const int IDB_RUN_TEST_ELEPHANT = 5999;
+static const int IDB_COMPUTE_TF                   = 6000;
+static const int IDB_COMPUTE_MODES                = 6001;
+static const int IDB_SHAPES_DIALOG                = 6002;
+static const int IDB_IMPORT_GEOMETRY              = 6003;
+static const int IDB_PARAM_SIMU_DIALOG            = 6004;
+static const int IDB_PLAY_LONG_VOWEL              = 6005;
+static const int IDB_PLAY_NOISE_SOURCE            = 6006;
+static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6007;
+static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6008;
+static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6009;
+//static const int IDB_EXPORT_FIELD = 6010;
 
 // Modes picture controls
-static const int IDB_SHOW_LOWER_ORDER_MODE = 6020;
-static const int IDB_SHOW_MESH = 6021;
-static const int IDB_SHOW_MODE = 6022;
-static const int IDB_SHOW_TRANSVERS_FIELD = 6023;
-//static const int IDB_SHOW_F = 6013;
-static const int IDB_SHOW_HIGHER_ORDER_MODE = 6024;
+static const int IDB_SHOW_LOWER_ORDER_MODE        = 6020;
+static const int IDB_SHOW_CONTOUR                 = 6021;
+static const int IDB_SHOW_MESH                    = 6022;
+static const int IDB_SHOW_MODE                    = 6023;
+static const int IDB_SHOW_TRANSVERS_FIELD         = 6024;
+//static const int IDB_SHOW_F = 6025;
+static const int IDB_SHOW_HIGHER_ORDER_MODE       = 6026;
 
 // segments picture controls
-static const int IDB_SHOW_PREVIOUS_SEGMENT = 6025;
-static const int IDB_SHOW_NEXT_SEGMENT = 6026;
-static const int IDB_SHOW_SEGMENTS = 6027;
-static const int IDB_SHOW_FIELD = 6028;
+static const int IDB_SHOW_PREVIOUS_SEGMENT        = 6027;
+static const int IDB_SHOW_NEXT_SEGMENT            = 6028;
+static const int IDB_SHOW_SEGMENTS                = 6029;
+static const int IDB_SHOW_FIELD                   = 6030;
 
 // Spectrum panel controls
 static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
@@ -83,23 +84,24 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
 
   //EVT_BUTTON(IDB_RUN_TEST_JUNCTION, Acoustic3dPage::OnRunTestJunction)
   //EVT_BUTTON(IDB_RUN_RAD_IMP, Acoustic3dPage::OnRunTestRadImp)
-  EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
+  //EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
   //EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
-  EVT_BUTTON(IDB_RUN_TEST_ELEPHANT, Acoustic3dPage::OnRunTestElephant)
+  //EVT_BUTTON(IDB_RUN_TEST_ELEPHANT, Acoustic3dPage::OnRunTestElephant)
   EVT_BUTTON(IDB_SHAPES_DIALOG, Acoustic3dPage::OnShapesDialog)
   EVT_BUTTON(IDB_IMPORT_GEOMETRY, Acoustic3dPage::OnImportGeometry)
   EVT_BUTTON(IDB_PARAM_SIMU_DIALOG, Acoustic3dPage::OnParamSimuDialog)
-  EVT_BUTTON(IDB_RUN_STATIC_SIMULATION, Acoustic3dPage::OnRunStaticSimulation)
+  EVT_BUTTON(IDB_COMPUTE_TF, Acoustic3dPage::OnComputeTf)
   EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
   EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
   EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
-  EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
+  //EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
   // Main panel controls
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
+  EVT_CHECKBOX(IDB_SHOW_CONTOUR, Acoustic3dPage::OnShowContour)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
   EVT_CHECKBOX(IDB_SHOW_MODE, Acoustic3dPage::OnShowMode)
   EVT_CHECKBOX(IDB_SHOW_TRANSVERS_FIELD, Acoustic3dPage::OnShowTransField)
@@ -150,11 +152,29 @@ void Acoustic3dPage::updateWidgets()
   VocalTract* tract = data->vocalTract;
 
   // display selected options for mode picture
-  chkShowMesh->SetValue(picPropModes->meshSelected());
-  chkShowMode->SetValue(picPropModes->modeSelected());
-  chkShowTransField->SetValue(picPropModes->fieldSelected());
-  chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
-  //chkShowF->SetValue(picPropModes->fSelected());
+  chkShowContour->SetValue(false);
+  chkShowMesh->SetValue(false);
+  chkShowMode->SetValue(false);
+  chkShowTransField->SetValue(false);
+  enum objectToDisplay object(picPropModes->getObjectDisplayed());
+  switch (object)
+  {
+  case MESH:
+    chkShowMesh->SetValue(true);
+    break;
+  case TRANSVERSE_MODE:
+    chkShowMode->SetValue(true);
+    break;
+  case ACOUSTIC_FIELD:
+    chkShowTransField->SetValue(true);
+    break;
+  case CONTOUR:
+    chkShowContour->SetValue(true);
+    break;
+  default:
+    chkShowContour->SetValue(true);
+    break;
+  }
 
   // options for segment picture
   segPic->setShowSegments(chkShowSegments->GetValue());
@@ -217,19 +237,19 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   //button = new wxButton(this, IDB_RUN_RAD_IMP, "Run test scale rad imped");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_TEST_MATRIX_E, "Run test matrix E");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_TEST_MATRIX_E, "Run test matrix E");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   //button = new wxButton(this, IDB_RUN_TEST_DISCONTINUITY, "Run test discontinuity");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_TEST_ELEPHANT, "Run test elphant");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_RUN_TEST_ELEPHANT, "Run test elphant");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_RUN_STATIC_SIMULATION, "Compute transfer function");
+  button = new wxButton(this, IDB_COMPUTE_TF, "Compute transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
@@ -243,8 +263,8 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   button = new wxButton(this, IDB_EXPORT_NOISE_SOURCE_TF, "Export noise transfer function");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_EXPORT_FIELD, "Export acoustic field");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_EXPORT_FIELD, "Export acoustic field");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(20);
   
@@ -352,6 +372,11 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   button = new wxButton(topPanel, IDB_SHOW_LOWER_ORDER_MODE, "<", wxDefaultPosition, wxSize(35, 35));
   sizer->Add(button, 0, wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  chkShowContour = new wxCheckBox(topPanel, IDB_SHOW_CONTOUR, "Contour");
+  sizer->Add(chkShowContour, 0, wxALIGN_BOTTOM | wxALL, 2);
 
   sizer->AddStretchSpacer(1);
 
@@ -559,15 +584,15 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  string fileName("file");
-  simu3d->runTest(MATRIX_E, fileName);
-  updateWidgets();
-  //picAreaFunction->Update();
-  picPropModes->Update();
-}
+//void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  string fileName("file");
+//  simu3d->runTest(MATRIX_E, fileName);
+//  updateWidgets();
+//  //picAreaFunction->Update();
+//  picPropModes->Update();
+//}
 
 // ****************************************************************************
 // ****************************************************************************
@@ -585,20 +610,20 @@ void Acoustic3dPage::OnRunTestMatrixE(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunTestElephant(wxCommandEvent& event)
-{
-  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  string fileName("file");
-  simu3d->runTest(ELEPHANT_TRUNK, fileName);
-  updateWidgets();
-  segPic->Update();
-  picPropModes->Update();
-}
+//void Acoustic3dPage::OnRunTestElephant(wxCommandEvent& event)
+//{
+//  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+//  string fileName("file");
+//  simu3d->runTest(ELEPHANT_TRUNK, fileName);
+//  updateWidgets();
+//  segPic->Update();
+//  picPropModes->Update();
+//}
 
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
+void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
 {
   Data* data = Data::getInstance();
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
@@ -606,11 +631,7 @@ void Acoustic3dPage::OnRunStaticSimulation(wxCommandEvent& event)
 
   simu3d->computeTransferFunction(tract);
 
-  // update pictures
   updateWidgets();
-  //picAreaFunction->Update();
-  //picPropModes->Update();
-
   OnPlayLongVowel();
 }
 
@@ -648,10 +669,8 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   ofs.close();
 
   // update pictures
+  setPicModeObjectTodisplay(TRANSVERSE_MODE);
   updateWidgets();
-  //picAreaFunction->Update();
-  //segPic->Update();
-  //picPropModes->Update();
 
   log.close();
 }
@@ -673,8 +692,9 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 
   // update pictures
   chkShowField->SetValue(true);
+  setPicModeObjectTodisplay(ACOUSTIC_FIELD);
   updateWidgets();
-  picPropModes->Update();
+  //picPropModes->Update();
 }
 
 // ****************************************************************************
@@ -706,15 +726,15 @@ void Acoustic3dPage::OnExportNoiseSourceTf(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnExportField(wxCommandEvent& event)
-{
-  wxFileName fileName;
-  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
-    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
-    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
-
-  simu3d->exportAcousticField(name.ToStdString());
-}
+//void Acoustic3dPage::OnExportField(wxCommandEvent& event)
+//{
+//  wxFileName fileName;
+//  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+//    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+//    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+//
+//  simu3d->exportAcousticField(name.ToStdString());
+//}
 
 // ****************************************************************************
 // ****************************************************************************
@@ -860,31 +880,30 @@ void Acoustic3dPage::OnPlayNoiseSource(wxCommandEvent& event)
 // Check boxes callback functions
 // ****************************************************************
 
+void Acoustic3dPage::OnShowContour(wxCommandEvent& event)
+{
+  setPicModeObjectTodisplay(CONTOUR);
+}
+
+// ****************************************************************************
+
 void Acoustic3dPage::OnShowMesh(wxCommandEvent& event)
 {
-  picPropModes->showMesh();
-  chkShowMode->SetValue(picPropModes->modeSelected());
-  chkShowTransField->SetValue(picPropModes->fieldSelected());
-  //chkShowF->SetValue(picPropModes->fSelected());
+  setPicModeObjectTodisplay(MESH);
 }
 
 // ****************************************************************************
 
 void Acoustic3dPage::OnShowMode(wxCommandEvent& event)
 {
-  picPropModes->showMode();
-  chkShowMesh->SetValue(picPropModes->meshSelected());
-  chkShowTransField->SetValue(picPropModes->fieldSelected());
-  //chkShowF->SetValue(picPropModes->fSelected());
+  setPicModeObjectTodisplay(TRANSVERSE_MODE);
 }
 
 // ****************************************************************************
 
 void Acoustic3dPage::OnShowTransField(wxCommandEvent& event)
 {
-  picPropModes->showField();
-  chkShowMesh->SetValue(picPropModes->meshSelected());
-  chkShowMode->SetValue(picPropModes->modeSelected());
+  setPicModeObjectTodisplay(ACOUSTIC_FIELD);
 }
 
 // ****************************************************************************
@@ -1041,4 +1060,38 @@ void Acoustic3dPage::importGeometry()
   ofstream log;
   log.open("log.txt", ofstream::out | ofstream::trunc);
   log.close();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::setPicModeObjectTodisplay(enum objectToDisplay object)
+{
+  chkShowContour->SetValue(false);
+  chkShowMesh->SetValue(false);
+  chkShowMode->SetValue(false);
+  chkShowTransField->SetValue(false);
+
+  switch (object)
+  {
+  case MESH:
+    chkShowMesh->SetValue(true);
+    picPropModes->setObjectToDisplay(MESH);
+    break;
+  case TRANSVERSE_MODE:
+    chkShowMode->SetValue(true);
+    picPropModes->setObjectToDisplay(TRANSVERSE_MODE);
+    break;
+  case ACOUSTIC_FIELD:
+    chkShowTransField->SetValue(true);
+    picPropModes->setObjectToDisplay(ACOUSTIC_FIELD);
+    break;
+  case CONTOUR:
+    chkShowContour->SetValue(true);
+    picPropModes->setObjectToDisplay(CONTOUR);
+    break;
+  default:
+    chkShowContour->SetValue(true);
+    picPropModes->setObjectToDisplay(CONTOUR);
+    break;
+  }
 }

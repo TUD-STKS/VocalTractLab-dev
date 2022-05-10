@@ -49,7 +49,7 @@ PropModesPicture::PropModesPicture(wxWindow* parent,
 	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
 	: BasicPicture(parent),
   m_fieldInLogScale(true),
-	m_objectToDisplay(MESH),
+	m_objectToDisplay(CONTOUR),
 	m_modeIdx(0)
 {
 	//this->m_picVocalTract = picVocalTract;
@@ -596,33 +596,16 @@ void PropModesPicture::draw(wxDC& dc)
 // ****************************************************************************
 // ****************************************************************************
 
-void PropModesPicture::showMesh()
+enum objectToDisplay PropModesPicture::getObjectDisplayed()
 {
-	m_objectToDisplay = MESH;
-	Refresh();
+  return(m_objectToDisplay);
 }
 
 // ****************************************************************************
 
-void PropModesPicture::showMode()
+void PropModesPicture::setObjectToDisplay(enum objectToDisplay object)
 {
-	m_objectToDisplay = TRANSVERSE_MODE;
-	Refresh();
-}
-
-// ****************************************************************************
-
-void PropModesPicture::showF()
-{
-	m_objectToDisplay = JUNCTION_MATRIX;
-	Refresh();
-}
-
-// ****************************************************************************
-
-void PropModesPicture::showField()
-{
-  m_objectToDisplay = ACOUSTIC_FIELD;
+  m_objectToDisplay = object;
   Refresh();
 }
 

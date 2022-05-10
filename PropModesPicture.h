@@ -32,10 +32,8 @@ public:
 
 	virtual void draw(wxDC& dc);
 
-	void showMesh();
-	void showMode();
-  void showField();
-	void showF();
+  enum objectToDisplay getObjectDisplayed();
+  void setObjectToDisplay(enum objectToDisplay object);
 	void setModeIdx(int idx);
 
   // accessors

@@ -27,6 +27,7 @@ static const int IDM_DEFINE_BBOX_UPPER_CORNER = 1001;
 static const int IDM_UPDATE_BBOX              = 1002;
 static const int IDM_EXPORT_ACOUSTIC_FIELD    = 1003;
 static const int IDM_DEFINE_NOISE_SRC_SEG     = 1004;
+static const int IDM_EXPORT_GEO_AS_CSV        = 1005;
 
 // ****************************************************************************
 // The event table.
@@ -39,6 +40,7 @@ BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
   EVT_MENU(IDM_UPDATE_BBOX, SegmentsPicture::OnUpdateBbox)
   EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, SegmentsPicture::OnExportAcousticField)
   EVT_MENU(IDM_DEFINE_NOISE_SRC_SEG, SegmentsPicture::OnDefineNoiseSourceSeg)
+  EVT_MENU(IDM_EXPORT_GEO_AS_CSV, SegmentsPicture::OnEXportGeoAsCsv)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -63,6 +65,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_contextMenu->Append(IDM_UPDATE_BBOX, "Reset bounding box");
   m_contextMenu->Append(IDM_EXPORT_ACOUSTIC_FIELD, "Export acoustic field as text file");
   m_contextMenu->Append(IDM_DEFINE_NOISE_SRC_SEG, "Define current segment as noise source location");
+  m_contextMenu->Append(IDM_EXPORT_GEO_AS_CSV, "Export geometry in a csv file");
 
   getZoomAndBbox();
 }
@@ -205,7 +208,7 @@ void SegmentsPicture::draw(wxDC& dc)
       auto bbox = sec->contour().bbox();
       Point ptInMin, ptInMax, ptOutMin, ptOutMax;
 
-      for (int i(0); i < m_simu3d->numCrossSections(); i++)
+      for (int i(0); i < m_simu3d->numberOfSegments(); i++)
       {
         sec = m_simu3d->crossSection(i);
         bbox = sec->contour().bbox();
@@ -295,7 +298,7 @@ void SegmentsPicture::showPreivousSegment()
 
 void SegmentsPicture::showNextSegment()
 {
-  m_activeSegment = min(m_simu3d->numCrossSections() - 1, m_activeSegment + 1);
+  m_activeSegment = min(m_simu3d->numberOfSegments() - 1, m_activeSegment + 1);
   Refresh();
 }
 
@@ -307,7 +310,7 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
   int idxSeg(-1);
 
   // left click
-  if (event.ButtonDown(wxMOUSE_BTN_LEFT) && (m_simu3d->numCrossSections() > 0))
+  if (event.ButtonDown(wxMOUSE_BTN_LEFT) && (m_simu3d->numberOfSegments() > 0))
   {
     m_mousePosX = event.GetX();
     m_mousePosY = event.GetY();
@@ -330,7 +333,7 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
   }
 
   // Right click
-  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numCrossSections() > 0))
+  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numberOfSegments() > 0))
   {
     m_mousePosX = event.GetX();
     m_mousePosY = event.GetY();
@@ -547,4 +550,22 @@ void SegmentsPicture::OnDefineNoiseSourceSeg(wxCommandEvent& event)
   wxCommandEvent picUpdateEvent(updateRequestEvent);
   event.SetInt(UPDATE_PICTURES);
   wxPostEvent(updateEventReceiver, picUpdateEvent);
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnEXportGeoAsCsv(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+    fileName.GetFullName(), ".csv", "(*.csv)|*.csv",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  ofstream log("log.txt", ofstream::app);
+
+  if (m_simu3d->exportGeoInCsv(name.ToStdString()))
+  {
+    log << "Geometry exported to file:\n" << name.ToStdString() << endl;
+  }
+  log.close();
 }

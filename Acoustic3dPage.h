@@ -53,6 +53,8 @@ private:
   // spectrum picture controls
   wxStaticText* txtTfPoint;
 
+  wxGenericProgressDialog* progressDialog;
+
   int m_idxTfPoint;
   Point_3 m_tfPoint;
 

@@ -629,6 +629,8 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
   Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
   VocalTract* tract = data->vocalTract;
 
+
+
   simu3d->computeTransferFunction(tract);
 
   updateWidgets();
@@ -648,25 +650,29 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
   ofstream log("log.txt", ofstream::app);
   log << "\nStart compute modes" << endl;
 
-  simu3d->createCrossSections(tract, false);
-  log << "Geometry succesfully imported" << endl;
+  int numSeg(simu3d->numberOfSegments());
 
-  simu3d->exportGeoInCsv("test.csv");
-  simu3d->computeMeshAndModes();
+  // Create the progress dialog
+  progressDialog = new wxGenericProgressDialog("Modes computation progress",
+    "Wait until the modes computation finished or press [Cancel]",
+    numSeg, NULL,
+    wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
 
-  ofstream ofs("modes.txt");
-  int nm;
-  for (int i(0); i < simu3d->numCrossSections(); i++)
+  for (int i(0); i < numSeg; i++)
   {
-    nm = simu3d->crossSection(i)->numberOfModes();
-    ofs << nm;
-    if (nm >= 2)
+    simu3d->computeMeshAndModes(i);
+
+    // stop if [Cancel] is pressed
+    if (progressDialog->Update(i) == false)
     {
-      ofs << "  " << simu3d->crossSection(i)->eigenFrequency(1);
+      break;
     }
-    ofs << endl;
   }
-  ofs.close();
+  log << "Mode computation finished" << endl;
+
+  // destroy progress dialog
+  progressDialog->Destroy();
+  progressDialog = NULL;
 
   // update pictures
   setPicModeObjectTodisplay(TRANSVERSE_MODE);

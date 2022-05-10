@@ -670,7 +670,7 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
 void PropModesPicture::OnMouseEvent(wxMouseEvent& event)
 {
   // Right click
-  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numCrossSections() > 0))
+  if (event.ButtonDown(wxMOUSE_BTN_RIGHT) && (m_simu3d->numberOfSegments() > 0))
   {
     PopupMenu(m_contextMenu);
   }

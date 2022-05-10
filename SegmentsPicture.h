@@ -79,6 +79,7 @@ private:
   void OnDefineBboxUpperCorner(wxCommandEvent& event);
   void OnExportAcousticField(wxCommandEvent& event);
   void OnDefineNoiseSourceSeg(wxCommandEvent& event);
+  void OnEXportGeoAsCsv(wxCommandEvent& event);
 
  // ****************************************************************************
  // Declare the event table right at the end

@@ -66,6 +66,9 @@ private:
   void initVars();
   void initWidgets(VocalTractPicture* picVocalTract);
   wxString generateTfPointCoordString();
+  void computeModesJunctionAndRadMats(bool precomputeRadMat,
+    wxGenericProgressDialog* progressDialog, bool& abort);
+
   void OnUpdateRequest(wxCommandEvent& event);
 
   // Event handers for controls at the left side

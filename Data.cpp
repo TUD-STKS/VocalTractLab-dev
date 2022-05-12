@@ -827,7 +827,8 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   double t_s, t_ms;
   double sum, sumN, sumC;
   double filteredValue;
-    double areaConst(simu3d->crossSection(simu3d->idxConstriction())->area());
+  //double areaConst(simu3d->crossSection(simu3d->idxConstriction())->area());
+  double areaConst(1.);
   double attenuation(pow(10., -20 / 20));
 
   ofstream sig;
@@ -900,7 +901,7 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   IirFilter filter;
   filter.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
     IirFilter filterNoise;
-    filterNoise.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
+  filterNoise.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
   IirFilter filterNoiseSrc;
   filterNoiseSrc.createChebyshev(500./ (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
 

@@ -99,7 +99,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
   //EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
-  // Main panel controls
+  // Modes picture controls
   EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
   EVT_CHECKBOX(IDB_SHOW_CONTOUR, Acoustic3dPage::OnShowContour)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
@@ -179,6 +179,9 @@ void Acoustic3dPage::updateWidgets()
   // options for segment picture
   segPic->setShowSegments(chkShowSegments->GetValue());
   segPic->setShowField(chkShowField->GetValue());
+
+  // option for spectrum 3D picture
+  chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
 
   picPropModes->Refresh();
   picSpectrum->Refresh();
@@ -526,6 +529,10 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   else
   if (event.GetInt() == REFRESH_PICTURES_AND_CONTROLS)
   {
+    segPic->Refresh();
+    segPic->Update();
+    picPropModes->Refresh();
+    picPropModes->Update();
     updateWidgets();
   }
   else
@@ -793,6 +800,7 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     progressDialog->Update(0,
       "Wait until the transfer functions computation finished or press [Cancel]");
     progressDialog->SetRange(numFreqComputed);
+
     for (int i(0); i < numFreqComputed; i++)
     {
       freq = max(0.1, (double)i * freqSteps);
@@ -807,7 +815,7 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
 
       start = std::chrono::system_clock::now();
 
-      simu3d->computeGlottalTf(i);
+      simu3d->computeGlottalTf(i, freq);
 
       end = std::chrono::system_clock::now();
       timeComputeField += end - start;

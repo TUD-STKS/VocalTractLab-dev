@@ -327,7 +327,7 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
       Refresh();
 
       wxCommandEvent event(updateRequestEvent);
-      event.SetInt(UPDATE_PICTURES);
+      event.SetInt(REFRESH_PICTURES_AND_CONTROLS);
       wxPostEvent(updateEventReceiver, event);
     }
   }

@@ -73,7 +73,6 @@ private:
   VocalTract* m_tract;
   double m_meshDensity;
   int m_secNoiseSource;
-	int m_secConstriction;
   int m_expSpectrumLgth;
   vector<string> m_listMouthBcond;
   int m_expSpectrumLgthStart;

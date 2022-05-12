@@ -15,8 +15,7 @@ static const int IDE_MAX_CUT_ON         = 4002;
 static const int IDE_MAX_SIM_FREQ       = 4003;
 static const int IDE_NUM_INTEGRATION    = 4004;
 static const int IDE_SEC_NOISE_SOURCE   = 4005;
-static const int IDE_SEC_CONSTRICTION	  = 4006;
-static const int IDE_PERCENT_LOSSES		  = 4008;
+static const int IDE_PERCENT_LOSSES		  = 4006;
 
 // acoustic field computation options
 static const int IDE_FREQ_COMPUTE_FIELD = 4009;
@@ -65,7 +64,6 @@ EVT_TEXT_ENTER(IDE_MAX_CUT_ON, ParamSimu3DDialog::OnMaxCutOnEnter)
 EVT_TEXT_ENTER(IDE_MAX_SIM_FREQ, ParamSimu3DDialog::OnMaxSimFreq)
 EVT_TEXT_ENTER(IDE_NUM_INTEGRATION, ParamSimu3DDialog::OnNumIntegrationEnter)
 EVT_TEXT_ENTER(IDE_SEC_NOISE_SOURCE, ParamSimu3DDialog::OnSecNoiseSourceEnter)
-EVT_TEXT_ENTER(IDE_SEC_CONSTRICTION, ParamSimu3DDialog::OnSecConstrictionEnter)
 EVT_TEXT_ENTER(IDE_PERCENT_LOSSES, ParamSimu3DDialog::OnPercentLosses)
 EVT_TEXT_ENTER(IDE_FREQ_COMPUTE_FIELD, ParamSimu3DDialog::OnFreqComputeField)
 EVT_TEXT_ENTER(IDE_RESOLUTION_FIELD, ParamSimu3DDialog::OnResolutionField)
@@ -146,9 +144,6 @@ void ParamSimu3DDialog::updateWidgets()
 
   st = wxString::Format("%d", m_secNoiseSource);
   txtSecNoiseSource->SetValue(st);
-
-	st = wxString::Format("%d", m_secConstriction);
-	txtConstriction->SetValue(st);
 
   //st = wxString::Format("%d", m_expSpectrumLgth);
   //txtExpLgth->SetValue(st);
@@ -249,7 +244,7 @@ void ParamSimu3DDialog::updateWidgets()
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
-		m_secConstriction, m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
+		m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
 
   //log.close();
 }
@@ -260,7 +255,6 @@ void ParamSimu3DDialog::updateParams()
 {
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
-  m_secConstriction = m_simu3d->idxConstriction();
   m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_simuParams = m_simu3d->simuParams();
@@ -318,7 +312,6 @@ wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
   m_tract = Data::getInstance()->vocalTract;
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
-	m_secConstriction = m_simu3d->idxConstriction();
   m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
 	m_simuParams = m_simu3d->simuParams();
@@ -599,23 +592,6 @@ void ParamSimu3DDialog::initWidgets()
     txtSecNoiseSource = new wxTextCtrl(this, IDE_SEC_NOISE_SOURCE, "", wxDefaultPosition,
         wxSize(40, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtSecNoiseSource, 0, wxALL, 3);
-
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
-
-    // ****************************************************************
-    // Set the section of the constriction
-    // ****************************************************************
-
-    topLevelSizer->AddSpacer(10);
-
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    label = new wxStaticText(this, wxID_ANY, "Index of constriction section: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
-
-    txtConstriction = new  wxTextCtrl(this, IDE_SEC_CONSTRICTION, "", wxDefaultPosition,
-      wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtConstriction, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
@@ -925,21 +901,6 @@ void ParamSimu3DDialog::OnSecNoiseSourceEnter(wxCommandEvent& event)
 
     updateWidgets();
     updatePictures();
-}
-
-// ****************************************************************************
-// ****************************************************************************
-
-void ParamSimu3DDialog::OnSecConstrictionEnter(wxCommandEvent& event)
-{
-	double x(0.);
-	wxString st = txtConstriction->GetValue();
-	if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 500.))
-	{
-		m_secConstriction = (int)x;
-	}
-
-	updateWidgets();
 }
 
 // ****************************************************************************
@@ -1370,8 +1331,6 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   m_simuParams.freqDepLosses = false;
 
   m_simuParams.thermalBndSpecAdm = complex<double>(0.005, 0.);
-
-  m_secConstriction = 0;
 
   m_secNoiseSource = 25;
 

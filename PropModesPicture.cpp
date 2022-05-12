@@ -89,7 +89,7 @@ void PropModesPicture::draw(wxDC& dc)
 		dc.SetPen(*wxBLACK_PEN);
 		dc.SetBackgroundMode(wxTRANSPARENT);
 		dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-		dc.DrawText("No modes computed.", 0, 0);
+		dc.DrawText("No segments.", 0, 0);
 		return;
 	}
 

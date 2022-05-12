@@ -86,7 +86,7 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
     dc.SetPen(wxPen(*wxBLACK, lineWidth));
     break;
   case NOISE:
-    dc.SetPen(wxPen(*wxRED, lineWidth));
+    dc.SetPen(wxPen(*wxBLUE, lineWidth));
     break;
   }
 
@@ -107,10 +107,9 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
       y = graphY + graphH - 1;
     }
 
-    if (i > 0)
-    {
+    if (isnan(val)) { y = NAN; }
+
       dc.DrawLine(graphX + i - 1, lastY, graphX + i, y);
-    }
 
     lastY = y;
   }

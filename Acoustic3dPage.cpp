@@ -688,6 +688,8 @@ void Acoustic3dPage::computeModesJunctionAndRadMats(bool precomputeRadMat,
       log << "Time junction matrices: " << time.count() << endl;
     }
 
+    simu3d->setNeedToComputeModesAndJunctions(false);
+
     //*********************************************************
     // precompute radiation impedance
     //*********************************************************
@@ -708,7 +710,6 @@ void Acoustic3dPage::computeModesJunctionAndRadMats(bool precomputeRadMat,
         }
       }
       simu3d->computeInterpCoefRadMat(nbRadFreqs, lastSeg);
-      simu3d->setNeedToComputeModesAndJunctions(false);
 
       end = std::chrono::system_clock::now();
       time = end - start;
@@ -733,7 +734,6 @@ void Acoustic3dPage::computeModesJunctionAndRadMats(bool precomputeRadMat,
       }
     }
     simu3d->computeInterpCoefRadMat(nbRadFreqs, lastSeg);
-    simu3d->setNeedToComputeModesAndJunctions(false);
 
     auto end = std::chrono::system_clock::now();
     time = end - start;
@@ -778,116 +778,6 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
   simu3d->precomputationsForTf();
 
   computeModesJunctionAndRadMats(true, progressDialog, abort);
-
-  //// if necessary, compute modes, junction matrices and precompute radiation impedance
-  //if (simuParams.needToComputeModesAndJunctions)
-  //{
-  //  // set mode number to 0 to make sure that it is defined by the maximal cutoff 
-  //  // frequency when modes are computed
-  //  for (int i(0); i < numSeg; i++)
-  //  {
-  //    simu3d->crossSection(i)->setModesNumber(0);
-  //  }
-
-  //  //*********************************************************
-  //  // compute modes
-  //  //*********************************************************
-
-  //  start = std::chrono::system_clock::now();
-  //  for (int i(0); i < numSeg; i++)
-  //  {
-  //    simu3d->computeMeshAndModes(i);
-
-  //    // stop if [Cancel] is pressed
-  //    if (progressDialog->Update(i) == false)
-  //    {
-  //      abort = true;
-  //      break;
-  //    }
-  //  }
-  //  end = std::chrono::system_clock::now();
-  //  timeModes = end - start;
-  //  log << "Time mesh and modes: " << timeModes.count() << endl;
-
-  //  //*********************************************************
-  //  // compute junction matrices
-  //  //*********************************************************
-
-  //  if (!abort)
-  //  {
-  //    progressDialog->Update(0,
-  //      "Wait until the junction matrices computation finished or press [Cancel]");
-  //    start = std::chrono::system_clock::now();
-  //    for (int i(0); i < numSeg; i++)
-  //    {
-  //      simu3d->computeJunctionMatrices(i);
-  //      log << "Junction segment " << i << " computed" << endl;
-  //      // stop if [Cancel] is pressed
-  //      if (progressDialog->Update(i) == false)
-  //      {
-  //        abort = true;
-  //        break;
-  //      }
-  //    }
-  //    end = std::chrono::system_clock::now();
-  //    timeJunctions = end - start;
-  //    log << "Time junction matrices: " << timeJunctions.count() << endl;
-  //  }
-
-  //  //*********************************************************
-  //  // precompute radiation impedance
-  //  //*********************************************************
-
-  //  if (!abort)
-  //  {
-  //    if (simu3d->mouthBoundaryCond() == RADIATION)
-  //    {
-  //      progressDialog->Update(0, "Precompute radiation impedance");
-  //      progressDialog->SetRange(nbRadFreqs);
-  //      start = std::chrono::system_clock::now();
-  //      simu3d->initCoefInterpRadiationMatrices(nbRadFreqs, lastSeg);
-  //      for (int i(0); i < nbRadFreqs; i++)
-  //      {
-  //        simu3d->addRadMatToInterpolate(nbRadFreqs, lastSeg, i);
-  //        if (progressDialog->Update(i) == false)
-  //        {
-  //          abort = true;
-  //          break;
-  //        }
-  //      }
-  //      simu3d->computeInterpCoefRadMat(nbRadFreqs, lastSeg);
-
-  //      end = std::chrono::system_clock::now();
-  //      timeRadImped = end - start;
-  //      log << "Time radiation impedance: " << timeRadImped.count() << endl;
-  //    }
-
-  //    simu3d->setNeedToComputeModesAndJunctions(false);
-  //  }
-  //}
-
-  //if (!simu3d->radImpedPrecomputed() && (simu3d->mouthBoundaryCond() == RADIATION)
-  //  && !abort)
-  //{
-  //  progressDialog->Update(0, "Precompute radiation impedance");
-  //  progressDialog->SetRange(nbRadFreqs);
-  //  start = std::chrono::system_clock::now();
-  //  simu3d->initCoefInterpRadiationMatrices(nbRadFreqs, lastSeg);
-  //  for (int i(0); i < nbRadFreqs; i++)
-  //  {
-  //    simu3d->addRadMatToInterpolate(nbRadFreqs, lastSeg, i);
-  //    if (progressDialog->Update(i) == false)
-  //    {
-  //      abort = true;
-  //      break;
-  //    }
-  //  }
-  //  simu3d->computeInterpCoefRadMat(nbRadFreqs, lastSeg);
-
-  //  end = std::chrono::system_clock::now();
-  //  timeRadImped = end - start;
-  //  log << "Time radiation impedance: " << timeRadImped.count() << endl;
-  //}
 
   //*********************************************************
   // Compute the transfer fucntion for each frequency
@@ -1026,12 +916,49 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
   VocalTract* tract = data->vocalTract;
 
   int numSeg(simu3d->numberOfSegments());
+  bool abort(false);
+  struct simulationParameters simuParams(simu3d->simuParams());
+  double freq(simuParams.freqField);
+  std::chrono::duration<double> timePropa(0.), timeExp(0.);
+  int nPtx, nPty;
+  int cnt(0);
 
   // Create the progress dialog
-  progressDialog = new wxGenericProgressDialog("Transfer functions progress",
+  progressDialog = new wxGenericProgressDialog("Acoustic field progress",
     "Wait until the modes computation finished or press [Cancel]",
     numSeg, NULL,
     wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_ELAPSED_TIME);
+
+  // log file
+  simu3d->generateLogFileHeader(true);
+  ofstream log("log.txt", ofstream::app);
+
+  computeModesJunctionAndRadMats(false, progressDialog, abort);
+
+  simu3d->solveWaveProblem(tract, freq, timePropa, &timeExp);
+
+  simu3d->prepareAcousticFieldComputation();
+  nPtx = simu3d->numPtXField();
+  nPty = simu3d->numPtYField();
+
+  progressDialog->Update(0,
+    "Wait until the acoustic field computation finished or press [Cancel]");
+  progressDialog->SetRange(nPtx);
+  log << "Num points on x: " << nPtx << " Num points on y: " << nPty << endl;
+
+  for (int i(0); i < nPtx; i++)
+  {
+    simu3d->acousticFieldInLine(i);
+    cnt += nPty;
+
+    log << 100 * cnt / nPtx / nPty << " % of field points computed" << endl;
+
+    // stop if [Cancel] is pressed
+    if (progressDialog->Update(i) == false)
+    {
+      break;
+    }
+  }
 
   //simu3d->computeAcousticField(tract);
 

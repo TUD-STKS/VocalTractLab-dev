@@ -789,7 +789,6 @@ int Data::synthesizeVowelLf(TlModel *tlModel, LfPulse &lfPulse, int startPos, bo
   }
 
   // Restore the pulse params
-
   lfPulse = origLfPulse;
 
   return (int)(duration_ms + 50.0);   // 50 ms more
@@ -817,27 +816,30 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   Signal window(simu3d->spectrum.N);
   Signal singlePulse;
   Signal pulseSignal(BUFFER_LENGTH);
-    Signal velocitySignal(BUFFER_LENGTH);
+  Signal velocitySignal(BUFFER_LENGTH);
   Signal noiseSignal(BUFFER_LENGTH);
   Signal pressureSignal(BUFFER_LENGTH);
+  Signal noisePressureSignal(BUFFER_LENGTH);
+  Signal vocalFoldSignal;
+  Signal noiseSourceSignal;
   ComplexSignal transferFunction(simu3d->spectrum.N);
   int i, k;
   int nextPulsePos = 10;   // Get the first pulse shape at sample number 10
   int pulseLength;
   double t_s, t_ms;
-  double sum, sumN, sumC;
+  double sum, sumN; //sumC;
   double filteredValue;
-  //double areaConst(simu3d->crossSection(simu3d->idxConstriction())->area());
-  double areaConst(1.);
+  double areaConst(simu3d->crossSection(0)->area());
   double attenuation(pow(10., -20 / 20));
 
-  ofstream sig;
-  //ofstream logf;
-  //logf.open("log.txt", ofstream::app);
-  //logf << "Start synthesis" << endl;
+  //ofstream sig;
+  //ofstream log;
+  //log.open("log.txt", ofstream::app);
+  //log << "Start vowel synthesis" << endl;
 
   // Memorize the pulse params to restore them at the end of the function
   LfPulse origLfPulse = lfPulse;
+  double envelop;
 
   // ****************************************************************
   // Init the time functions for F0 and glottal pulse amplitude.
@@ -850,17 +852,17 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
 
     TimeFunction::Node f0[NUM_F0_NODES] =
     {
-      {0.0,   1. * max},
+      {0.0,   0.9 * max},
       {300.0, 1.00 * max},
-      {450.0, 1. * max},
-      {600.0, 1. * max}
+      {450.0, 0.8 * max},
+      {600.0, 0.7 * max}
     };
 
     TimeFunction::Node amp[NUM_AMP_NODES] =
     {
       {0.0,   0.0},
-      {50.0,  500.0},
-      {550.0, 500.0},
+      {40.0,  500.0},
+      {400.0, 450.0},
       {600.0, 0.0}
     };
 
@@ -892,15 +894,16 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   }
 
   // The length in samples
-
   int length = (int)((duration_ms / 1000.0) * (double)SAMPLING_RATE);
+  vocalFoldSignal.setNewLength(length);
+  noiseSourceSignal.setNewLength(length);
 
   // Init the low-pass filter
 
   const double NUM_LOWPASS_POLES = 6;
   IirFilter filter;
   filter.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
-    IirFilter filterNoise;
+  IirFilter filterNoise;
   filterNoise.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
   IirFilter filterNoiseSrc;
   filterNoiseSrc.createChebyshev(500./ (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
@@ -913,9 +916,6 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
   Signal impulseResponse(IMPULSE_RESPONSE_LENGTH);
   Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
-  Signal impulseResponseSrcNoise(IMPULSE_RESPONSE_LENGTH);
-
-    //logf << "IMPULSE_RESPONSE_LENGTH " << IMPULSE_RESPONSE_LENGTH << endl;
 
   tlModel->getImpulseResponseWindow(&window, IMPULSE_RESPONSE_LENGTH);
   
@@ -937,24 +937,13 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
     impulseResponseNoise.x[i] = transferFunction.re[i] * window.x[i];
   }
 
-  // impulse response of glottis -> constriction transfer function
-  transferFunction = simu3d->spectrumConst;
-  complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
-  for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
-  {
-    impulseResponseSrcNoise.x[i] = transferFunction.re[i] * window.x[i];
-  }
-    // Reduce amplitude with increasing F0.
-    impulseResponseSrcNoise *= 80.0 / lfPulse.F0;
-
   //sig.open("imp.txt");
   //for (int i(0); i < impulseResponse.N; i++)
   //{
-  //  sig << impulseResponse.getValue(i) << endl;
+  //  sig << impulseResponse.getValue(i) << "  "
+  //    << impulseResponseNoise.getValue(i) << endl;
   //}
   //sig.close();
-
-    //logf << "impulse response computed" << endl;
 
   // ****************************************************************
   // Calc. the speech signal samples.
@@ -964,15 +953,14 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   TdsModel::NoiseSource noiseSource;
   noiseSource.isFirstOrder = false;
   noiseSource.cutoffFreq = 5000.;
-  //noiseSource.targetAmp1kHz = 1.;
   
-    sig.open("sig.txt");
+  //sig.open("sig.txt");
   for (i = 0; i < length; i++)
   {
     t_s = (double)i / (double)SAMPLING_RATE;
     t_ms = t_s * 1000.0;
 
-        noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms);
+    noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms);
     tdsModel->calcNoiseSample(&noiseSource, 0.001);
     noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
     tdsModel->incrementPosition();
@@ -1008,73 +996,78 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
     // Do the convolution.
     // **************************************************************
 
-        //logf << "Convolute " << i << endl;
-
-    sum = 0.0; sumN = 0.0; sumC = 0.0;
+    sum = 0.0; 
+    sumN = 0.0; 
     for (k = 0; k < IMPULSE_RESPONSE_LENGTH; k++)
     {
       sum += impulseResponse.x[k] * pulseSignal.x[(i - k) & BUFFER_MASK];
-      
-      sumC += impulseResponseSrcNoise.x[k] * pulseSignal.x[(i - k) & BUFFER_MASK];
     }
 
     // low pass filter the volume velocity at the constriction
-    filteredValue = filterNoiseSrc.getOutputSample(sumC);
-        // keep only positive values
-        if (filteredValue > 0)
-        {
-            filteredValue /= areaConst;
-            filteredValue = pow(filteredValue, 3)/pow(100000000, 2);
-        }
-        else
-        {
-            filteredValue = 0.;
-        }
+    filteredValue = filterNoiseSrc.getOutputSample(pulseSignal.x[i & BUFFER_MASK]);
+    // keep only positive values
+    if (filteredValue > 0)
+    {
+        filteredValue /= areaConst;
+        filteredValue = pow(filteredValue, 3);
+    }
+    else
+    {
+        filteredValue = 0.;
+    }
+    envelop = filteredValue;
+    velocitySignal.x[i & BUFFER_MASK] = filteredValue;
 
-        velocitySignal.x[i & BUFFER_MASK] = filteredValue;
+    // convolute noise signal multiplying by the power of the sound source
+    // computed from the velocity 
+    for (k = 0; k < IMPULSE_RESPONSE_LENGTH; k++)
+    {
+      sumN += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK]
+            * velocitySignal.x[(i - k) & BUFFER_MASK];
+    }
 
-        // convolute noise signal multiplying by the power of the sound source
-        // computed from the velocity 
-        for (k = 0; k < IMPULSE_RESPONSE_LENGTH; k++)
-        {
-            sumN += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK]
-                * velocitySignal.x[(i - k) & BUFFER_MASK];
-        }
-
-        sig << pulseSignal.x[(i)& BUFFER_MASK] << "  " << noiseSource.sample << "  "
-      << sum << "  " << sumN << "  " << filteredValue << "  " 
-            << filteredValue * sumN;
-
-    pressureSignal.x[i & BUFFER_MASK] = sum*0.00002;
+    pressureSignal.x[i & BUFFER_MASK] = sum;
+    noisePressureSignal.x[i & BUFFER_MASK] = sumN;
 
     filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
-    track[MAIN_TRACK]->setValue(startPos + i, filteredValue);
+    vocalFoldSignal.setValue(i, filteredValue);
 
-    noiseSignal.x[i & BUFFER_MASK] = sumN * 0.00002;
-    filteredValue = 2000.0 * filterNoise.getOutputSample(noiseSignal.getValue(i));
-    track[EXTRA_TRACK]->setValue(startPos + i, filteredValue);
+    filteredValue = 2000.0 * filterNoise.getOutputSample(noisePressureSignal.getValue(i));
+    noiseSourceSignal.setValue(i, filteredValue);
 
-        sig << "  " << ampTimeFunction.getValue(t_ms) << endl;
+    //sig
+    //  << noiseSource.sample << "  "
+    //  << sum << "  "
+    //  << sumN << "  "
+    //  << envelop << "  "
+    //  << filteredValue << "  "
+    //  << vocalFoldSignal.getValue(i) << "  "
+    //  << noiseSourceSignal.getValue(i) << "  "
+    //  << endl;
   }
-    sig.close();
+  //sig.close();
 
-  // normalize the amplitudes of the noise and glottal pulse tracks
-  normalizeAudioAmplitude(MAIN_TRACK);
-  normalizeAudioAmplitude(EXTRA_TRACK);
+  // normalise the signals 
+  double minVf, maxVf, minNs(0.), maxNs(0.);
+  vocalFoldSignal.getMinMax(minVf, maxVf);
+  noiseSourceSignal.getMinMax(minNs, maxNs);
 
-  // add the noise with a n attenuation
+  double normalisationFactor(((double)(1 << 15) - 1000.) / max(abs(minVf), abs(maxVf)));
+  vocalFoldSignal *= normalisationFactor;
+  normalisationFactor = ((double)(1 << 15) - 1000.) / max(abs(minNs), abs(maxNs));
+  noiseSourceSignal *= normalisationFactor;
+
   for (int i(0); i < length; i++)
   {
-    track[MAIN_TRACK]->setValue(startPos + i, track[MAIN_TRACK]->x[startPos + i]
-      + track[EXTRA_TRACK]->x[startPos + i] * attenuation);
+    track[MAIN_TRACK]->setValue(startPos + i, vocalFoldSignal.getValue(i) + 
+    pow(10., -25/20.) * noiseSourceSignal.getValue(i));
+    track[EXTRA_TRACK]->setValue(startPos + i, noiseSourceSignal.getValue(i));
   }
   
-
   // Restore the pulse params
-
   lfPulse = origLfPulse;
 
-  //logf.close();
+  //log.close();
   return (int)(duration_ms + 50.0);   // 50 ms more
 }
 

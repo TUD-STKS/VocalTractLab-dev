@@ -271,10 +271,10 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   leftSizer->AddSpacer(20);
   
-  button = new wxButton(this, IDB_PLAY_LONG_VOWEL, "Play long vowel");
+  button = new wxButton(this, IDB_PLAY_LONG_VOWEL, "Play vowel");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_PLAY_NOISE_SOURCE, "Play fricative");
+  button = new wxButton(this, IDB_PLAY_NOISE_SOURCE, "Play noise source");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
 // ****************************************************************
@@ -838,7 +838,7 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     }
 
     // generate spectra values for negative frequencies
-    simu3d->generateSpectraNegativeFreqs();
+    simu3d->generateSpectraForSynthesis(m_idxTfPoint);
   }
 
   log << "\nTime propagation: " << timePropa.count() << endl;
@@ -1066,48 +1066,7 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
 
 void Acoustic3dPage::OnPlayLongVowel(wxCommandEvent& event)
 {
-
   OnPlayLongVowel();
-  //Data* data = Data::getInstance();
-  //Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
-  //ofstream log;
-  ////log.open("log.txt", ofstream::app);
-  ////log << "Pointer data: " << data << endl;
-  ////log << "Pointer simu3d: " << simu3d << endl;
-
-  ////for (int i(0); i < simu3d->spectrum.N; i++)
-  ////{
-  ////  log << simu3d->spectrum.getMagnitude(i) << endl;
-  ////}
-  ////log.close();
-  ////int duration_ms = data->synthesizeVowelLf(simu3d->spectrum, data->lfPulse, 0, true);
-  //int duration_ms = data->synthesizeVowelLf(simu3d, data->lfPulse, 0, true);
-
-  ////log.open("sig.txt");
-  ////for (int i(0); i < data->track[Data::MAIN_TRACK]->N; i++)
-  ////{
-  ////  log << data->track[Data::MAIN_TRACK]->getValue(i) << endl;
-  ////}
-  ////log.close();
-
-  //data->normalizeAudioAmplitude(Data::MAIN_TRACK);
-
-  ////log.open("sigNorm.txt");
-  ////for (int i(0); i < data->track[Data::MAIN_TRACK]->N; i++)
-  ////{
-  ////  log << data->track[Data::MAIN_TRACK]->getValue(i) << endl;
-  ////}
-  ////log.close();
-
-  //if (waveStartPlaying(data->track[Data::MAIN_TRACK]->x, data->track[Data::MAIN_TRACK]->N, false))
-  //{
-  //  wxMilliSleep(duration_ms);
-  //  waveStopPlaying();
-  //}
-  //else
-  //{
-  //  wxMessageBox("Playing failed.", "Attention!");
-  //}
 }
 
 // ****************************************************************************
@@ -1305,6 +1264,7 @@ void Acoustic3dPage::OnShowNoiseSourceSpec(wxCommandEvent& event)
 void Acoustic3dPage::OnPreviousTf(wxCommandEvent& event)
 {
   m_idxTfPoint = max(0, m_idxTfPoint - 1);
+  simu3d->generateSpectraForSynthesis(m_idxTfPoint);
 
   picSpectrum->setIdxTfPoint(m_idxTfPoint);
   picSpectrum->Refresh();
@@ -1320,6 +1280,7 @@ void Acoustic3dPage::OnNextTf(wxCommandEvent& event)
 {
   struct simulationParameters simuParams(simu3d->simuParams());
   m_idxTfPoint = min((int)(simuParams.tfPoint.size()) - 1, m_idxTfPoint + 1);
+  simu3d->generateSpectraForSynthesis(m_idxTfPoint);
 
   picSpectrum->setIdxTfPoint(m_idxTfPoint);
   picSpectrum->Refresh();

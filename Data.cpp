@@ -1079,87 +1079,83 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
 
 int Data::synthesizeNoiseSource(Acoustic3dSimulation* simu3d, int startPos)
 {
-    const int NUM_AMP_NODES = 4;
-    const int BUFFER_LENGTH = 2048;
-    const int BUFFER_MASK = 2047;
-    TimeFunction ampTimeFunction;
-    ComplexSignal transferFunction(simu3d->spectrumNoise.N);
-    const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
-    const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
-    Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
-    Signal noiseSignal(BUFFER_LENGTH);
-    Signal pressureSignal(BUFFER_LENGTH);
+  const int NUM_AMP_NODES = 4;
+  const int BUFFER_LENGTH = 2048;
+  const int BUFFER_MASK = 2047;
+  TimeFunction ampTimeFunction;
+  ComplexSignal transferFunction(simu3d->spectrumNoise.N);
+  const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
+  const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
+  Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
+  Signal noiseSignal(BUFFER_LENGTH);
+  Signal pressureSignal(BUFFER_LENGTH);
   Signal window(simu3d->spectrumNoise.N / 2);
-    IirFilter filter;
-    double duration_ms = 650.0, t_ms, sum, filteredValue;
+  IirFilter filter;
+  double duration_ms = 650.0, t_ms, sum, filteredValue;
 
-    ofstream sig;
+  ofstream sig;
 
-    // ****************************************************************
-    // Set amplitude variations
-    // ****************************************************************
+  // ****************************************************************
+  // Set amplitude variations
+  // ****************************************************************
 
-    TimeFunction::Node amp[NUM_AMP_NODES] =
-    {
-      {0.0,   0.0},
-      {40.0,  500.0},
-      {400.0, 450.0},
-      {600.0, 0.0}
-    };
+  TimeFunction::Node amp[NUM_AMP_NODES] =
+  {
+    {0.0,   0.0},
+    {40.0,  500.0},
+    {400.0, 450.0},
+    {600.0, 0.0}
+  };
 
-    ampTimeFunction.setNodes(amp, NUM_AMP_NODES);
+  ampTimeFunction.setNodes(amp, NUM_AMP_NODES);
 
-    // ****************************************************************
-    // Calc. impulse response
-    // ****************************************************************
+  // ****************************************************************
+  // Calc. impulse response
+  // ****************************************************************
 
-    transferFunction = simu3d->spectrumNoise;
-    complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
+  transferFunction = simu3d->spectrumNoise;
+  complexIFFT(transferFunction, IMPULSE_RESPONSE_EXPONENT, true);
   tlModel->getImpulseResponseWindow(&window, IMPULSE_RESPONSE_LENGTH);
-    for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
-    {
-        impulseResponseNoise.x[i] = transferFunction.re[i]*window.x[i];
-    }
+  for (int i(0); i < IMPULSE_RESPONSE_LENGTH; i++)
+  {
+      impulseResponseNoise.x[i] = transferFunction.re[i]*window.x[i];
+  }
 
-    // ****************************************************************
-    // Generate noise 
-    // ****************************************************************
+  // ****************************************************************
+  // Generate noise 
+  // ****************************************************************
     
-    TdsModel::NoiseSource noiseSource;
-    noiseSource.isFirstOrder = false;
-    noiseSource.cutoffFreq = 5000.;
+  TdsModel::NoiseSource noiseSource;
+  noiseSource.isFirstOrder = false;
+  noiseSource.cutoffFreq = 5000.;
 
   const double NUM_LOWPASS_POLES = 6;
   filter.createChebyshev(20000. / (double)SAMPLING_RATE, false, (int)NUM_LOWPASS_POLES);
 
-    int length = (int)((duration_ms / 1000.0) * (double)SAMPLING_RATE);
+  int length = (int)((duration_ms / 1000.0) * (double)SAMPLING_RATE);
 
-    //sig.open("noise.txt");
-    for (int i(0); i < length; i++)
+  for (int i(0); i < length; i++)
+  {
+    t_ms = 1000. * (double)i / (double)SAMPLING_RATE;
+
+    noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms) / 2.;
+    tdsModel->calcNoiseSample(&noiseSource, 0.001);
+    noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
+    tdsModel->incrementPosition();
+
+    sum = 0.0;
+    for (int k(0); k < IMPULSE_RESPONSE_LENGTH; k++)
     {
-        t_ms = 1000. * (double)i / (double)SAMPLING_RATE;
-
-        noiseSource.targetAmp1kHz = ampTimeFunction.getValue(t_ms) / 2.;
-        tdsModel->calcNoiseSample(&noiseSource, 0.001);
-        noiseSignal.x[i & BUFFER_MASK] = noiseSource.sample;
-        tdsModel->incrementPosition();
-
-        sum = 0.0;
-        for (int k(0); k < IMPULSE_RESPONSE_LENGTH; k++)
-        {
-            sum += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK];
-        }
-
-        pressureSignal.x[i & BUFFER_MASK] = sum * 0.2;
-
-        filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
-        track[MAIN_TRACK]->setValue(startPos + i, filteredValue);
-
-        //sig << track[MAIN_TRACK]->getValue(startPos + i) << endl;
+        sum += impulseResponseNoise.x[k] * noiseSignal.x[(i - k) & BUFFER_MASK];
     }
-    //sig.close();
 
-    return (int)(duration_ms + 50.0);   // 50 ms more
+    pressureSignal.x[i & BUFFER_MASK] = sum * 0.2;
+
+    filteredValue = 2000.0 * filter.getOutputSample(pressureSignal.getValue(i));
+    track[MAIN_TRACK]->setValue(startPos + i, filteredValue);
+  }
+
+  return (int)(duration_ms + 50.0);   // 50 ms more
 }
 
 // ****************************************************************************

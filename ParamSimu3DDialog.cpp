@@ -1169,12 +1169,12 @@ void ParamSimu3DDialog::OnChkWallAdmittance(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 {
-    m_simuParams.propMethod = STRAIGHT_TUBES;
+  m_simuParams.propMethod = STRAIGHT_TUBES;
 	m_simuParams.curved = false;
-    m_simuParams.varyingArea = false;
+  m_simuParams.varyingArea = false;
 	chkMagnus->SetValue(false);
-  m_simu3d->importGeometry(m_tract);
-    updateWidgets();
+  updateWidgets();
+  updateGeometry();
 }
 
 // ****************************************************************************
@@ -1183,8 +1183,9 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 {
 	m_simuParams.propMethod = MAGNUS;
-    chkStraight->SetValue(false);
-    updateWidgets();
+  chkStraight->SetValue(false);
+  updateWidgets();
+
 }
 
 // ****************************************************************************
@@ -1192,7 +1193,7 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
-  //ofstream log("log.txt", ofstream::app);
+  m_simuParams.propMethod = MAGNUS;
   m_simuParams.curved = !m_simuParams.curved;
   updateWidgets();
 
@@ -1204,6 +1205,7 @@ void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
+  m_simuParams.propMethod = MAGNUS;
 	m_simuParams.varyingArea = !m_simuParams.varyingArea;
   updateWidgets();
 

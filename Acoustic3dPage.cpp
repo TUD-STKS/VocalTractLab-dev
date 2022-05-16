@@ -1,5 +1,6 @@
 #include "Acoustic3dPage.h"
 #include "ParamSimu3DDialog.h"
+#include "VocalTractDialog.h"
 #include "Backend/SoundLib.h"
 
 #include <stdio.h>
@@ -32,16 +33,19 @@ using namespace std;
 //static const int IDB_RUN_TEST_MATRIX_E = 5997;
 //static const int IDB_RUN_TEST_DISCONTINUITY = 5998;
 //static const int IDB_RUN_TEST_ELEPHANT = 5999;
-static const int IDB_COMPUTE_TF                   = 6000;
-static const int IDB_COMPUTE_MODES                = 6001;
+static const int IDB_PARAM_SIMU_DIALOG            = 6000;
+static const int IDB_VOCAL_TRACT_DIALOG           = 6001;
 static const int IDB_SHAPES_DIALOG                = 6002;
 static const int IDB_IMPORT_GEOMETRY              = 6003;
-static const int IDB_PARAM_SIMU_DIALOG            = 6004;
-static const int IDB_PLAY_LONG_VOWEL              = 6005;
-static const int IDB_PLAY_NOISE_SOURCE            = 6006;
-static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6007;
-static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6008;
-static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6009;
+static const int IDB_COMPUTE_MODES                = 6004;
+static const int IDB_COMPUTE_TF                   = 6005;
+static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6006;
+static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6007;
+static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6008;
+static const int IDB_PLAY_LONG_VOWEL              = 6009;
+static const int IDB_PLAY_NOISE_SOURCE            = 6010;
+
+
 //static const int IDB_EXPORT_FIELD = 6010;
 
 // Modes picture controls
@@ -87,16 +91,17 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   //EVT_BUTTON(IDB_RUN_TEST_MATRIX_E, Acoustic3dPage::OnRunTestMatrixE)
   //EVT_BUTTON(IDB_RUN_TEST_DISCONTINUITY, Acoustic3dPage::OnRunTestDiscontinuity)
   //EVT_BUTTON(IDB_RUN_TEST_ELEPHANT, Acoustic3dPage::OnRunTestElephant)
+  EVT_BUTTON(IDB_PARAM_SIMU_DIALOG, Acoustic3dPage::OnParamSimuDialog)
+  EVT_BUTTON(IDB_VOCAL_TRACT_DIALOG, Acoustic3dPage::OnVocalTractDialog)
   EVT_BUTTON(IDB_SHAPES_DIALOG, Acoustic3dPage::OnShapesDialog)
   EVT_BUTTON(IDB_IMPORT_GEOMETRY, Acoustic3dPage::OnImportGeometry)
-  EVT_BUTTON(IDB_PARAM_SIMU_DIALOG, Acoustic3dPage::OnParamSimuDialog)
-  EVT_BUTTON(IDB_COMPUTE_TF, Acoustic3dPage::OnComputeTf)
-  EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
-  EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
+  EVT_BUTTON(IDB_COMPUTE_TF, Acoustic3dPage::OnComputeTf)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
   EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
   EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
+  EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
+  EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   //EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
   // Modes picture controls
@@ -187,7 +192,7 @@ void Acoustic3dPage::updateWidgets()
   picSpectrum->Refresh();
   segPic->Refresh();
 
-  m_tfPoint = simu3d->simuParams().tfPoint[m_idxTfPoint];
+  m_tfPoint = simu3d->oldSimuParams().tfPoint[m_idxTfPoint];
   txtTfPoint->SetLabelText(generateTfPointCoordString());
 }
 
@@ -224,6 +229,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
 
   button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+
+  button = new wxButton(this, IDB_VOCAL_TRACT_DIALOG, "Show vocal tract");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_SHAPES_DIALOG, "Vocal tract shapes");
@@ -1033,6 +1041,15 @@ void Acoustic3dPage::OnParamSimuDialog(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
+void Acoustic3dPage::OnVocalTractDialog(wxCommandEvent& event)
+{
+  VocalTractDialog* dialog = VocalTractDialog::getInstance(this);
+  dialog->Show(true);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
 void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
 {
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
@@ -1278,7 +1295,7 @@ void Acoustic3dPage::OnPreviousTf(wxCommandEvent& event)
 void Acoustic3dPage::OnNextTf(wxCommandEvent& event)
 
 {
-  struct simulationParameters simuParams(simu3d->simuParams());
+  struct simulationParameters simuParams(simu3d->oldSimuParams());
   m_idxTfPoint = min((int)(simuParams.tfPoint.size()) - 1, m_idxTfPoint + 1);
   simu3d->generateSpectraForSynthesis(m_idxTfPoint);
 

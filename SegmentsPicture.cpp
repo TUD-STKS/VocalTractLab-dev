@@ -352,14 +352,7 @@ void SegmentsPicture::resetActiveSegment()
 
 void SegmentsPicture::getZoomAndBbox()
 {
-  //ofstream log("log.txt", ofstream::app);
-
   m_bbox = m_simu3d->bboxSagittalPlane();
-
-  //log << "bbox " << m_bbox.first.x << "  "
-  //  << m_bbox.second.x << "  "
-  //  << m_bbox.first.y << "  "
-  //  << m_bbox.second.y << endl;
 
   // get the dimensions of the picture
   this->GetSize(&m_width, &m_height);
@@ -367,42 +360,23 @@ void SegmentsPicture::getZoomAndBbox()
   m_halfWidth = (double)(m_width) / 2.;
   m_halfHeight = (double)(m_height) / 2.;
 
-  //log << "Width " << m_width << " height " << m_height << endl;
-
   double bboxWidth(m_bbox.second.x - m_bbox.first.x);
   double bboxHeight(m_bbox.second.y - m_bbox.first.y);
 
-  //log << "bboxWidth " << bboxWidth << " bboxHeight " << bboxHeight << endl;
+  double ratioHeightWidthBbox(bboxHeight / bboxWidth);
+  double ratioHeightWidth((double)m_height / (double)m_width);
 
-  if (bboxHeight > bboxWidth)
+  if (ratioHeightWidth > ratioHeightWidthBbox)
   {
-    if (m_height > m_width)
-    {
-      m_zoom = (double)m_width / bboxHeight / 1.01;
-    }
-    else
-    {
-      m_zoom = (double)m_height / bboxHeight / 1.01;
-    }
+    m_zoom = (double)m_width / bboxWidth / 1.01;
   }
-  else 
+  else
   {
-    if (m_height > m_width)
-    {
-      m_zoom = (double)m_width / bboxWidth / 1.01;
-    }
-    else
-    {
-      m_zoom = (double)m_height / bboxWidth / 1.01;
-    }
+    m_zoom = (double)m_height / bboxHeight / 1.01;
   }
-
-  //log << "Zoom " << m_zoom << endl;
 
   m_bboxHalfWidth = m_zoom * (m_bbox.second.x - m_bbox.first.x) / 2.;
   m_bboxHalfHeight = m_zoom * (m_bbox.second.y - m_bbox.first.y) / 2.;
-
-  //log.close();
 }
 
 // ****************************************************************************

@@ -78,17 +78,18 @@ private:
   //void OnRunTestMatrixE(wxCommandEvent& event);
   //void OnRunTestDiscontinuity(wxCommandEvent& event);
   //void OnRunTestElephant(wxCommandEvent& event);
-  void OnComputeTf(wxCommandEvent& event);
   void OnParamSimuDialog(wxCommandEvent& event);
+  void OnVocalTractDialog(wxCommandEvent& event);
   void OnShapesDialog(wxCommandEvent& event);
   void OnImportGeometry(wxCommandEvent& event);
-  void OnPlayLongVowel(wxCommandEvent& event);
-  void OnPlayLongVowel();
-  void OnPlayNoiseSource(wxCommandEvent& event);
   void OnComputeModes(wxCommandEvent& event);
+  void OnComputeTf(wxCommandEvent& event);
   void OnComputeAcousticField(wxCommandEvent& event);
   void OnExportGlottalSourceTf(wxCommandEvent& event);
   void OnExportNoiseSourceTf(wxCommandEvent& event);
+  void OnPlayLongVowel(wxCommandEvent& event);
+  void OnPlayLongVowel();
+  void OnPlayNoiseSource(wxCommandEvent& event);
   //void OnExportField(wxCommandEvent& event);
 
   // event handlers for main panel control

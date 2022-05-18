@@ -553,7 +553,7 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   else
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
-    simu3d->setGeometryImported(false);
+    //simu3d->setGeometryImported(false);
     simu3d->requestModesAndJunctionComputation();
     simu3d->cleanAcousticField();
     importGeometry();
@@ -1045,6 +1045,8 @@ void Acoustic3dPage::OnVocalTractDialog(wxCommandEvent& event)
 {
   VocalTractDialog* dialog = VocalTractDialog::getInstance(this);
   dialog->Show(true);
+  simu3d->setGeometryImported(false);
+  simu3d->setContourInterpolationMethod(AREA);
 }
 
 // ****************************************************************************
@@ -1054,8 +1056,10 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
 {
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
+  simu3d->setGeometryImported(false);
+  simu3d->setContourInterpolationMethod(AREA);
 
-  updateWidgets();
+  //updateWidgets();
 }
 
 // ****************************************************************************

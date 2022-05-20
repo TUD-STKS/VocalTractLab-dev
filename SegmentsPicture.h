@@ -73,6 +73,8 @@ private:
   double getCoordXFromPixel(int Xpix);
   double getCoordYFromPixel(int Ypix);
   void drawSegment(CrossSection2d *sec, CGAL::Bbox_2 &bbox, wxDC& dc);
+  void getSegmentPts(CrossSection2d* sec, CGAL::Bbox_2& bbox,
+    Point& ptInMin, Point& ptInMax, Point& ptOutMin, Point& ptOutMax);
 
   void OnUpdateBbox(wxCommandEvent& event);
   void OnDefineBboxLowerCorner(wxCommandEvent& event);
@@ -80,6 +82,7 @@ private:
   void OnExportAcousticField(wxCommandEvent& event);
   void OnDefineNoiseSourceSeg(wxCommandEvent& event);
   void OnEXportGeoAsCsv(wxCommandEvent& event);
+  void OnExportSegPic(wxCommandEvent& event);
 
  // ****************************************************************************
  // Declare the event table right at the end

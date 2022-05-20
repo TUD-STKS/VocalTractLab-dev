@@ -105,13 +105,13 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   //EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
 
   // Modes picture controls
-  EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowLowerOrderMode)
+  EVT_BUTTON(IDB_SHOW_LOWER_ORDER_MODE, Acoustic3dPage::OnShowPrevious)
   EVT_CHECKBOX(IDB_SHOW_CONTOUR, Acoustic3dPage::OnShowContour)
   EVT_CHECKBOX(IDB_SHOW_MESH, Acoustic3dPage::OnShowMesh)
   EVT_CHECKBOX(IDB_SHOW_MODE, Acoustic3dPage::OnShowMode)
   EVT_CHECKBOX(IDB_SHOW_TRANSVERS_FIELD, Acoustic3dPage::OnShowTransField)
   //EVT_CHECKBOX(IDB_SHOW_F, Acoustic3dPage::OnShowF)
-  EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowHigherOrderMode)
+  EVT_BUTTON(IDB_SHOW_HIGHER_ORDER_MODE, Acoustic3dPage::OnShowNext)
 
   // segments picture controls
   EVT_BUTTON(IDB_SHOW_PREVIOUS_SEGMENT, Acoustic3dPage::OnShowPreviousSegment)
@@ -1180,16 +1180,36 @@ void Acoustic3dPage::OnShowTransField(wxCommandEvent& event)
 
 // ****************************************************************************
 
-void Acoustic3dPage::OnShowLowerOrderMode(wxCommandEvent& event)
+void Acoustic3dPage::OnShowPrevious(wxCommandEvent& event)
 {
-  picPropModes->setModeIdx(picPropModes->modeIdx() - 1);
+  enum objectToDisplay picType(picPropModes->getObjectDisplayed());
+
+  switch (picType)
+  {
+  case TRANSVERSE_MODE:
+    picPropModes->setModeIdx(picPropModes->modeIdx() - 1);
+    break;
+  case CONTOUR:
+    picPropModes->prevContourPosition();
+    break;
+  }
 }
 
 // ****************************************************************************
 
-void Acoustic3dPage::OnShowHigherOrderMode(wxCommandEvent& event)
+void Acoustic3dPage::OnShowNext(wxCommandEvent& event)
 {
-  picPropModes->setModeIdx(picPropModes->modeIdx() + 1);
+  enum objectToDisplay picType(picPropModes->getObjectDisplayed());
+
+  switch (picType)
+  {
+  case TRANSVERSE_MODE:
+    picPropModes->setModeIdx(picPropModes->modeIdx() + 1);
+    break;
+  case CONTOUR:
+    picPropModes->nextContourPosition();
+    break;
+  }
 }
 
 // ****************************************************************************
@@ -1321,10 +1341,10 @@ void Acoustic3dPage::importGeometry()
 
   segPic->resetActiveSegment();
 
-  // clean the log file
-  ofstream log;
-  log.open("log.txt", ofstream::out | ofstream::trunc);
-  log.close();
+  //// clean the log file
+  //ofstream log;
+  //log.open("log.txt", ofstream::out | ofstream::trunc);
+  //log.close();
 }
 
 // ****************************************************************************

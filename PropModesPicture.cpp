@@ -31,14 +31,16 @@ typedef int(*ColorMap)[256][3];
 // ****************************************************************************
 
 static const int IDM_EXPORT_ACOUSTIC_FIELD = 1000;
+static const int IDM_EXPORT_CONTOUR        = 1001;
 
 // ****************************************************************************
 // The event table.
 // ****************************************************************************
 
 BEGIN_EVENT_TABLE(PropModesPicture, BasicPicture)
-  EVT_MOUSE_EVENTS(PropModesPicture::OnMouseEvent)
-  EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, PropModesPicture::OnExportAcousticField)
+EVT_MOUSE_EVENTS(PropModesPicture::OnMouseEvent)
+EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, PropModesPicture::OnExportAcousticField)
+EVT_MENU(IDM_EXPORT_CONTOUR, PropModesPicture::OnExportContour)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -46,11 +48,12 @@ END_EVENT_TABLE()
 // ****************************************************************************
 
 PropModesPicture::PropModesPicture(wxWindow* parent,
-	Acoustic3dSimulation* simu3d, SegmentsPicture *segPic)
-	: BasicPicture(parent),
+  Acoustic3dSimulation* simu3d, SegmentsPicture* segPic)
+  : BasicPicture(parent),
   m_fieldInLogScale(true),
-	m_objectToDisplay(CONTOUR),
-	m_modeIdx(0)
+  m_objectToDisplay(CONTOUR),
+  m_modeIdx(0),
+  m_positionContour(1)
 {
 	//this->m_picVocalTract = picVocalTract;
 	this->m_simu3d = simu3d;
@@ -58,6 +61,7 @@ PropModesPicture::PropModesPicture(wxWindow* parent,
 
   m_contextMenu = new wxMenu();
   m_contextMenu->Append(IDM_EXPORT_ACOUSTIC_FIELD, "Export acoustic field in text file");
+  m_contextMenu->Append(IDM_EXPORT_CONTOUR, "Export contour in text file");
 }
 
 // ****************************************************************************
@@ -581,6 +585,18 @@ void PropModesPicture::draw(wxDC& dc)
     }
 
       default:
+        switch (m_positionContour)
+        {
+        case 0:
+          info << "entrance" << endl;
+          break;
+        case 1:
+          info << "Mode computation size" << endl;
+          break;
+        case 2:
+          info << "Exit" << endl;
+          break;
+        }
         drawContour(sectionIdx, surf, dc);
         break;
 		}
@@ -619,11 +635,36 @@ void PropModesPicture::setModeIdx(int idx)
 
 // ****************************************************************************
 
+double PropModesPicture::getScaling()
+{
+  // determine which contour must be plot
+  CrossSection2d* seg = m_simu3d->crossSection(m_segPic->activeSegment());
+  double scaling;
+  switch (m_positionContour)
+  {
+  case 0:
+    scaling = seg->scaleIn();
+    break;
+  case 1:
+    scaling = 1;
+    break;
+  case 2:
+    scaling = seg->scaleOut();
+    break;
+  }
+  return(scaling);
+}
+
+// ****************************************************************************
+
 void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
 {
-  Polygon_2 contour = (m_simu3d->crossSection(sectionIdx))->contour();
+  CrossSection2d* seg = m_simu3d->crossSection(sectionIdx);
+  Polygon_2 contour = seg->contour();
   CGAL::Polygon_2<K>::Edge_const_iterator vit;
   int s, xBig, yBig, xEnd, yEnd;
+  double scaling(getScaling());
+
   for (s = 0, vit = contour.edges_begin(); vit != contour.edges_end(); ++vit, ++s)
   {
     switch (surf[s])
@@ -653,12 +694,12 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
       dc.SetPen(wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID));
     }
 
-    xBig = (int)(m_zoom * (vit->point(0).x()) + m_centerX);
-    yBig = (int)(m_centerY - m_zoom * (vit->point(0).y()));
+    xBig = (int)(m_zoom * (scaling * vit->point(0).x()) + m_centerX);
+    yBig = (int)(m_centerY - m_zoom * (scaling * vit->point(0).y()));
     dc.DrawCircle(xBig, yBig, 1);
 
-    xEnd = (int)(m_zoom * (vit->point(1).x()) + m_centerX);
-    yEnd = (int)(m_centerY - m_zoom * (vit->point(1).y()));
+    xEnd = (int)(m_zoom * (scaling * vit->point(1).x()) + m_centerX);
+    yEnd = (int)(m_centerY - m_zoom * (scaling * vit->point(1).y()));
 
     dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
@@ -697,4 +738,49 @@ void PropModesPicture::OnExportAcousticField(wxCommandEvent& event)
     << m_segPic->activeSegment() << " saved in file:" << endl;
   log << name.ToStdString() << endl;
   log.close();
+}
+
+// ****************************************************************************
+
+void PropModesPicture::OnExportContour(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save contour", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  ofstream ofs(name.ToStdString());
+  if (ofs.is_open())
+  {
+    double scaling(getScaling());
+    int sectionIdx = m_segPic->activeSegment();
+    for (auto pt : m_simu3d->crossSection(sectionIdx)->contour())
+    {
+      ofs << scaling * pt.x() << "  " 
+        << scaling * pt.y() << endl;
+    }
+    ofs.close();
+
+    ofstream log("log.txt", ofstream::app);
+    log << "Contour of segment " 
+      << m_segPic->activeSegment() << " saved in file:\n"
+      << name.ToStdString() << endl;
+    log.close();
+  }
+}
+
+// ****************************************************************************
+
+void PropModesPicture::prevContourPosition()
+{
+  m_positionContour = max(0, m_positionContour - 1);
+  Refresh();
+}
+
+// ****************************************************************************
+
+void PropModesPicture::nextContourPosition()
+{
+  m_positionContour = min(2, m_positionContour + 1);
+  Refresh();
 }

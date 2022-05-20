@@ -42,6 +42,8 @@ public:
   bool fSelected() const { return(m_objectToDisplay == JUNCTION_MATRIX); }
   bool fieldSelected() const { return(m_objectToDisplay == ACOUSTIC_FIELD); }
   int modeIdx() const { return(m_modeIdx); }
+  void prevContourPosition();
+  void nextContourPosition();
 
 // **************************************************************************
 // Private data.
@@ -57,6 +59,7 @@ private:
   double m_zoom;
   double m_centerX;
   double m_centerY;
+  int m_positionContour;
 
   Matrix m_field;
 
@@ -69,10 +72,12 @@ private:
 
 private:
 
+  double getScaling();
   void drawContour(int sectionIdx, vector<int>& surf, wxDC& dc);
 
   void OnMouseEvent(wxMouseEvent& event);
   void OnExportAcousticField(wxCommandEvent& event);
+  void OnExportContour(wxCommandEvent& event);
 
 // ****************************************************************************
 // Declare the event table right at the end

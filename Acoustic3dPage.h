@@ -92,14 +92,14 @@ private:
   void OnPlayNoiseSource(wxCommandEvent& event);
   //void OnExportField(wxCommandEvent& event);
 
-  // event handlers for main panel control
-  void OnShowLowerOrderMode(wxCommandEvent& event);
+  // event handlers for mode picture
+  void OnShowPrevious(wxCommandEvent& event);
   void OnShowContour(wxCommandEvent& event);
   void OnShowMesh(wxCommandEvent& event);
   void OnShowMode(wxCommandEvent& event);
   void OnShowTransField(wxCommandEvent& event);
   //void OnShowF(wxCommandEvent& event);
-  void OnShowHigherOrderMode(wxCommandEvent& event);
+  void OnShowNext(wxCommandEvent& event);
 
   // event handlers for segments picture
   void OnShowPreviousSegment(wxCommandEvent& event);

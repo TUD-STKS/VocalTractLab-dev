@@ -28,6 +28,7 @@ static const int IDM_UPDATE_BBOX              = 1002;
 static const int IDM_EXPORT_ACOUSTIC_FIELD    = 1003;
 static const int IDM_DEFINE_NOISE_SRC_SEG     = 1004;
 static const int IDM_EXPORT_GEO_AS_CSV        = 1005;
+static const int IDM_EXPORT_SEGMENT_PIC       = 1006;
 
 // ****************************************************************************
 // The event table.
@@ -41,6 +42,7 @@ BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
   EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, SegmentsPicture::OnExportAcousticField)
   EVT_MENU(IDM_DEFINE_NOISE_SRC_SEG, SegmentsPicture::OnDefineNoiseSourceSeg)
   EVT_MENU(IDM_EXPORT_GEO_AS_CSV, SegmentsPicture::OnEXportGeoAsCsv)
+  EVT_MENU(IDM_EXPORT_SEGMENT_PIC, SegmentsPicture::OnExportSegPic)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -66,6 +68,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_contextMenu->Append(IDM_EXPORT_ACOUSTIC_FIELD, "Export acoustic field as text file");
   m_contextMenu->Append(IDM_DEFINE_NOISE_SRC_SEG, "Define current segment as noise source location");
   m_contextMenu->Append(IDM_EXPORT_GEO_AS_CSV, "Export geometry in a csv file");
+  m_contextMenu->Append(IDM_EXPORT_SEGMENT_PIC, "Export segment picture");
 
   getZoomAndBbox();
 }
@@ -254,7 +257,7 @@ void SegmentsPicture::draw(wxDC& dc)
       }
 
       //************************************************
-      // Draw transfer fucntion points
+      // Draw transfer function points
       //************************************************
 
       // plot the reception points of the transfer functions
@@ -411,11 +414,9 @@ double SegmentsPicture::getCoordYFromPixel(int Ypix)
 
 // ****************************************************************************
 
-void SegmentsPicture::drawSegment(CrossSection2d *sec, CGAL::Bbox_2& bbox, wxDC& dc)
+void SegmentsPicture::getSegmentPts(CrossSection2d* sec, CGAL::Bbox_2& bbox,
+  Point& ptInMin, Point& ptInMax, Point& ptOutMin, Point& ptOutMax)
 {
-  Point ptInMin, ptInMax, ptOutMin, ptOutMax;
-  int xBig, yBig, xEnd, yEnd;
-
   Transformation translateInMin(CGAL::TRANSLATION,
     sec->scaleIn() * bbox.ymin() * sec->normalIn());
   ptInMin = translateInMin(sec->ctrLinePtIn());
@@ -431,6 +432,16 @@ void SegmentsPicture::drawSegment(CrossSection2d *sec, CGAL::Bbox_2& bbox, wxDC&
   Transformation translateOutMax(CGAL::TRANSLATION,
     sec->scaleOut() * bbox.ymax() * sec->normalOut());
   ptOutMax = translateOutMax(sec->ctrLinePtOut());
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::drawSegment(CrossSection2d *sec, CGAL::Bbox_2& bbox, wxDC& dc)
+{
+  Point ptInMin, ptInMax, ptOutMin, ptOutMax;
+  int xBig, yBig, xEnd, yEnd;
+
+  getSegmentPts(sec, bbox, ptInMin, ptInMax, ptOutMin, ptOutMax);
 
   // draw first line
   xBig = getPixelCoordX(ptInMin.x());
@@ -541,5 +552,54 @@ void SegmentsPicture::OnEXportGeoAsCsv(wxCommandEvent& event)
   {
     log << "Geometry exported to file:\n" << name.ToStdString() << endl;
   }
+  log.close();
+}
+
+// ****************************************************************************
+
+void SegmentsPicture::OnExportSegPic(wxCommandEvent& event)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save segments picture", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  CrossSection2d* sec;
+  CGAL::Bbox_2 bbox;
+  //auto sec = m_simu3d->crossSection(0);
+  //auto bbox = sec->contour().bbox();
+  Point ptInMin, ptInMax, ptOutMin, ptOutMax;
+
+  ofstream of(name.ToStdString());
+  ofstream log("log.txt", ofstream::app);
+
+  if (of.is_open())
+  {
+    for (int i(0); i < m_simu3d->numberOfSegments(); i++)
+    {
+      sec = m_simu3d->crossSection(i);
+      bbox = sec->contour().bbox();
+
+      getSegmentPts(sec, bbox, ptInMin, ptInMax, ptOutMin, ptOutMax);
+
+      // draw first line
+      of << ptInMin.x() << "  " << ptInMin.y() << endl;
+      of << ptInMax.x() << "  " << ptInMax.y() << endl;
+
+      // draw second line
+      of << ptOutMax.x() << "  " << ptOutMax.y() << endl;
+
+      // draw third line
+      of << ptOutMin.x() << "  " << ptOutMin.y() << endl;
+
+      // draw fourth line
+      of << ptInMin.x() << "  " << ptInMin.y() << endl;
+
+      of << "nan  nan" << endl;
+    }
+
+    log << "Segment picture exported to file:\n" << name.ToStdString() << endl;
+  }
+  of.close();
   log.close();
 }

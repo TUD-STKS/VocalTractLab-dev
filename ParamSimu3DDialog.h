@@ -66,6 +66,7 @@ private:
   wxCheckBox* chkMultiTFPts;
   wxCheckBox* chkComputeRad;
 
+  wxComboBox* lstScalingFacMethods;
   wxComboBox* lstMouthBcond;
   wxComboBox* lstFreqRes;
     
@@ -75,10 +76,12 @@ private:
   int m_secNoiseSource;
   int m_expSpectrumLgth;
   vector<string> m_listMouthBcond;
+  vector<string> m_listScalingMethods;
   int m_expSpectrumLgthStart;
   int m_expSpectrumLgthEnd;
   vector<string> m_listFreqRes;
   openEndBoundaryCond m_mouthBoundaryCond;
+  contourInterpolationMethod m_contInterpMeth;
 	struct simulationParameters m_simuParams;
 
 // **************************************************************************
@@ -123,6 +126,7 @@ private:
   void OnChkMultiTFPts(wxCommandEvent& event);
   void OnChkComputeRad(wxCommandEvent& event);
 
+  void OnScalingFactMethod(wxCommandEvent& event);
   void OnMouthBcond(wxCommandEvent& event);
   void OnFreqRes(wxCommandEvent& event);
 

@@ -46,8 +46,9 @@ static const int IDB_CHK_MULTI_TF_PTS = 5008;
 
 static const int IDB_COMPUTE_RAD_FIELD = 5009;
 
-static const int IDL_MOUTH_BCOND = 6000;
-static const int IDL_FREQ_RES = 6001;
+static const int IDL_SCALING_FAC_METHOD = 6000;
+static const int IDL_MOUTH_BCOND = 6001;
+static const int IDL_FREQ_RES = 6002;
 
 static const int IDB_SET_DEFAULT_PARAMS_FAST = 6002;
 static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 6003;
@@ -89,6 +90,7 @@ EVT_CHECKBOX(IDB_CHK_VAR_AREA, ParamSimu3DDialog::OnChkVarArea)
 EVT_CHECKBOX(IDB_CHK_MULTI_TF_PTS, ParamSimu3DDialog::OnChkMultiTFPts)
 EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 
+EVT_COMBOBOX(IDL_SCALING_FAC_METHOD, ParamSimu3DDialog::OnScalingFactMethod)
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 
@@ -183,6 +185,20 @@ void ParamSimu3DDialog::updateWidgets()
 
 	chkVarArea->SetValue(m_simuParams.varyingArea);
 
+  // scaling factor computation method
+  switch (m_contInterpMeth)
+  {
+  case AREA:
+    lstScalingFacMethods->SetValue(m_listScalingMethods[0]);
+    break;
+  case BOUNDING_BOX:
+    lstScalingFacMethods->SetValue(m_listScalingMethods[1]);
+    break;
+  case FROM_FILE:
+    lstScalingFacMethods->SetValue(m_listScalingMethods[2]);
+    break;
+  }
+
   // set compute acoustic field options
   st = wxString::Format("%1.1f", m_simuParams.freqField);
   txtFreqComputeField->SetValue(st);
@@ -244,7 +260,7 @@ void ParamSimu3DDialog::updateWidgets()
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
-		m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond);
+		m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond, m_contInterpMeth);
 
   //log.close();
 }
@@ -257,6 +273,7 @@ void ParamSimu3DDialog::updateParams()
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
   m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
+  m_contInterpMeth = m_simu3d->contInterpMeth();
   m_simuParams = m_simu3d->simuParams();
 }
 
@@ -323,6 +340,18 @@ wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
   // ****************************************************************
 
   initWidgets();
+
+  // create the list of scaling factor computation methods
+  m_listScalingMethods.clear();
+  m_listScalingMethods.push_back("Area");
+  m_listScalingMethods.push_back("Bounding box");
+  m_listScalingMethods.push_back("From file");
+
+  lstScalingFacMethods->Clear();
+  for (int i(0); i < m_listScalingMethods.size(); i++)
+  {
+    lstScalingFacMethods->Append(m_listScalingMethods[i]);
+  }
 
   // create the list of boundary conditions
   m_listMouthBcond.clear();
@@ -461,6 +490,10 @@ void ParamSimu3DDialog::initWidgets()
 
     chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
     lineSizer->Add(chkVarArea, 0, wxALL, 2);
+
+    lstScalingFacMethods = new wxComboBox(this, IDL_SCALING_FAC_METHOD, "", wxDefaultPosition,
+      this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstScalingFacMethods, 0, wxALL, 3);
 
     topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
 
@@ -1227,6 +1260,37 @@ void ParamSimu3DDialog::OnChkComputeRad(wxCommandEvent& event)
 {
   m_simuParams.computeRadiatedField = !m_simuParams.computeRadiatedField;
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnScalingFactMethod(wxCommandEvent& event)
+{
+  auto res = lstScalingFacMethods->GetSelection();
+
+  switch (res)
+  {
+  case 0:
+    m_contInterpMeth = AREA;
+    break;
+  case 1:
+    m_contInterpMeth = BOUNDING_BOX;
+    break;
+  case 2:
+    if (m_simu3d->isGeometryImported())
+    {
+      m_contInterpMeth = FROM_FILE;
+    }
+    else
+    {
+      lstScalingFacMethods->SetValue(m_listScalingMethods[1]);
+    }
+    break;
+  }
+
+  updateWidgets();
+  updateGeometry();
 }
 
 // ****************************************************************************

@@ -342,6 +342,16 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
     m_mousePosY = event.GetY();
     PopupMenu(m_contextMenu);
   }
+
+  // Double click
+  if (event.ButtonDClick() && (m_simu3d->numberOfSegments() > 0))
+  {
+    m_simu3d->updateBoundingBox();
+
+    wxCommandEvent event(updateRequestEvent);
+    event.SetInt(UPDATE_PICTURES);
+    wxPostEvent(updateEventReceiver, event);
+  }
 }
 
 // ****************************************************************************

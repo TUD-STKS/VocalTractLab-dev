@@ -321,7 +321,7 @@ void ParamSimu3DDialog::updatePictures()
 // ****************************************************************************
 
 ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
-wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
+  wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
     wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
 
@@ -331,7 +331,9 @@ wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
   m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
+  m_contInterpMeth = m_simu3d->contInterpMeth(); 
 	m_simuParams = m_simu3d->simuParams();
+  m_maxBbox = 100.;
 
   this->Move(100, 100);
 
@@ -1001,7 +1003,7 @@ void ParamSimu3DDialog::OnBboxMinX(wxCommandEvent& event)
 {
   double x(0.);
   wxString st = txtBboxMinX->GetValue();
-  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  if ((st.ToDouble(&x)) && (x >= -m_maxBbox) && (x <= m_maxBbox))
   {
     m_simuParams.bbox[0] = Point(x, m_simuParams.bbox[0].y());
   }
@@ -1016,7 +1018,7 @@ void ParamSimu3DDialog::OnBboxMinY(wxCommandEvent& event)
 {
   double x(0.);
   wxString st = txtBboxMinY->GetValue();
-  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  if ((st.ToDouble(&x)) && (x >= -m_maxBbox) && (x <= m_maxBbox))
   {
     m_simuParams.bbox[0] = Point(m_simuParams.bbox[0].x(), x);
   }
@@ -1031,7 +1033,7 @@ void ParamSimu3DDialog::OnBboxMaxX(wxCommandEvent& event)
 {
   double x(0.);
   wxString st = txtBboxMaxX->GetValue();
-  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  if ((st.ToDouble(&x)) && (x >= -m_maxBbox) && (x <= m_maxBbox))
   {
     m_simuParams.bbox[1] = Point(x, m_simuParams.bbox[1].y());
   }
@@ -1046,7 +1048,7 @@ void ParamSimu3DDialog::OnBboxMaxY(wxCommandEvent& event)
 {
   double x(0.);
   wxString st = txtBboxMaxY->GetValue();
-  if ((st.ToDouble(&x)) && (x >= -20.) && (x <= 20.))
+  if ((st.ToDouble(&x)) && (x >= -m_maxBbox) && (x <= m_maxBbox))
   {
     m_simuParams.bbox[1] = Point(m_simuParams.bbox[1].x(), x);
   }

@@ -262,7 +262,7 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_COMPUTE_TF, "Compute transfer function");
+  button = new wxButton(this, IDB_COMPUTE_TF, "Compute transfer functions");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
@@ -1051,7 +1051,10 @@ void Acoustic3dPage::OnVocalTractDialog(wxCommandEvent& event)
   VocalTractDialog* dialog = VocalTractDialog::getInstance(this);
   dialog->Show(true);
   simu3d->setGeometryImported(false);
-  simu3d->setContourInterpolationMethod(AREA);
+  if (simu3d->contInterpMeth() == FROM_FILE)
+  {
+    simu3d->setContourInterpolationMethod(BOUNDING_BOX);
+  }
 }
 
 // ****************************************************************************
@@ -1062,9 +1065,10 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
   simu3d->setGeometryImported(false);
-  simu3d->setContourInterpolationMethod(AREA);
-
-  //updateWidgets();
+  if (simu3d->contInterpMeth() == FROM_FILE)
+  {
+    simu3d->setContourInterpolationMethod(BOUNDING_BOX);
+  }
 }
 
 // ****************************************************************************

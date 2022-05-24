@@ -42,8 +42,9 @@ static const int IDB_COMPUTE_TF                   = 6005;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6006;
 static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6007;
 static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6008;
-static const int IDB_PLAY_LONG_VOWEL              = 6009;
-static const int IDB_PLAY_NOISE_SOURCE            = 6010;
+static const int IDB_LF_PULSE                     = 6009;
+static const int IDB_PLAY_LONG_VOWEL              = 6010;
+static const int IDB_PLAY_NOISE_SOURCE            = 6011;
 
 
 //static const int IDB_EXPORT_FIELD = 6010;
@@ -100,6 +101,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
   EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
   EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
+  EVT_BUTTON(IDB_LF_PULSE, Acoustic3dPage::OnLfPulse)
   EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
   //EVT_BUTTON(IDB_EXPORT_FIELD, Acoustic3dPage::OnExportField)
@@ -278,6 +280,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(20);
+  
+  button = new wxButton(this, IDB_LF_PULSE, "LF glottal flow pulse");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
   
   button = new wxButton(this, IDB_PLAY_LONG_VOWEL, "Play vowel");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -1080,6 +1085,15 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
   importGeometry();
 
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Acoustic3dPage::OnLfPulse(wxCommandEvent& event)
+{
+  LfPulseDialog *dialog = LfPulseDialog::getInstance();
+  dialog->Show(true);
 }
 
 // ****************************************************************************

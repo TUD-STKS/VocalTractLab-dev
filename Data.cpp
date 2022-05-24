@@ -1060,7 +1060,7 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   for (int i(0); i < length; i++)
   {
     track[MAIN_TRACK]->setValue(startPos + i, vocalFoldSignal.getValue(i) + 
-    pow(10., -25/20.) * noiseSourceSignal.getValue(i));
+    pow(10., -lfPulse.SNR/20.) * noiseSourceSignal.getValue(i));
     track[EXTRA_TRACK]->setValue(startPos + i, noiseSourceSignal.getValue(i));
   }
   

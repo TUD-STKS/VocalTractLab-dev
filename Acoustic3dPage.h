@@ -15,6 +15,7 @@
 #include "PropModesPicture.h"
 #include "Spectrum3dPicture.h"
 #include "SegmentsPicture.h"
+#include "LfPulseDialog.h"
 
 class Acoustic3dPage : public wxPanel
 {
@@ -87,6 +88,7 @@ private:
   void OnComputeAcousticField(wxCommandEvent& event);
   void OnExportGlottalSourceTf(wxCommandEvent& event);
   void OnExportNoiseSourceTf(wxCommandEvent& event);
+  void OnLfPulse(wxCommandEvent& event);
   void OnPlayLongVowel(wxCommandEvent& event);
   void OnPlayLongVowel();
   void OnPlayNoiseSource(wxCommandEvent& event);

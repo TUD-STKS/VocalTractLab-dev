@@ -144,7 +144,7 @@ void PropModesPicture::draw(wxDC& dc)
     m_objectToDisplay = CONTOUR;
   }
 
-    info << "Section " << sectionIdx;
+    info << "Segment " << sectionIdx;
     info << "      area  " << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
       << "      length  " << m_simu3d->crossSection(sectionIdx)->length() << " cm " << endl;
     info << "Curvature angle     "

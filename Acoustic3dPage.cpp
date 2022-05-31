@@ -902,6 +902,10 @@ void Acoustic3dPage::OnComputeModes(wxCommandEvent& event)
 
   for (int i(0); i < numSeg; i++)
   {
+    // set mode number to 0 to make sure that it is defined by the maximal cutoff 
+    // frequency when modes are computed
+    simu3d->crossSection(i)->setModesNumber(0);
+
     simu3d->computeMeshAndModes(i);
 
     // stop if [Cancel] is pressed
@@ -1085,6 +1089,7 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
   simu3d->setContourInterpolationMethod(FROM_FILE);
   simu3d->setGeometryFile(name.ToStdString());
   simu3d->requestModesAndJunctionComputation();
+  simu3d->cleanAcousticField();
 
   importGeometry();
 

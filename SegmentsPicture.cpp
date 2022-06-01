@@ -79,8 +79,8 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "Start draw segments picture" << endl;
+  //ofstream log("log.txt", ofstream::app);
+  //log << "Start draw segments picture" << endl;
 
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
@@ -284,7 +284,7 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
-  log.close();
+  //log.close();
 }
 
 // ****************************************************************************

@@ -80,8 +80,8 @@ void PropModesPicture::draw(wxDC& dc)
 	int sectionIdx(0);
   ostringstream info;
 
-	ofstream log("log.txt", ofstream::app);
-	log << "\nStart draw mode picture" << endl;
+	//ofstream log("log.txt", ofstream::app);
+	//log << "\nStart draw mode picture" << endl;
 
 	// Clear the background.
 	dc.SetBackground(*wxWHITE_BRUSH);
@@ -268,21 +268,11 @@ void PropModesPicture::draw(wxDC& dc)
 				p.OffsetY(data, 1);
 			}
 
-			//end = std::chrono::system_clock::now();
-			//elapsed_seconds = end - start;
-			//log << "map initialization "  << endl;
-			//start = std::chrono::system_clock::now();
-
 			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
 			int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
 			vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
 			vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
 			Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
-
-			//end = std::chrono::system_clock::now();
-			//elapsed_seconds = end - start;
-			//log << "Load cdt " << elapsed_seconds.count() << endl;
-			//start = std::chrono::system_clock::now();
 
 			// extract the maximum and minimum of amplitude
 			maxAmp = (m_simu3d->crossSection(sectionIdx))->getMaxAmplitude(m_modeIdx);
@@ -457,16 +447,8 @@ void PropModesPicture::draw(wxDC& dc)
         double maxDist;
         int normAmp;
 
-        auto start = std::chrono::system_clock::now();
-
-
         m_field.resize(height, width);
         m_field.setConstant(NAN);
-
-        auto end = std::chrono::system_clock::now();
-        std::chrono::duration<double> duration = start - end;
-
-        log << "Time m_field " << duration.count() << endl;
 
         int idxI, idxJ;
 
@@ -494,11 +476,7 @@ void PropModesPicture::draw(wxDC& dc)
         Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
         int mn(modes.cols());
 
-        log << "Mode number " << mn << endl;
-
         auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
-
-        log << "modesAmpl:\n" << modesAmpl << endl << endl;
 
         Vec amplitudes((modes * modesAmpl).cwiseAbs());
 
@@ -516,8 +494,6 @@ void PropModesPicture::draw(wxDC& dc)
           minAmp = 20. * log10(minAmp);
           maxAmp = maxAmp - minAmp + dbShift;
         }
-
-        log << "maxAmp " << maxAmp << " minAmp " << minAmp << endl;
 
         // draw the acoustic field
         //
@@ -606,7 +582,7 @@ void PropModesPicture::draw(wxDC& dc)
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
   dc.DrawText(info.str(), 0., 0.);
 
-	log.close();
+	//log.close();
 }
 
 // ****************************************************************************

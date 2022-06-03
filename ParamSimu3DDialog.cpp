@@ -1205,6 +1205,7 @@ void ParamSimu3DDialog::OnChkWallAdmittance(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 {
   m_simuParams.propMethod = STRAIGHT_TUBES;
+  m_simuParams.numIntegrationStep = 2;
 	m_simuParams.curved = false;
   m_simuParams.varyingArea = false;
 	chkMagnus->SetValue(false);

@@ -31,6 +31,9 @@ public:
   // **************************************************************************
 
 private:
+
+  wxMenu* m_contextMenu;
+
   int lineWidth{ this->FromDIP(1) };
   Acoustic3dSimulation *simu3d;
   bool m_showGlottalTf;
@@ -44,6 +47,18 @@ private:
 
 private:
   void drawTf(wxDC& dc, enum tfType type);
+  void exportResult(enum tfType type);
+
+  void OnMouseEvent(wxMouseEvent& event);
+  void OnExportGlottalTf(wxCommandEvent& event);
+  void OnEXportNoiseSrcTf(wxCommandEvent& event);
+  void OnExportInputImpedance(wxCommandEvent& event);
+
+// ****************************************************************************
+// Declare the event table right at the end
+// ****************************************************************************
+
+  DECLARE_EVENT_TABLE()
 };
 
 #endif

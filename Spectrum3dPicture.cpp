@@ -1,5 +1,25 @@
 #include "Spectrum3dPicture.h"
 #include <fstream>
+#include <wx/filename.h>
+
+// ****************************************************************************
+// IDs.
+// ****************************************************************************
+
+static const int IDM_EXPORT_GLOTTAL_TF = 1000;
+static const int IDM_EXPORT_NOISE_SRC_TF = 1001;
+static const int IDM_EXPORT_INPUT_IMPEDANCE = 1002;
+
+// ****************************************************************************
+// The event table.
+// ****************************************************************************
+
+BEGIN_EVENT_TABLE(Spectrum3dPicture, BasicPicture)
+  EVT_MOUSE_EVENTS(Spectrum3dPicture::OnMouseEvent)
+  EVT_MENU(IDM_EXPORT_GLOTTAL_TF, Spectrum3dPicture::OnExportGlottalTf)
+  EVT_MENU(IDM_EXPORT_NOISE_SRC_TF, Spectrum3dPicture::OnEXportNoiseSrcTf)
+  EVT_MENU(IDM_EXPORT_INPUT_IMPEDANCE, Spectrum3dPicture::OnExportInputImpedance)
+END_EVENT_TABLE()
 
 // ****************************************************************************
 /// Constructor.
@@ -35,6 +55,15 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
     true, 10);
 
   graph.isLinearOrdinate = false;
+
+  // ****************************************************************
+  // The context menu
+  // ****************************************************************
+
+  m_contextMenu = new wxMenu();
+  m_contextMenu->Append(IDM_EXPORT_GLOTTAL_TF, "Save the glottal transfer function as txt file");
+  m_contextMenu->Append(IDM_EXPORT_NOISE_SRC_TF, "Save the noise transfer function as txt file");
+  m_contextMenu->Append(IDM_EXPORT_INPUT_IMPEDANCE, "Save input impedance as txt file");
 }
 
 // ****************************************************************************
@@ -113,4 +142,53 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
 
     lastY = y;
   }
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::exportResult(enum tfType type)
+{
+  wxFileName fileName;
+  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
+    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+
+  simu3d->exportTransferFucntions(name.ToStdString(), type);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::OnMouseEvent(wxMouseEvent& event)
+{
+  // Right click
+  if (event.ButtonDown(wxMOUSE_BTN_RIGHT))
+  {
+    PopupMenu(m_contextMenu);
+  }
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::OnExportGlottalTf(wxCommandEvent& event)
+{
+  exportResult(GLOTTAL);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::OnEXportNoiseSrcTf(wxCommandEvent& event)
+{
+  exportResult(NOISE);
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::OnExportInputImpedance(wxCommandEvent& event)
+{
+  exportResult(INPUT_IMPED);
 }

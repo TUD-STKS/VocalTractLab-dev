@@ -854,6 +854,7 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     simu3d->generateSpectraForSynthesis(m_idxTfPoint);
   }
 
+  // print the times of the different parts of the process
   log << "\nTime propagation: " << timePropa.count() << endl;
   end = std::chrono::system_clock::now();
   time = end - startTot;

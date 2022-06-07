@@ -252,7 +252,7 @@ void ParamSimu3DDialog::updateWidgets()
   }
 
   // frequency resolution
-  lstFreqRes->SetValue(m_listFreqRes[m_expSpectrumLgth - m_expSpectrumLgthStart]);
+  lstFreqRes->SetValue(m_listFreqRes[m_simuParams.spectrumLgthExponent - m_expSpectrumLgthStart]);
 
   st = wxString::Format("%1.4f", real(m_simuParams.thermalBndSpecAdm));
   txtWallAdmit->SetValue(st);
@@ -260,7 +260,7 @@ void ParamSimu3DDialog::updateWidgets()
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
-		m_expSpectrumLgth, m_simuParams, m_mouthBoundaryCond, m_contInterpMeth);
+		m_simuParams, m_mouthBoundaryCond, m_contInterpMeth);
 
   //log.close();
 }
@@ -271,7 +271,7 @@ void ParamSimu3DDialog::updateParams()
 {
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
-  m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
+  m_simuParams.spectrumLgthExponent = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth();
   m_simuParams = m_simu3d->simuParams();
@@ -329,7 +329,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_tract = Data::getInstance()->vocalTract;
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
-  m_expSpectrumLgth = m_simu3d->spectrumLgthExponent();
+  m_simuParams.spectrumLgthExponent = m_simu3d->spectrumLgthExponent();
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth(); 
 	m_simuParams = m_simu3d->simuParams();
@@ -1329,7 +1329,7 @@ void ParamSimu3DDialog::OnFreqRes(wxCommandEvent& event)
 {
   auto res = lstFreqRes->GetSelection();
 
-  m_expSpectrumLgth = m_expSpectrumLgthStart + res;
+  m_simuParams.spectrumLgthExponent = m_expSpectrumLgthStart + res;
 
   updateWidgets();
 }
@@ -1365,7 +1365,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
     m_simuParams.maxComputedFreq = 10000.;
 
     // for about 40 Hz resolution
-    m_expSpectrumLgth = m_expSpectrumLgthStart + 2;
+    m_simuParams.spectrumLgthExponent = m_expSpectrumLgthStart + 2;
   }
   else
   {
@@ -1376,7 +1376,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
     m_simuParams.maxComputedFreq = 20000.;
 
     // for about 10 Hz resolution
-    m_expSpectrumLgth = m_expSpectrumLgthStart + 4;
+    m_simuParams.spectrumLgthExponent = m_expSpectrumLgthStart + 4;
   }
 
   m_simuParams.sndSpeed = 35000.;

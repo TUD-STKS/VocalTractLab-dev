@@ -912,7 +912,7 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   // Calc. the vocal tract impulse responses.
   // ****************************************************************
 
-  const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
+  const int IMPULSE_RESPONSE_EXPONENT = simu3d->oldSpectrumLgthExponent();
   const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
   Signal impulseResponse(IMPULSE_RESPONSE_LENGTH);
   Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
@@ -1084,7 +1084,7 @@ int Data::synthesizeNoiseSource(Acoustic3dSimulation* simu3d, int startPos)
   const int BUFFER_MASK = 2047;
   TimeFunction ampTimeFunction;
   ComplexSignal transferFunction(simu3d->spectrumNoise.N);
-  const int IMPULSE_RESPONSE_EXPONENT = simu3d->spectrumLgthExponent();
+  const int IMPULSE_RESPONSE_EXPONENT = simu3d->oldSpectrumLgthExponent();
   const int IMPULSE_RESPONSE_LENGTH = 1 << (IMPULSE_RESPONSE_EXPONENT - 1);
   Signal impulseResponseNoise(IMPULSE_RESPONSE_LENGTH);
   Signal noiseSignal(BUFFER_LENGTH);

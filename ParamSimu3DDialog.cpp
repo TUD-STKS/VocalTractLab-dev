@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Backend/Constants.h"
 #include <wx/filename.h>
+#include <wx/statline.h>
 
 // ****************************************************************************
 // IDs.
@@ -52,6 +53,7 @@ static const int IDL_FREQ_RES = 6002;
 
 static const int IDB_SET_DEFAULT_PARAMS_FAST = 6002;
 static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 6003;
+static const int IDB_CLOSE = 6004;
 
 // ****************************************************************************
 // The event table.
@@ -96,6 +98,7 @@ EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_FAST, ParamSimu3DDialog::OnSetDefaultParamsFast)
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_ACCURATE, ParamSimu3DDialog::OnSetDefaultParamsAccurate)
+EVT_BUTTON(IDB_CLOSE, ParamSimu3DDialog::OnClose)
 
 END_EVENT_TABLE()
 
@@ -414,6 +417,8 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtTemperature, 0, wxALL, 3);
 
+    lineSizer->AddStretchSpacer();
+
     label = new wxStaticText(this, wxID_ANY, "Sound speed (m/s): ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
@@ -421,7 +426,7 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtSndSpeed, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set mesh density.
@@ -797,24 +802,32 @@ void ParamSimu3DDialog::initWidgets()
   // ****************************************************************
 
   topLevelSizer->AddSpacer(10);
+  topLevelSizer->Add(new wxStaticLine(this), 1, wxEXPAND | wxALL, 10);
 
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
   button = new wxButton(this, IDB_SET_DEFAULT_PARAMS_FAST,
-    "Set default parameters\nfast simulation (innacurate)");
-  lineSizer->Add(button, 0, wxGROW | wxALL, 3);
+    "Default (fast)");
+  lineSizer->Add(button, 1, wxEXPAND | wxALL, 3);
 
   button = new wxButton(this, IDB_SET_DEFAULT_PARAMS_ACCURATE,
-    "Set default parameters\naccurate simulation (slow)");
-  lineSizer->Add(button, 0, wxGROW | wxALL, 3);
+    "Default (accurate)");
+  lineSizer->Add(button, 1, wxEXPAND | wxALL, 3);
 
-  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+  lineSizer->AddStretchSpacer();
+
+  button = new wxButton(this, IDB_CLOSE, "Close");
+  lineSizer->Add(button, 1, wxEXPAND | wxALL, 3);
+
+  topLevelSizer->Add(lineSizer, 0, wxEXPAND | wxALL, 10);
 
   // ****************************************************************
   // Set the top-level-sizer for this window.
   // ****************************************************************
 
-  topLevelSizer->AddSpacer(10);
+  //topLevelSizer->AddSpacer(10);
+
+  //topLevelSizer->Add(CreateSeparatedButtonSizer(wxCLOSE), 1, wxALL | wxEXPAND, 10);
 
   this->SetSizer(topLevelSizer);
   topLevelSizer->Fit(this);
@@ -1414,4 +1427,12 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   m_simuParams.computeRadiatedField = false;
 
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnClose(wxCommandEvent& event)
+{
+  this->Close();
 }

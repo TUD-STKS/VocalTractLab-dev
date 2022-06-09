@@ -80,8 +80,13 @@ void PropModesPicture::draw(wxDC& dc)
 	int sectionIdx(0);
   ostringstream info;
 
-	//ofstream log("log.txt", ofstream::app);
-	//log << "\nStart draw mode picture" << endl;
+  // clear info strings
+  m_infoStr.clear();
+  m_labelStr.clear();
+  m_valueStr.clear();
+
+	ofstream log("log.txt", ofstream::app);
+	log << "\nStart draw mode picture" << endl;
 
 	// Clear the background.
 	dc.SetBackground(*wxWHITE_BRUSH);
@@ -144,14 +149,33 @@ void PropModesPicture::draw(wxDC& dc)
     m_objectToDisplay = CONTOUR;
   }
 
-    info << "Segment " << sectionIdx;
-    info << "      area  " << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
-      << "      length  " << m_simu3d->crossSection(sectionIdx)->length() << " cm " << endl;
-    info << "Curvature angle     "
-      << 180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI << " deg   "
-      << "        radius  " << m_simu3d->crossSection(sectionIdx)->curvRadius() << " cm" << endl;
-    info << "Scaling in  " << m_simu3d->crossSection(sectionIdx)->scaleIn()
-      << "      scaling out  " << m_simu3d->crossSection(sectionIdx)->scaleOut() << endl;
+  info << "Segment " << sectionIdx << endl;
+  m_infoStr.push_back(info.str());
+
+  info.str("");
+  info << setprecision(2);
+  info << "area";
+  m_labelStr.push_back(info.str());
+
+  info.str("");
+  info << m_simu3d->crossSection(sectionIdx)->area() << " cm^2";
+  m_valueStr.push_back(info.str());
+
+  info.str("");
+  info << "length";
+  m_labelStr.push_back(info.str());
+
+  info.str("");
+  info << m_simu3d->crossSection(sectionIdx)->length() << " cm ";
+  m_valueStr.push_back(info.str());
+
+  //info << "area" << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
+  //    << "      length  " << m_simu3d->crossSection(sectionIdx)->length() << " cm " << endl;
+  //  info << "Curvature angle     "
+  //    << 180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI << " deg   "
+  //    << "        radius  " << m_simu3d->crossSection(sectionIdx)->curvRadius() << " cm" << endl;
+  //  info << "Scaling in  " << m_simu3d->crossSection(sectionIdx)->scaleIn()
+  //    << "      scaling out  " << m_simu3d->crossSection(sectionIdx)->scaleOut() << endl;
 
     vector<int> surf = (m_simu3d->crossSection(sectionIdx))->surfaceIdx();
 
@@ -564,7 +588,7 @@ void PropModesPicture::draw(wxDC& dc)
         switch (m_positionContour)
         {
         case 0:
-          info << "entrance" << endl;
+          info << "Entrance" << endl;
           break;
         case 1:
           info << "Mode computation size" << endl;
@@ -580,9 +604,23 @@ void PropModesPicture::draw(wxDC& dc)
   dc.SetPen(*wxBLACK_PEN);
   dc.SetBackgroundMode(wxTRANSPARENT);
   dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-  dc.DrawText(info.str(), 0., 0.);
+  wxCoord w, h;
+  dc.GetTextExtent(m_infoStr[0], &w, &h);
+  m_infoStr.push_back(info.str());
+  log << "Text extent " << w << "  " << h << endl;
+  wxCoord cellH(15), cellW(200), interCell(15);
+  dc.DrawText(m_infoStr[0], 0., 0.);
 
-	//log.close();
+  dc.DrawText(m_labelStr[0], 0., cellH);
+  dc.GetTextExtent(m_valueStr[0], &w, &h);
+  dc.DrawText(m_valueStr[0], cellW - w - interCell, cellH);
+
+  dc.DrawText(m_labelStr[1], cellW, cellH);
+  dc.GetTextExtent(m_valueStr[1], &w, &h);
+  dc.DrawText(m_valueStr[1], 2.*cellW - w - interCell, cellH);
+  //dc.DrawText(m_infoStr[1], 0., h);
+
+	log.close();
 }
 
 // ****************************************************************************

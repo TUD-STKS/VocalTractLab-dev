@@ -60,6 +60,9 @@ private:
   double m_centerX;
   double m_centerY;
   int m_positionContour;
+  vector<string> m_infoStr;
+  vector<string> m_labelStr;
+  vector<string> m_valueStr;
 
   Matrix m_field;
 

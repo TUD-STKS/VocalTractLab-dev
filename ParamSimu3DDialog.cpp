@@ -127,6 +127,15 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent)
 
 void ParamSimu3DDialog::updateWidgets()
 {
+  //ofstream log("log.txt", ofstream::app);
+
+  if (m_simuParams.propMethod == MAGNUS)
+  {
+    m_simuParams.curved = m_simuParamsManus.curved;
+    m_simuParams.varyingArea = m_simuParamsManus.varyingArea;
+    m_simuParams.numIntegrationStep = m_simuParamsManus.numIntegrationStep;
+  }
+
   wxString st;
 
   st = wxString::Format("%2.1f", m_simuParams.temperature);
@@ -144,7 +153,7 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%5.f", m_simuParams.maxComputedFreq);
   txtMaxSimFreq->SetValue(st);
 
-  st = wxString::Format("%d", m_simuParams.numIntegrationStep);
+  st = wxString::Format("%d", m_simuParamsManus.numIntegrationStep);
   txtNumIntegrationStep->SetValue(st);
 
   st = wxString::Format("%d", m_secNoiseSource);
@@ -184,9 +193,9 @@ void ParamSimu3DDialog::updateWidgets()
           break;
   }
 
-	chkCurv->SetValue(m_simuParams.curved);
+	chkCurv->SetValue(m_simuParamsManus.curved);
 
-	chkVarArea->SetValue(m_simuParams.varyingArea);
+	chkVarArea->SetValue(m_simuParamsManus.varyingArea);
 
   // scaling factor computation method
   switch (m_contInterpMeth)
@@ -278,6 +287,10 @@ void ParamSimu3DDialog::updateParams()
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth();
   m_simuParams = m_simu3d->simuParams();
+  if (m_simuParams.propMethod == MAGNUS)
+  {
+    m_simuParamsManus = m_simu3d->simuParams();
+  }
 }
 
 // ****************************************************************************
@@ -336,6 +349,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth(); 
 	m_simuParams = m_simu3d->simuParams();
+  m_simuParamsManus = m_simu3d->simuParams();
   m_maxBbox = 100.;
 
   this->Move(100, 100);
@@ -411,20 +425,20 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Temperature (°C): ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtTemperature, 0, wxALL, 3);
+    lineSizer->Add(txtTemperature, 1, wxALL, 3);
 
-    lineSizer->AddStretchSpacer();
+    //lineSizer->AddStretchSpacer();
 
     label = new wxStaticText(this, wxID_ANY, "Sound speed (m/s): ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtSndSpeed = new wxTextCtrl(this, IDE_SND_SPEED, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtSndSpeed, 0, wxALL, 3);
+    lineSizer->Add(txtSndSpeed, 1, wxALL, 3);
 
     topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
@@ -436,17 +450,17 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Mesh density: ");
+    label = new wxStaticText(this, wxID_ANY, "Mesh density (elements per length): ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMeshDensity = new wxTextCtrl(this, IDE_MESH_DENSITY, "", wxDefaultPosition,
         wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMeshDensity, 0, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, "Elements per length");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    //label = new wxStaticText(this, wxID_ANY, "Elements per length");
+    //lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the maximal cut-on frequency
@@ -456,14 +470,14 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Maximal cut-off frequency: ");
+    label = new wxStaticText(this, wxID_ANY, "Maximal cut-off frequency (Hz): ");
     lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxCutOnFreq = new wxTextCtrl(this, IDE_MAX_CUT_ON, "", wxDefaultPosition,
         wxSize(80, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxCutOnFreq, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Select the numerical scheme
@@ -474,35 +488,15 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Numerical scheme: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     chkStraight = new wxCheckBox(this, IDB_CHK_STRAIGHT, "Straight");
-    lineSizer->Add(chkStraight, 0, wxALL, 2);
+    lineSizer->Add(chkStraight, 1, wxALL, 2);
 
     chkMagnus = new wxCheckBox(this, IDB_CHK_MAGNUS, "Magnus");
-    lineSizer->Add(chkMagnus, 0, wxALL, 2);
+    lineSizer->Add(chkMagnus, 1, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
-
-    // ****************************************************************
-    // Select the geometrical features
-    // ****************************************************************
-
-    topLevelSizer->AddSpacer(10);
-
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    chkCurv = new wxCheckBox(this, IDB_CHK_CURV, "Curved");
-    lineSizer->Add(chkCurv, 0, wxALL, 2);
-
-    chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
-    lineSizer->Add(chkVarArea, 0, wxALL, 2);
-
-    lstScalingFacMethods = new wxComboBox(this, IDL_SCALING_FAC_METHOD, "", wxDefaultPosition,
-      this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
-    lineSizer->Add(lstScalingFacMethods, 0, wxALL, 3);
-
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the number of integration steps
@@ -519,7 +513,27 @@ void ParamSimu3DDialog::initWidgets()
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtNumIntegrationStep, 0, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    // ****************************************************************
+    // Select the geometrical features
+    // ****************************************************************
+
+    topLevelSizer->AddSpacer(10);
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    chkCurv = new wxCheckBox(this, IDB_CHK_CURV, "Curved");
+    lineSizer->Add(chkCurv, 1, wxALL, 2);
+
+    chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
+    lineSizer->Add(chkVarArea, 1, wxALL, 2);
+
+    lstScalingFacMethods = new wxComboBox(this, IDL_SCALING_FAC_METHOD, "", wxDefaultPosition,
+      this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstScalingFacMethods, 1, wxALL, 3);
+
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Select mouth boundary condition
@@ -929,7 +943,7 @@ void ParamSimu3DDialog::OnNumIntegrationEnter(wxCommandEvent& event)
     wxString st = txtNumIntegrationStep->GetValue();
     if ((st.ToDouble(&x)) && (x > 0.) && (x <= 1000.))
     {
-        m_simuParams.numIntegrationStep = (int)x;
+      m_simuParamsManus.numIntegrationStep = (int)x;
     }
 
     updateWidgets();
@@ -1221,7 +1235,9 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
   m_simuParams.numIntegrationStep = 2;
 	m_simuParams.curved = false;
   m_simuParams.varyingArea = false;
-	chkMagnus->SetValue(false);
+  chkCurv->Disable();
+  chkVarArea->Disable();
+  txtNumIntegrationStep->Disable();
   updateWidgets();
   updateGeometry();
 }
@@ -1232,9 +1248,11 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 {
 	m_simuParams.propMethod = MAGNUS;
-  chkStraight->SetValue(false);
+  chkCurv->Enable();
+  chkVarArea->Enable();
+  txtNumIntegrationStep->Enable();
   updateWidgets();
-
+  updateGeometry();
 }
 
 // ****************************************************************************
@@ -1242,8 +1260,7 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
-  m_simuParams.propMethod = MAGNUS;
-  m_simuParams.curved = !m_simuParams.curved;
+  m_simuParamsManus.curved = !m_simuParamsManus.curved;
   updateWidgets();
 
   updateGeometry();
@@ -1254,8 +1271,8 @@ void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
-  m_simuParams.propMethod = MAGNUS;
-	m_simuParams.varyingArea = !m_simuParams.varyingArea;
+  //m_simuParams.propMethod = MAGNUS;
+  m_simuParamsManus.varyingArea = !m_simuParamsManus.varyingArea;
   updateWidgets();
 
   updateGeometry();

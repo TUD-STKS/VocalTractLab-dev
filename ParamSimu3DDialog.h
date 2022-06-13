@@ -82,6 +82,7 @@ private:
   openEndBoundaryCond m_mouthBoundaryCond;
   contourInterpolationMethod m_contInterpMeth;
 	struct simulationParameters m_simuParams;
+  struct simulationParameters m_simuParamsManus;
   double m_maxBbox;
 
 // **************************************************************************

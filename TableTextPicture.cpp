@@ -29,8 +29,6 @@ void TableTextPicture::printCells(wxDC& dc)
   wxCoord w, h;
   cell* ce;
 
-  ofstream log("log.txt", ofstream::app);
-
   dc.SetPen(*wxBLACK_PEN);
 
   while (idxCell < m_cells.size())
@@ -38,9 +36,7 @@ void TableTextPicture::printCells(wxDC& dc)
     ce = &m_cells[idxCell];
 
     idxRow = idxCell / m_nbCols;
-    log << "idxRow " << idxRow << endl;
     idxCol = idxCell % m_nbCols;
-    log << "idxCol " << idxCol << endl;
 
     dc.DrawText(ce->label, idxCol * m_cellWidth, idxRow * m_cellHeight);
     dc.GetTextExtent(ce->value, &w, &h);
@@ -48,5 +44,4 @@ void TableTextPicture::printCells(wxDC& dc)
 
     idxCell++;
   }
-  log.close();
 }

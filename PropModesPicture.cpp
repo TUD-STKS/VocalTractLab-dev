@@ -206,22 +206,6 @@ void PropModesPicture::draw(wxDC& dc)
       m_positionContour = 1;
       drawContour(sectionIdx, surf, dc);
 
-			//// if it exists, draw the next contour
-			//if ((sectionIdx+1) < (m_simu3d->sectionNumber() - 1))
-			//{
-			//	Polygon_2 contour = (m_simu3d->crossSection(sectionIdx+1)).contour(0);
-			//	dc.SetPen(*wxBLUE_PEN);
-			//	CGAL::Polygon_2<K>::Edge_const_iterator vit;
-			//	for (vit = contour.edges_begin(); vit != contour.edges_end(); ++vit)
-			//	{
-			//		xBig = (int)(m_zoom * (vit->point(0).x()) + m_centerX);
-			//		yBig = (int)(m_centerY - m_zoom * (vit->point(0).y()));
-			//		xEnd = (int)(m_zoom * (vit->point(1).x()) + m_centerX);
-			//		yEnd = (int)(m_centerY - m_zoom * (vit->point(1).y()));
-			//		dc.DrawLine(xBig, yBig, xEnd, yEnd);
-			//	}
-			//}
-
 			// display number of vertex, segments and triangles
       tbText.addCell("Nb vertexes", (m_simu3d->crossSection(sectionIdx))->numberOfVertices());
       tbText.addCell("nb faces", (m_simu3d->crossSection(sectionIdx))->numberOfFaces());
@@ -651,43 +635,53 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
   CGAL::Polygon_2<K>::Edge_const_iterator vit;
   int s, xBig, yBig, xEnd, yEnd;
   double scaling(getScaling());
+  int penWidth(5);
 
+  // colors are from https://davidmathlogic.com/colorblind
   for (s = 0, vit = contour.edges_begin(); vit != contour.edges_end(); ++vit, ++s)
   {
-    switch (surf[s])
-    {
-    case 2: case 3: case 23: case 24:		// covers
-      dc.SetPen(wxPen(*wxCYAN, 2, wxPENSTYLE_SOLID));
-      break;
-    case 16:						// tongue
-      dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
-      break;
-    case 0: case 1:					// teeth
-      dc.SetPen(wxPen(*wxYELLOW, 2, wxPENSTYLE_SOLID));
-      break;
-    case 29:						// epiglotis
-      dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
-      break;
-    case 26:						// uvula
-      dc.SetPen(wxPen(*wxLIGHT_GREY, 2, wxPENSTYLE_SOLID));
-      break;
-    case 4: case 5:					// lips
-      dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
-      break;
-    case 31:						// radiation
-      dc.SetPen(wxPen(wxColour(128, 0, 128, 255), 2, wxPENSTYLE_SOLID));
-      break;
-    default:
-      dc.SetPen(wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID));
-    }
 
+    // get the coordinate of the segment of the contour
     xBig = (int)(m_zoom * (scaling * vit->point(0).x()) + m_centerX);
     yBig = (int)(m_centerY - m_zoom * (scaling * vit->point(0).y()));
-    dc.DrawCircle(xBig, yBig, 1);
-
     xEnd = (int)(m_zoom * (scaling * vit->point(1).x()) + m_centerX);
     yEnd = (int)(m_centerY - m_zoom * (scaling * vit->point(1).y()));
 
+    if (m_objectToDisplay == CONTOUR)
+    {
+      switch (surf[s])
+      {
+      case 2: case 3: case 23: case 24:		// covers
+        dc.SetPen(wxPen(wxColour(68, 170, 153, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 16:						// tongue
+        dc.SetPen(wxPen(wxColour(170, 68, 153, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 0: case 1:					// teeth
+        dc.SetPen(wxPen(wxColour(221, 204, 119, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 29:						// epiglotis
+        dc.SetPen(wxPen(wxColour(51, 34, 136, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 26:						// uvula
+        dc.SetPen(wxPen(wxColour(204, 102, 119, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 4: case 5:					// lips
+        dc.SetPen(wxPen(wxColour(136, 34, 85, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      case 31:						// radiation
+        dc.SetPen(wxPen(wxColour(136, 204, 238, 255), penWidth, wxPENSTYLE_SOLID));
+        break;
+      default:
+        dc.SetPen(wxPen(wxColour(68, 170, 153, 255), penWidth, wxPENSTYLE_SOLID));
+      }
+
+      // draw a colored dot to indicate the nature of the anatomical part 
+      // corresponding to the surface
+      dc.DrawCircle(xBig, yBig, 1);
+    }
+
+    // draw the segment
     dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(xBig, yBig, xEnd, yEnd);
   }

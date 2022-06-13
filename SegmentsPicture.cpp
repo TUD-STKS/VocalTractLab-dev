@@ -79,7 +79,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
-  //ofstream log("log.txt", ofstream::app);
+  ofstream log("log.txt", ofstream::app);
   //log << "Start draw segments picture" << endl;
 
   // Clear the background.
@@ -262,9 +262,13 @@ void SegmentsPicture::draw(wxDC& dc)
 
       // plot the reception points of the transfer functions
       struct simulationParameters simuParams = m_simu3d->simuParams();
-      dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
+      wxCoord crossSize(7);
+      int penWidth(2);
+      // make a blue pen
+      dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
       Point_3 pt;
       int cnt(0);
+
       for (auto it : simuParams.tfPoint)
       {
         pt = m_simu3d->movePointFromExitLandmarkToGeoLandmark(it);
@@ -272,19 +276,31 @@ void SegmentsPicture::draw(wxDC& dc)
         yBig = getPixelCoordY(pt.z());
         if (cnt == m_idxPtTf)
         {
-          dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
-          dc.DrawCircle(xBig, yBig, 1);
-          dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
+          // make the pen red
+          dc.SetPen(wxPen(wxColour(220, 50, 32, 255), penWidth, wxPENSTYLE_SOLID));
+
+          // draw a cross
+          dc.DrawLine(xBig - crossSize, yBig, xBig + crossSize - 1, yBig);
+          dc.DrawLine(xBig, yBig - crossSize, xBig, yBig + crossSize - 1);
+
+          log << "xBig " << xBig << endl;
+          log << "yBig " << yBig << endl;
+
+          // reset the pen as blue
+          dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
+          dc.DrawPoint(xBig, yBig);
         }
         else
         {
-          dc.DrawCircle(xBig, yBig, 1);
+          // draw a cross
+          dc.DrawLine(xBig - crossSize + 0, yBig, xBig + crossSize, yBig);
+          dc.DrawLine(xBig, yBig - crossSize + 0, xBig, yBig + crossSize);
         }
         cnt++;
       }
     }
   }
-  //log.close();
+  log.close();
 }
 
 // ****************************************************************************

@@ -8,6 +8,7 @@
 #include <wx/rawbmp.h>
 #include <chrono>
 #include "ColorScale.h"
+#include "TableTextPicture.h"
 
 // for eigen
 #include <Eigen/Dense>
@@ -79,6 +80,7 @@ void PropModesPicture::draw(wxDC& dc)
 	double cumLength(0.), minDist(1e-15);
 	int sectionIdx(0);
   ostringstream info;
+  TableTextPicture tbText;
 
   // clear info strings
   m_infoStr.clear();
@@ -129,8 +131,6 @@ void PropModesPicture::draw(wxDC& dc)
 	{
 		maxLength = VocalTract::PROFILE_LENGTH;
 	}
-	//log << "maxLength " << maxLength << endl;
-	
 
 	if (width < height)
 	{
@@ -141,41 +141,27 @@ void PropModesPicture::draw(wxDC& dc)
     m_zoom = (double)height * 1 / maxLength;
 	}
 
-// ****************************************************************
-// plot the segments of the mesh
-// ****************************************************************
-
   if (((m_simu3d->crossSection(sectionIdx))->numberOfFaces() == 0)) {
     m_objectToDisplay = CONTOUR;
   }
 
-  info << "Segment " << sectionIdx << endl;
-  m_infoStr.push_back(info.str());
+  // ****************************************************************
+  // add the informations to display as text
+  // ****************************************************************
 
-  info.str("");
-  info << setprecision(2);
-  info << "area";
-  m_labelStr.push_back(info.str());
+  tbText.addCell("Segment index", sectionIdx);
+  tbText.addCell(" ", " ");
+  tbText.addCell("Area (cm^2)", m_simu3d->crossSection(sectionIdx)->area());
+  tbText.addCell("Length (cm)", m_simu3d->crossSection(sectionIdx)->length());
+  tbText.addCell("Curv angle (deg)",
+    180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI);
+  tbText.addCell("Curv radius (cm)", m_simu3d->crossSection(sectionIdx)->curvRadius());
+  tbText.addCell("Scaling in", m_simu3d->crossSection(sectionIdx)->scaleIn());
+  tbText.addCell("Scaling out", m_simu3d->crossSection(sectionIdx)->scaleOut());
 
-  info.str("");
-  info << m_simu3d->crossSection(sectionIdx)->area() << " cm^2";
-  m_valueStr.push_back(info.str());
-
-  info.str("");
-  info << "length";
-  m_labelStr.push_back(info.str());
-
-  info.str("");
-  info << m_simu3d->crossSection(sectionIdx)->length() << " cm ";
-  m_valueStr.push_back(info.str());
-
-  //info << "area" << m_simu3d->crossSection(sectionIdx)->area() << " cm^2"
-  //    << "      length  " << m_simu3d->crossSection(sectionIdx)->length() << " cm " << endl;
-  //  info << "Curvature angle     "
-  //    << 180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI << " deg   "
-  //    << "        radius  " << m_simu3d->crossSection(sectionIdx)->curvRadius() << " cm" << endl;
-  //  info << "Scaling in  " << m_simu3d->crossSection(sectionIdx)->scaleIn()
-  //    << "      scaling out  " << m_simu3d->crossSection(sectionIdx)->scaleOut() << endl;
+// ****************************************************************
+// Draw the mesh
+// ****************************************************************
 
     vector<int> surf = (m_simu3d->crossSection(sectionIdx))->surfaceIdx();
 
@@ -217,6 +203,7 @@ void PropModesPicture::draw(wxDC& dc)
 				}
 			}
 
+      m_positionContour = 1;
       drawContour(sectionIdx, surf, dc);
 
 			//// if it exists, draw the next contour
@@ -236,8 +223,10 @@ void PropModesPicture::draw(wxDC& dc)
 			//}
 
 			// display number of vertex, segments and triangles
-      info << (m_simu3d->crossSection(sectionIdx))->numberOfVertices() << "  vertexes  "
-        << (m_simu3d->crossSection(sectionIdx))->numberOfFaces() << "  faces" << endl;
+      tbText.addCell("Nb vertexes", (m_simu3d->crossSection(sectionIdx))->numberOfVertices());
+      tbText.addCell("nb faces", (m_simu3d->crossSection(sectionIdx))->numberOfFaces());
+      //info << (m_simu3d->crossSection(sectionIdx))->numberOfVertices() << "  vertexes  "
+      //  << (m_simu3d->crossSection(sectionIdx))->numberOfFaces() << "  faces" << endl;
 
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
@@ -369,12 +358,13 @@ void PropModesPicture::draw(wxDC& dc)
 			//start = std::chrono::system_clock::now();
 
 			// write informations about the mode
-			info << "mode " << m_modeIdx + 1 << " over " <<
-				(m_simu3d->crossSection(sectionIdx))->numberOfModes() <<
-				"    f" << m_modeIdx + 1 <<
-				"= " << (m_simu3d->crossSection(sectionIdx))->eigenFrequency(m_modeIdx) <<
-				" Hz" << endl;
-				//area " << (m_simu3d->crossSection(sectionIdx)).area(m) << " cm^2" << endl;
+      info.str("");
+      info << m_modeIdx + 1 << " / "
+        << (m_simu3d->crossSection(sectionIdx))->numberOfModes();
+      tbText.addCell("mode", info.str());
+      tbText.addCell("Cutoff freq (Hz)",
+        (m_simu3d->crossSection(sectionIdx))->eigenFrequency(m_modeIdx));
+
 			dc.DrawBitmap(bmp, 0, 0, 0);
 
 			//end = std::chrono::system_clock::now();
@@ -577,7 +567,7 @@ void PropModesPicture::draw(wxDC& dc)
           }
         }
         // write informations
-        info << "f = " << m_simu3d->lastFreqComputed() << " Hz" << endl;
+        tbText.addCell("Frequency (Hz)", m_simu3d->lastFreqComputed());
 
         dc.DrawBitmap(bmp, 0, 0, 0);
         break;
@@ -588,37 +578,20 @@ void PropModesPicture::draw(wxDC& dc)
         switch (m_positionContour)
         {
         case 0:
-          info << "Entrance" << endl;
+          tbText.addCell("Entrance", "");
           break;
         case 1:
-          info << "Mode computation size" << endl;
+          tbText.addCell("Mode computation size", "");
           break;
         case 2:
-          info << "Exit" << endl;
+          tbText.addCell("Exit", "");
           break;
         }
         drawContour(sectionIdx, surf, dc);
         break;
 		}
 
-  dc.SetPen(*wxBLACK_PEN);
-  dc.SetBackgroundMode(wxTRANSPARENT);
-  dc.SetFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-  wxCoord w, h;
-  dc.GetTextExtent(m_infoStr[0], &w, &h);
-  m_infoStr.push_back(info.str());
-  log << "Text extent " << w << "  " << h << endl;
-  wxCoord cellH(15), cellW(200), interCell(15);
-  dc.DrawText(m_infoStr[0], 0., 0.);
-
-  dc.DrawText(m_labelStr[0], 0., cellH);
-  dc.GetTextExtent(m_valueStr[0], &w, &h);
-  dc.DrawText(m_valueStr[0], cellW - w - interCell, cellH);
-
-  dc.DrawText(m_labelStr[1], cellW, cellH);
-  dc.GetTextExtent(m_valueStr[1], &w, &h);
-  dc.DrawText(m_valueStr[1], 2.*cellW - w - interCell, cellH);
-  //dc.DrawText(m_infoStr[1], 0., h);
+    tbText.printCells(dc);
 
 	log.close();
 }

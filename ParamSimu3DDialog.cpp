@@ -131,9 +131,22 @@ void ParamSimu3DDialog::updateWidgets()
 
   if (m_simuParams.propMethod == MAGNUS)
   {
-    m_simuParams.curved = m_simuParamsManus.curved;
-    m_simuParams.varyingArea = m_simuParamsManus.varyingArea;
-    m_simuParams.numIntegrationStep = m_simuParamsManus.numIntegrationStep;
+    m_simuParams.curved = m_simuParamsMagnus.curved;
+    m_simuParams.varyingArea = m_simuParamsMagnus.varyingArea;
+    m_simuParams.numIntegrationStep = m_simuParamsMagnus.numIntegrationStep;
+  }
+
+  if (!m_simuParams.constantWallImped)
+  {
+    m_simuParams.wallLosses = m_simuParamsFreqDepLosses.wallLosses;
+    m_simuParams.viscoThermalLosses = m_simuParamsFreqDepLosses.viscoThermalLosses;
+    chkFdepLosses->Enable();
+    chkWallLosses->Enable();
+  }
+  else
+  {
+    chkFdepLosses->Disable();
+    chkWallLosses->Disable();
   }
 
   wxString st;
@@ -153,7 +166,7 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%5.f", m_simuParams.maxComputedFreq);
   txtMaxSimFreq->SetValue(st);
 
-  st = wxString::Format("%d", m_simuParamsManus.numIntegrationStep);
+  st = wxString::Format("%d", m_simuParamsMagnus.numIntegrationStep);
   txtNumIntegrationStep->SetValue(st);
 
   st = wxString::Format("%d", m_secNoiseSource);
@@ -169,18 +182,11 @@ void ParamSimu3DDialog::updateWidgets()
 	st = wxString::Format("%1.2f", 100. * m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);
 
-	chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
+	chkFdepLosses->SetValue(m_simuParamsFreqDepLosses.viscoThermalLosses);
 
-  chkWallLosses->SetValue(m_simuParams.wallLosses);
+  chkWallLosses->SetValue(m_simuParamsFreqDepLosses.wallLosses);
 
-  if (m_simuParams.freqDepLosses || m_simuParams.wallLosses)
-  {
-    chkWallAdmittance->SetValue(false);
-  }
-  else
-  {
-    chkWallAdmittance->SetValue(true);
-  }
+  chkWallAdmittance->SetValue(m_simuParams.constantWallImped);
 
   switch (m_simuParams.propMethod) {
       case MAGNUS:
@@ -193,9 +199,9 @@ void ParamSimu3DDialog::updateWidgets()
           break;
   }
 
-	chkCurv->SetValue(m_simuParamsManus.curved);
+	chkCurv->SetValue(m_simuParamsMagnus.curved);
 
-	chkVarArea->SetValue(m_simuParamsManus.varyingArea);
+	chkVarArea->SetValue(m_simuParamsMagnus.varyingArea);
 
   // scaling factor computation method
   switch (m_contInterpMeth)
@@ -289,7 +295,11 @@ void ParamSimu3DDialog::updateParams()
   m_simuParams = m_simu3d->simuParams();
   if (m_simuParams.propMethod == MAGNUS)
   {
-    m_simuParamsManus = m_simu3d->simuParams();
+    m_simuParamsMagnus = m_simu3d->simuParams();
+  }
+  if (!m_simuParams.constantWallImped)
+  {
+    m_simuParamsFreqDepLosses = m_simu3d->simuParams();
   }
 }
 
@@ -349,7 +359,8 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth(); 
 	m_simuParams = m_simu3d->simuParams();
-  m_simuParamsManus = m_simu3d->simuParams();
+  m_simuParamsMagnus = m_simu3d->simuParams();
+  m_simuParamsFreqDepLosses = m_simu3d->simuParams();
   m_maxBbox = 100.;
 
   this->Move(100, 100);
@@ -544,13 +555,13 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Mouth boundary condition ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     lstMouthBcond = new wxComboBox(this, IDL_MOUTH_BCOND, "", wxDefaultPosition,
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
-    lineSizer->Add(lstMouthBcond, 0, wxALL, 3);
+    lineSizer->Add(lstMouthBcond, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
 
     // ****************************************************************
@@ -562,13 +573,13 @@ void ParamSimu3DDialog::initWidgets()
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Percentage of losses: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtPercLoss = new wxTextCtrl(this, IDE_PERCENT_LOSSES, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtPercLoss, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(txtPercLoss, 1, wxALL | wxALIGN_CENTER, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set options losses
@@ -580,14 +591,13 @@ void ParamSimu3DDialog::initWidgets()
 
     chkFdepLosses = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
       "Visco-thermal losses");
-    lineSizer->Add(chkFdepLosses, 0, wxALL, 2);
-    chkFdepLosses->Disable();
+    lineSizer->Add(chkFdepLosses, 1, wxALL, 2);
 
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
       "Soft walls");
-    lineSizer->Add(chkWallLosses, 0, wxALL, 2);
+    lineSizer->Add(chkWallLosses, 1, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
 
@@ -943,7 +953,7 @@ void ParamSimu3DDialog::OnNumIntegrationEnter(wxCommandEvent& event)
     wxString st = txtNumIntegrationStep->GetValue();
     if ((st.ToDouble(&x)) && (x > 0.) && (x <= 1000.))
     {
-      m_simuParamsManus.numIntegrationStep = (int)x;
+      m_simuParamsMagnus.numIntegrationStep = (int)x;
     }
 
     updateWidgets();
@@ -1181,16 +1191,8 @@ void ParamSimu3DDialog::OnWallAdmitEnter(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkFdepLosses(wxCommandEvent& event)
 {
-	m_simuParams.freqDepLosses = !m_simuParams.freqDepLosses;
-	chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
-    if (!m_simuParams.freqDepLosses)
-    {
-        m_simuParams.wallLosses = false;
-    }
-    if (m_simuParams.freqDepLosses)
-    {
-      chkWallAdmittance->SetValue(false);
-    }
+  m_simuParamsFreqDepLosses.viscoThermalLosses = !m_simuParamsFreqDepLosses.viscoThermalLosses;
+
 	updateWidgets();
 }
 
@@ -1199,17 +1201,7 @@ void ParamSimu3DDialog::OnChkFdepLosses(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkWallLosses(wxCommandEvent& event)
 {
-    m_simuParams.wallLosses = !m_simuParams.wallLosses;
-    chkWallLosses->SetValue(m_simuParams.wallLosses);
-    if (m_simuParams.wallLosses)
-    {
-      chkWallAdmittance->SetValue(false);
-    }
-    if (!m_simuParams.freqDepLosses && m_simuParams.wallLosses)
-    {
-      m_simuParams.freqDepLosses = true;
-      chkFdepLosses->SetValue(true);
-    }
+  m_simuParamsFreqDepLosses.wallLosses = !m_simuParamsFreqDepLosses.wallLosses;
     
   updateWidgets();
 }
@@ -1219,10 +1211,12 @@ void ParamSimu3DDialog::OnChkWallLosses(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkWallAdmittance(wxCommandEvent& event)
 {
-  m_simuParams.wallLosses = false;
-  chkWallLosses->SetValue(m_simuParams.wallLosses);
-  m_simuParams.freqDepLosses = false;
-  chkFdepLosses->SetValue(m_simuParams.freqDepLosses);
+  m_simuParams.constantWallImped = !m_simuParams.constantWallImped;
+  if (m_simuParams.constantWallImped)
+  {
+    m_simuParams.wallLosses = false;
+    m_simuParams.viscoThermalLosses = false;
+  }
   updateWidgets();
 }
 
@@ -1235,9 +1229,17 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
   m_simuParams.numIntegrationStep = 2;
 	m_simuParams.curved = false;
   m_simuParams.varyingArea = false;
+
+  // disable unrelevant option for straight
   chkCurv->Disable();
   chkVarArea->Disable();
   txtNumIntegrationStep->Disable();
+  lstScalingFacMethods->Disable();
+  txtPercLoss->Disable();
+  chkWallLosses->Disable();
+  chkWallAdmittance->Disable();
+  txtWallAdmit->Disable();
+
   updateWidgets();
   updateGeometry();
 }
@@ -1248,9 +1250,17 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 {
 	m_simuParams.propMethod = MAGNUS;
+
+  // Enable all the options in case they were disabled before
   chkCurv->Enable();
   chkVarArea->Enable();
   txtNumIntegrationStep->Enable();
+  lstScalingFacMethods->Enable();
+  txtPercLoss->Enable();
+  chkWallLosses->Enable();
+  chkWallAdmittance->Enable();
+  txtWallAdmit->Enable();
+
   updateWidgets();
   updateGeometry();
 }
@@ -1260,7 +1270,7 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 {
-  m_simuParamsManus.curved = !m_simuParamsManus.curved;
+  m_simuParamsMagnus.curved = !m_simuParamsMagnus.curved;
   updateWidgets();
 
   updateGeometry();
@@ -1272,7 +1282,7 @@ void ParamSimu3DDialog::OnChkCurv(wxCommandEvent& event)
 void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 {
   //m_simuParams.propMethod = MAGNUS;
-  m_simuParamsManus.varyingArea = !m_simuParamsManus.varyingArea;
+  m_simuParamsMagnus.varyingArea = !m_simuParamsMagnus.varyingArea;
   updateWidgets();
 
   updateGeometry();
@@ -1427,7 +1437,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
 
   m_simuParams.wallLosses = false;
 
-  m_simuParams.freqDepLosses = false;
+  m_simuParams.viscoThermalLosses = false;
 
   m_simuParams.thermalBndSpecAdm = complex<double>(0.005, 0.);
 

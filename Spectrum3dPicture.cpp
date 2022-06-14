@@ -71,9 +71,8 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
 
 void Spectrum3dPicture::draw(wxDC &dc)
 {
-  // ****************************************************************
-  // Clear the background and paint the axes.
-  // ****************************************************************
+  ofstream log("log.txt", ofstream::app);
+  log << "Start draw spectrum" << endl;
 
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
@@ -81,6 +80,8 @@ void Spectrum3dPicture::draw(wxDC &dc)
   graph.paintOrdinate(dc);
 
   paintSpectrum(dc);
+
+  log.close();
 }
 
 // ****************************************************************************
@@ -108,6 +109,7 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
   double freq, val;
 
   graph.getDimensions(graphX, graphY, graphW, graphH);
+  lastY = graphY;
 
   switch (type)
   {

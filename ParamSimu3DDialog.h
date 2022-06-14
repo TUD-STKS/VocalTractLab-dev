@@ -82,7 +82,8 @@ private:
   openEndBoundaryCond m_mouthBoundaryCond;
   contourInterpolationMethod m_contInterpMeth;
 	struct simulationParameters m_simuParams;
-  struct simulationParameters m_simuParamsManus;
+  struct simulationParameters m_simuParamsMagnus;
+  struct simulationParameters m_simuParamsFreqDepLosses;
   double m_maxBbox;
 
 // **************************************************************************
@@ -100,7 +101,6 @@ private:
   void OnMaxSimFreq(wxCommandEvent& event);
   void OnNumIntegrationEnter(wxCommandEvent& event);
   void OnSecNoiseSourceEnter(wxCommandEvent& event);
-	void OnSecConstrictionEnter(wxCommandEvent& event);
   //void OnExpSpectrumLgthEnter(wxCommandEvent& event);
 	void OnPercentLosses(wxCommandEvent& event);
   void OnFreqComputeField(wxCommandEvent& event);

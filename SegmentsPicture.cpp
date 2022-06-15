@@ -79,7 +79,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
-  ofstream log("log.txt", ofstream::app);
+  //ofstream log("log.txt", ofstream::app);
   //log << "Start draw segments picture" << endl;
 
   // Clear the background.
@@ -283,9 +283,6 @@ void SegmentsPicture::draw(wxDC& dc)
           dc.DrawLine(xBig - crossSize, yBig, xBig + crossSize - 1, yBig);
           dc.DrawLine(xBig, yBig - crossSize, xBig, yBig + crossSize - 1);
 
-          log << "xBig " << xBig << endl;
-          log << "yBig " << yBig << endl;
-
           // reset the pen as blue
           dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
           dc.DrawPoint(xBig, yBig);
@@ -300,7 +297,7 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
-  log.close();
+  //log.close();
 }
 
 // ****************************************************************************

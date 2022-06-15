@@ -32,7 +32,8 @@ static const int IDE_TF_POINT_Y       = 4016;
 static const int IDE_TF_POINT_Z       = 4017;
 static const int IDB_LOAD_TF_POINTS   = 4018;
 
-static const int IDE_WALL_ADMIT       = 4019;
+static const int IDE_WALL_ADMIT_REAL       = 4019;
+static const int IDE_WALL_ADMIT_IMAG    = 4020;
 
 static const int IDB_CHK_FDEP_LOSSES	= 5001;
 static const int IDB_CHK_WALL_LOSSES    = 5002;
@@ -80,7 +81,8 @@ EVT_TEXT_ENTER(IDE_TF_POINT_Y, ParamSimu3DDialog::OnTfPointY)
 EVT_TEXT_ENTER(IDE_TF_POINT_Z, ParamSimu3DDialog::OnTfPointZ)
 EVT_BUTTON(IDB_LOAD_TF_POINTS, ParamSimu3DDialog::OnLoadTfPts)
 
-EVT_TEXT_ENTER(IDE_WALL_ADMIT, ParamSimu3DDialog::OnWallAdmitEnter)
+EVT_TEXT_ENTER(IDE_WALL_ADMIT_REAL, ParamSimu3DDialog::OnWallAdmitEnter)
+EVT_TEXT_ENTER(IDE_WALL_ADMIT_IMAG, ParamSimu3DDialog::OnWallAdmitEnter)
 
 EVT_CHECKBOX(IDB_CHK_FDEP_LOSSES, ParamSimu3DDialog::OnChkFdepLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_LOSSES, ParamSimu3DDialog::OnChkWallLosses)
@@ -136,18 +138,7 @@ void ParamSimu3DDialog::updateWidgets()
     m_simuParams.numIntegrationStep = m_simuParamsMagnus.numIntegrationStep;
   }
 
-  if (!m_simuParams.constantWallImped)
-  {
-    m_simuParams.wallLosses = m_simuParamsFreqDepLosses.wallLosses;
-    m_simuParams.viscoThermalLosses = m_simuParamsFreqDepLosses.viscoThermalLosses;
-    chkFdepLosses->Enable();
-    chkWallLosses->Enable();
-  }
-  else
-  {
-    chkFdepLosses->Disable();
-    chkWallLosses->Disable();
-  }
+
 
   wxString st;
 
@@ -182,11 +173,44 @@ void ParamSimu3DDialog::updateWidgets()
 	st = wxString::Format("%1.2f", 100. * m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);
 
-	chkFdepLosses->SetValue(m_simuParamsFreqDepLosses.viscoThermalLosses);
+  chkViscoThermLoss->SetValue(m_simuParamsFreqDepLosses.viscoThermalLosses);
+  if ((m_simuParams.propMethod == STRAIGHT_TUBES) ||
+    m_simuParams.constantWallImped)
+  {
+    chkViscoThermLoss->Disable();
+  }
+  else
+  {
+    chkViscoThermLoss->Enable();
+  }
 
   chkWallLosses->SetValue(m_simuParamsFreqDepLosses.wallLosses);
+  if ((m_simuParams.propMethod == STRAIGHT_TUBES) ||
+    m_simuParams.constantWallImped)
+  {
+    chkWallLosses->Disable();
+  }
+  else
+  {
+    chkWallLosses->Enable();
+  }
 
   chkWallAdmittance->SetValue(m_simuParams.constantWallImped);
+  if (!m_simuParams.constantWallImped || (m_simuParams.propMethod == STRAIGHT_TUBES))
+  {
+    txtWallAdmitReal->Disable();
+    txtWallAdmitImag->Disable();
+  }
+  else
+  {
+    txtWallAdmitReal->Enable();
+    txtWallAdmitImag->Enable();
+  }
+  if (!m_simuParams.constantWallImped)
+  {
+    m_simuParams.wallLosses = m_simuParamsFreqDepLosses.wallLosses;
+    m_simuParams.viscoThermalLosses = m_simuParamsFreqDepLosses.viscoThermalLosses;
+  }
 
   switch (m_simuParams.propMethod) {
       case MAGNUS:
@@ -237,14 +261,33 @@ void ParamSimu3DDialog::updateWidgets()
   txtBboxMaxY->SetValue(st);
 
   // transfer function point
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].x());
+  st = wxString::Format("%1.1f", m_singlePtTf.x());
   txtTfPointX->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].y());
+  st = wxString::Format("%1.1f", m_singlePtTf.y());
   txtTfPointY->SetValue(st);
 
-  st = wxString::Format("%1.1f", m_simuParams.tfPoint[0].z());
+  st = wxString::Format("%1.1f", m_singlePtTf.z());
   txtTfPointZ->SetValue(st);
+
+  chkMultiTFPts->SetValue(m_tfPtsFromFile);
+  if (m_tfPtsFromFile)
+  {
+    txtTfPointX->Disable();
+    txtTfPointY->Disable();
+    txtTfPointZ->Disable();
+    buttonMultiTfPts->Enable();
+  }
+  else
+  {
+    txtTfPointX->Enable();
+    txtTfPointY->Enable();
+    txtTfPointZ->Enable();
+    buttonMultiTfPts->Disable();
+
+    m_simuParams.tfPoint.clear();
+    m_simuParams.tfPoint.push_back(m_singlePtTf);
+  }
 
   // mouth boundary condition
   switch (m_mouthBoundaryCond)
@@ -272,8 +315,11 @@ void ParamSimu3DDialog::updateWidgets()
   // frequency resolution
   lstFreqRes->SetValue(m_listFreqRes[m_simuParams.spectrumLgthExponent - m_expSpectrumLgthStart]);
 
-  st = wxString::Format("%1.4f", real(m_simuParams.thermalBndSpecAdm));
-  txtWallAdmit->SetValue(st);
+  st = wxString::Format("%1.4f", real(m_simuParams.wallAdmit));
+  txtWallAdmitReal->SetValue(st);
+
+  st = wxString::Format("%1.4f", imag(m_simuParams.wallAdmit));
+  txtWallAdmitImag->SetValue(st);
 
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
@@ -356,9 +402,11 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_meshDensity = m_simu3d->meshDensity();
   m_secNoiseSource = m_simu3d->idxSecNoiseSource();
   m_simuParams.spectrumLgthExponent = m_simu3d->spectrumLgthExponent();
+  m_tfPtsFromFile = false;
   m_mouthBoundaryCond = m_simu3d->mouthBoundaryCond();
   m_contInterpMeth = m_simu3d->contInterpMeth(); 
 	m_simuParams = m_simu3d->simuParams();
+  m_singlePtTf = m_simuParams.tfPoint[0];
   m_simuParamsMagnus = m_simu3d->simuParams();
   m_simuParamsFreqDepLosses = m_simu3d->simuParams();
   m_maxBbox = 100.;
@@ -423,6 +471,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
 void ParamSimu3DDialog::initWidgets()
 {
     wxBoxSizer* topLevelSizer = new wxBoxSizer(wxVERTICAL);
+    wxStaticBoxSizer* sz = NULL;
     wxBoxSizer* lineSizer = NULL;
     wxStaticText* label = NULL;
     wxButton* button; 
@@ -453,53 +502,70 @@ void ParamSimu3DDialog::initWidgets()
 
     topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
+    ///////////////////////////////////////////////////////////////////
+    // Modes computation options
+    ///////////////////////////////////////////////////////////////////
+
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Mode computation options");
+
     // ****************************************************************
     // Set mesh density.
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Mesh density (elements per length): ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtMeshDensity = new wxTextCtrl(this, IDE_MESH_DENSITY, "", wxDefaultPosition,
         wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtMeshDensity, 0, wxALL, 3);
+    lineSizer->Add(txtMeshDensity, 1, wxALL, 3);
 
-    //label = new wxStaticText(this, wxID_ANY, "Elements per length");
-    //lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->AddStretchSpacer();
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the maximal cut-on frequency
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Maximal cut-off frequency (Hz): ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxCutOnFreq = new wxTextCtrl(this, IDE_MAX_CUT_ON, "", wxDefaultPosition,
         wxSize(80, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtMaxCutOnFreq, 0, wxALL, 3);
+    lineSizer->Add(txtMaxCutOnFreq, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    ///////////////////////////////////////////////////////////////////
+    // Numerical scheme options
+    ///////////////////////////////////////////////////////////////////
+
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Numerical scheme options");
 
     // ****************************************************************
     // Select the numerical scheme
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Numerical scheme: ");
-    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
+    //label = new wxStaticText(this, wxID_ANY, "Numerical scheme: ");
+    //lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     chkStraight = new wxCheckBox(this, IDB_CHK_STRAIGHT, "Straight");
     lineSizer->Add(chkStraight, 1, wxALL, 2);
@@ -507,24 +573,28 @@ void ParamSimu3DDialog::initWidgets()
     chkMagnus = new wxCheckBox(this, IDB_CHK_MAGNUS, "Magnus");
     lineSizer->Add(chkMagnus, 1, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the number of integration steps
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Number of integration steps: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtNumIntegrationStep = new wxTextCtrl(this, IDE_NUM_INTEGRATION, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtNumIntegrationStep, 0, wxALL, 3);
+    lineSizer->Add(txtNumIntegrationStep, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Select the geometrical features
@@ -544,235 +614,258 @@ void ParamSimu3DDialog::initWidgets()
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstScalingFacMethods, 1, wxALL, 3);
 
+    lineSizer->AddStretchSpacer();
+
     topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    ///////////////////////////////////////////////////////////////////
+    // Boundary conditions options
+    ///////////////////////////////////////////////////////////////////
+
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Boundary conditions options");
 
     // ****************************************************************
     // Select mouth boundary condition
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Mouth boundary condition ");
-    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     lstMouthBcond = new wxComboBox(this, IDL_MOUTH_BCOND, "", wxDefaultPosition,
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstMouthBcond, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    //topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
 
     // ****************************************************************
     // Set the percentage of losses
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Percentage of losses: ");
-    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtPercLoss = new wxTextCtrl(this, IDE_PERCENT_LOSSES, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtPercLoss, 1, wxALL | wxALIGN_CENTER, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    //topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set options losses
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    chkFdepLosses = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
+    chkViscoThermLoss = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
       "Visco-thermal losses");
-    lineSizer->Add(chkFdepLosses, 1, wxALL, 2);
+    lineSizer->Add(chkViscoThermLoss, 1, wxALL, 2);
 
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
       "Soft walls");
     lineSizer->Add(chkWallLosses, 1, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    //topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     chkWallAdmittance = new wxCheckBox(this, IDB_CHK_WALL_ADMITTANCE,
-      "Constant wall admittance");
-    lineSizer->Add(chkWallAdmittance, 0, wxALL, 2);
+      "Constant wall admittance:");
+    lineSizer->Add(chkWallAdmittance, 4, wxALL, 2);
 
-    label = new wxStaticText(this, wxID_ANY, " admittance ");
-    lineSizer->Add(label, 0, wxALL, 2);
+    label = new wxStaticText(this, wxID_ANY, "real part");
+    lineSizer->Add(label, 1, wxALL, 2);
 
-    txtWallAdmit = new wxTextCtrl(this, IDE_WALL_ADMIT, "", wxDefaultPosition,
+    txtWallAdmitReal = new wxTextCtrl(this, IDE_WALL_ADMIT_REAL, "", wxDefaultPosition,
       wxSize(60, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtWallAdmit, 0, wxALL, 2);
+    lineSizer->Add(txtWallAdmitReal, 1, wxALL, 2);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    label = new wxStaticText(this, wxID_ANY, "imaginary part");
+    lineSizer->Add(label, 1, wxALL, 2);
+
+    txtWallAdmitImag = new wxTextCtrl(this, IDE_WALL_ADMIT_IMAG, "", wxDefaultPosition,
+      wxSize(60, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtWallAdmitImag, 1, wxALL, 2);
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     ///////////////////////////////////////////////////////////////////
     // Transfer function options
     ///////////////////////////////////////////////////////////////////
 
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Transfer functions options");
+
     // ****************************************************************
     // Set the maximal computed frequency
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(20);
-
-    label = new wxStaticText(this, wxID_ANY, "Transfer function computation options");
-    topLevelSizer->Add(label, 0, wxALL | wxALIGN_LEFT, 3);
-
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Maximal simulated frequency: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    label = new wxStaticText(this, wxID_ANY, "Maximal simulated frequency (Hz): ");
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtMaxSimFreq = new wxTextCtrl(this, IDE_MAX_SIM_FREQ, "", wxDefaultPosition,
         wxSize(80, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtMaxSimFreq, 0, wxALL, 3);
+    lineSizer->Add(txtMaxSimFreq, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the section containing the noise source
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     label = new wxStaticText(this, wxID_ANY, "Index of noise source section: ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     txtSecNoiseSource = new wxTextCtrl(this, IDE_SEC_NOISE_SOURCE, "", wxDefaultPosition,
         wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtSecNoiseSource, 0, wxALL, 3);
+    lineSizer->Add(txtSecNoiseSource, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the length of the spectrum
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Frequency resolution");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
-
-    //txtExpLgth = new wxTextCtrl(this, IDE_EXP_SPECTRUM_LGTH, "", wxDefaultPosition,
-        //wxSize(40, -1), wxTE_PROCESS_ENTER);
-    //lineSizer->Add(txtExpLgth, 0, wxALL, 3);
-
-    //wxString st(wxString::Format(" %d freqs", 1 << (m_expSpectrumLgth - 1)));
-    //txtNbFreqs = new wxStaticText(this, wxID_ANY, st);
-    //lineSizer->Add(txtNbFreqs, 0, wxALL | wxALIGN_CENTER, 3);
+    label = new wxStaticText(this, wxID_ANY, "Frequency steps");
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     lstFreqRes = new wxComboBox(this, IDL_FREQ_RES, "", wxDefaultPosition,
       this->FromDIP(wxSize(150, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
-    lineSizer->Add(lstFreqRes, 0, wxALL, 3);
+    lineSizer->Add(lstFreqRes, 1, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Set the point for transfer function computation
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Transfer function point (cm) X ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    label = new wxStaticText(this, wxID_ANY, "Transfer function point (cm)");
+    lineSizer->Add(label, 9, wxALL | wxALIGN_CENTER, 3);
+
+    label = new wxStaticText(this, wxID_ANY, " X ");
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtTfPointX = new wxTextCtrl(this, IDE_TF_POINT_X, "", wxDefaultPosition,
       wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtTfPointX, 0, wxALL, 3);
+    lineSizer->Add(txtTfPointX, 2, wxALL, 3);
 
     label = new wxStaticText(this, wxID_ANY, " Y ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtTfPointY = new wxTextCtrl(this, IDE_TF_POINT_Y, "", wxDefaultPosition,
       wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtTfPointY, 0, wxALL, 3);
+    lineSizer->Add(txtTfPointY, 2, wxALL, 3);
 
     label = new wxStaticText(this, wxID_ANY, " Z ");
-    lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
     txtTfPointZ = new wxTextCtrl(this, IDE_TF_POINT_Z, "", wxDefaultPosition,
       wxSize(40, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtTfPointZ, 0, wxALL, 3);
+    lineSizer->Add(txtTfPointZ, 2, wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     // ****************************************************************
     // Load the transfer function points from a file
     // ****************************************************************
 
-    topLevelSizer->AddSpacer(10);
+    //topLevelSizer->AddSpacer(10);
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
     chkMultiTFPts = new wxCheckBox(this, IDB_CHK_MULTI_TF_PTS,
       "Multiple transfer function points");
-    lineSizer->Add(chkMultiTFPts, 0, wxGROW | wxALL, 3);
-    chkMultiTFPts->Disable();
+    lineSizer->Add(chkMultiTFPts, 1, wxGROW | wxALL, 3);
 
-    button = new wxButton(this, IDB_LOAD_TF_POINTS, 
+    buttonMultiTfPts = new wxButton(this, IDB_LOAD_TF_POINTS,
       "Load coordinates to evaluate transfer functions");
-    lineSizer->Add(button, 0, wxGROW | wxALL, 3);
+    lineSizer->Add(buttonMultiTfPts, 1, wxGROW | wxALL, 3);
 
-    topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     ///////////////////////////////////////////////////////////////////
     // Acoustic field computation options
     ///////////////////////////////////////////////////////////////////
 
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Acoustic field options");
+
   // ****************************************************************
   // Select the frequency and the resolution for field computation
   // ****************************************************************
 
-  topLevelSizer->AddSpacer(20);
-
-  label = new wxStaticText(this, wxID_ANY, "Acoustic field computation options");
-  topLevelSizer->Add(label, 0, wxALL | wxALIGN_LEFT , 3);
-
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-  label = new wxStaticText(this, wxID_ANY, "Frequency ");
-  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, "Frequency (Hz)");
+  lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
   txtFreqComputeField = new wxTextCtrl(this, IDE_FREQ_COMPUTE_FIELD, "", wxDefaultPosition,
     wxSize(80, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtFreqComputeField, 0, wxALL, 3);
+  lineSizer->Add(txtFreqComputeField, 1, wxALL, 3);
 
-  label = new wxStaticText(this, wxID_ANY, " Hz, resolution ");
-  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  label = new wxStaticText(this, wxID_ANY, "resolution (points per cm)");
+  lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
   txtResolutionField = new wxTextCtrl(this, IDE_RESOLUTION_FIELD, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtResolutionField, 0, wxALL, 3);
+  lineSizer->Add(txtResolutionField, 1, wxALL, 3);
 
-  label = new wxStaticText(this, wxID_ANY, " point per cm");
-  lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
+  //label = new wxStaticText(this, wxID_ANY, " points per cm");
+  //lineSizer->Add(label, 1, wxALL | wxALIGN_CENTER, 3);
 
-  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+  sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
   // ****************************************************************
   // Set the bounding box to compute the acoustic field
   // ****************************************************************
 
-  topLevelSizer->AddSpacer(10);
+  //topLevelSizer->AddSpacer(10);
 
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -781,36 +874,36 @@ void ParamSimu3DDialog::initWidgets()
 
   txtBboxMinX = new wxTextCtrl(this, IDE_BBOX_MIN_X, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtBboxMinX, 0, wxALL, 3);
+  lineSizer->Add(txtBboxMinX, 1, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, " max X ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   txtBboxMaxX = new wxTextCtrl(this, IDE_BBOX_MAX_X, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtBboxMaxX, 0, wxALL, 3);
+  lineSizer->Add(txtBboxMaxX, 1, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, " min Y ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   txtBboxMinY = new wxTextCtrl(this, IDE_BBOX_MIN_Y, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtBboxMinY, 0, wxALL, 3);
+  lineSizer->Add(txtBboxMinY, 1, wxALL, 3);
 
   label = new wxStaticText(this, wxID_ANY, " max Y ");
   lineSizer->Add(label, 0, wxALL | wxALIGN_CENTER, 3);
 
   txtBboxMaxY = new wxTextCtrl(this, IDE_BBOX_MAX_Y, "", wxDefaultPosition,
     wxSize(50, -1), wxTE_PROCESS_ENTER);
-  lineSizer->Add(txtBboxMaxY, 0, wxALL, 3);
+  lineSizer->Add(txtBboxMaxY, 1, wxALL, 3);
 
-  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+  sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
   // ****************************************************************
   // Set if the radiated field must be computed or not
   // ****************************************************************
 
-  topLevelSizer->AddSpacer(10);
+  //topLevelSizer->AddSpacer(10);
 
   lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -819,7 +912,9 @@ void ParamSimu3DDialog::initWidgets()
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
   lineSizer->Add(chkComputeRad, 0, wxALL, 2);
 
-  topLevelSizer->Add(lineSizer, 0, wxLEFT | wxRIGHT, 10);
+  sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+  topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
   // ****************************************************************
   // Set the default parameters
@@ -848,10 +943,6 @@ void ParamSimu3DDialog::initWidgets()
   // ****************************************************************
   // Set the top-level-sizer for this window.
   // ****************************************************************
-
-  //topLevelSizer->AddSpacer(10);
-
-  //topLevelSizer->Add(CreateSeparatedButtonSizer(wxCLOSE), 1, wxALL | wxEXPAND, 10);
 
   this->SetSizer(topLevelSizer);
   topLevelSizer->Fit(this);
@@ -1102,8 +1193,9 @@ void ParamSimu3DDialog::OnTfPointX(wxCommandEvent& event)
   wxString st = txtTfPointX->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint[0] = Point_3(x, m_simuParams.tfPoint[0].y(), 
-      m_simuParams.tfPoint[0].z());
+    m_singlePtTf = Point_3(x, m_singlePtTf.y(), m_singlePtTf.z());
+    //m_simuParams.tfPoint[0] = Point_3(x, m_simuParams.tfPoint[0].y(), 
+    //  m_simuParams.tfPoint[0].z());
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1119,8 +1211,9 @@ void ParamSimu3DDialog::OnTfPointY(wxCommandEvent& event)
   wxString st = txtTfPointY->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(), x,
-      m_simuParams.tfPoint[0].z());
+    m_singlePtTf = Point_3(m_singlePtTf.x(), x, m_singlePtTf.z());
+    //m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(), x,
+    //  m_simuParams.tfPoint[0].z());
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1136,8 +1229,9 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
   wxString st = txtTfPointZ->GetValue();
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
-    m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(),
-      m_simuParams.tfPoint[0].y(), x);
+    m_singlePtTf = Point_3(m_singlePtTf.x(), m_singlePtTf.y(), x);
+    //m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(),
+    //  m_simuParams.tfPoint[0].y(), x);
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1161,13 +1255,11 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   if (success)
   {
     log << "Importation successfull" << endl;
-    chkMultiTFPts->SetValue(true);
     updatePictures();
   }
   else
   {
     log << "Importation failed" << endl;
-    chkMultiTFPts->SetValue(false);
   }
   log.close();
 }
@@ -1177,11 +1269,13 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnWallAdmitEnter(wxCommandEvent& event)
 {
-  double x(0.);
-  wxString st = txtWallAdmit->GetValue();
-  if ((st.ToDouble(&x)) && (x >= -10000000.) && (x <= 10000000.))
+  double re(0.), im(0.);
+  wxString stRe = txtWallAdmitReal->GetValue();
+  wxString stIm = txtWallAdmitImag->GetValue();
+  if ((stRe.ToDouble(&re)) && (re >= -10000000.) && (re <= 10000000.)
+    && (stIm.ToDouble(&im)) && (im >= -10000000.) && (im <= 10000000.))
   {
-    m_simuParams.thermalBndSpecAdm = complex<double>(x, 0.);
+    m_simuParams.wallAdmit = complex<double>(re, im);
   }
   updateWidgets();
 }
@@ -1217,6 +1311,7 @@ void ParamSimu3DDialog::OnChkWallAdmittance(wxCommandEvent& event)
     m_simuParams.wallLosses = false;
     m_simuParams.viscoThermalLosses = false;
   }
+
   updateWidgets();
 }
 
@@ -1238,7 +1333,6 @@ void ParamSimu3DDialog::OnChkStraight(wxCommandEvent& event)
   txtPercLoss->Disable();
   chkWallLosses->Disable();
   chkWallAdmittance->Disable();
-  txtWallAdmit->Disable();
 
   updateWidgets();
   updateGeometry();
@@ -1259,7 +1353,6 @@ void ParamSimu3DDialog::OnChkMagnus(wxCommandEvent& event)
   txtPercLoss->Enable();
   chkWallLosses->Enable();
   chkWallAdmittance->Enable();
-  txtWallAdmit->Enable();
 
   updateWidgets();
   updateGeometry();
@@ -1293,7 +1386,9 @@ void ParamSimu3DDialog::OnChkVarArea(wxCommandEvent& event)
 
 void ParamSimu3DDialog::OnChkMultiTFPts(wxCommandEvent& event)
 {
-
+  m_tfPtsFromFile = !m_tfPtsFromFile;
+  updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************

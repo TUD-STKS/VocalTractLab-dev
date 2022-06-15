@@ -71,17 +71,12 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
 
 void Spectrum3dPicture::draw(wxDC &dc)
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "Start draw spectrum" << endl;
-
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
   graph.paintAbscissa(dc);
   graph.paintOrdinate(dc);
 
   paintSpectrum(dc);
-
-  log.close();
 }
 
 // ****************************************************************************

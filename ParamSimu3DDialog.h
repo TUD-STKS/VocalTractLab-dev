@@ -40,6 +40,8 @@ private:
   wxTextCtrl* txtSecNoiseSource;
 	wxTextCtrl* txtConstriction;
 	wxTextCtrl* txtPercLoss;
+  wxTextCtrl* txtWallAdmitReal;
+  wxTextCtrl* txtWallAdmitImag;
 
   // for acoustic field computation
   wxTextCtrl* txtFreqComputeField;
@@ -53,10 +55,10 @@ private:
   wxTextCtrl* txtTfPointX;
   wxTextCtrl* txtTfPointY;
   wxTextCtrl* txtTfPointZ;
+  wxButton* buttonMultiTfPts;
 
-  wxTextCtrl* txtWallAdmit;
-
-	wxCheckBox* chkFdepLosses;
+  // check boxes
+	wxCheckBox* chkViscoThermLoss;
   wxCheckBox* chkWallLosses;
   wxCheckBox* chkWallAdmittance;
   wxCheckBox* chkStraight;
@@ -66,6 +68,7 @@ private:
   wxCheckBox* chkMultiTFPts;
   wxCheckBox* chkComputeRad;
 
+  // lists
   wxComboBox* lstScalingFacMethods;
   wxComboBox* lstMouthBcond;
   wxComboBox* lstFreqRes;
@@ -79,6 +82,8 @@ private:
   int m_expSpectrumLgthStart;
   int m_expSpectrumLgthEnd;
   vector<string> m_listFreqRes;
+  bool m_tfPtsFromFile;
+  Point_3 m_singlePtTf;
   openEndBoundaryCond m_mouthBoundaryCond;
   contourInterpolationMethod m_contInterpMeth;
 	struct simulationParameters m_simuParams;

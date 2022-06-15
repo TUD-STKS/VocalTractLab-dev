@@ -87,8 +87,8 @@ void PropModesPicture::draw(wxDC& dc)
   m_labelStr.clear();
   m_valueStr.clear();
 
-	ofstream log("log.txt", ofstream::app);
-	log << "\nStart draw mode picture" << endl;
+	//ofstream log("log.txt", ofstream::app);
+	//log << "\nStart draw mode picture" << endl;
 
 	// Clear the background.
 	dc.SetBackground(*wxWHITE_BRUSH);
@@ -173,8 +173,6 @@ void PropModesPicture::draw(wxDC& dc)
 			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
 			vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
 			vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
-			
-			//log << "\nDraw mesh" << endl;
 
 			auto start = std::chrono::system_clock::now();
 			auto end = std::chrono::system_clock::now();
@@ -209,8 +207,6 @@ void PropModesPicture::draw(wxDC& dc)
 			// display number of vertex, segments and triangles
       tbText.addCell("Nb vertexes", (m_simu3d->crossSection(sectionIdx))->numberOfVertices());
       tbText.addCell("nb faces", (m_simu3d->crossSection(sectionIdx))->numberOfFaces());
-      //info << (m_simu3d->crossSection(sectionIdx))->numberOfVertices() << "  vertexes  "
-      //  << (m_simu3d->crossSection(sectionIdx))->numberOfFaces() << "  faces" << endl;
 
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
@@ -577,7 +573,7 @@ void PropModesPicture::draw(wxDC& dc)
 
     tbText.printCells(dc);
 
-	log.close();
+	//log.close();
 }
 
 // ****************************************************************************

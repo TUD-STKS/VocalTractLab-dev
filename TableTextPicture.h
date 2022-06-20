@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 

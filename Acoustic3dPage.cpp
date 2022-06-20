@@ -522,10 +522,6 @@ wxString Acoustic3dPage::generateTfPointCoordString()
 
 void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
 {
-  ofstream log("log.txt", ofstream::app);
-  log << "OnUpdateRequest" << endl;
-  log.close();
-
   if (event.GetInt() == REFRESH_PICTURES)
   {
     segPic->Refresh();

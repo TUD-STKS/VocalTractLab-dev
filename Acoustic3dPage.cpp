@@ -1090,6 +1090,10 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
 
   importGeometry();
 
+  //ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+  //dialog->updateParams();
+  //dialog->updateWidgets();
+
   updateWidgets();
 }
 
@@ -1360,6 +1364,9 @@ void Acoustic3dPage::importGeometry()
   simu3d->importGeometry(tract);
 
   segPic->resetActiveSegment();
+
+  ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+  dialog->updateParams();
 
   //// clean the log file
   //ofstream log;

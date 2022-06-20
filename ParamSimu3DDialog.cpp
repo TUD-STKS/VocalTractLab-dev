@@ -1187,8 +1187,6 @@ void ParamSimu3DDialog::OnTfPointX(wxCommandEvent& event)
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
     m_singlePtTf = Point_3(x, m_singlePtTf.y(), m_singlePtTf.z());
-    //m_simuParams.tfPoint[0] = Point_3(x, m_simuParams.tfPoint[0].y(), 
-    //  m_simuParams.tfPoint[0].z());
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1205,8 +1203,6 @@ void ParamSimu3DDialog::OnTfPointY(wxCommandEvent& event)
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
     m_singlePtTf = Point_3(m_singlePtTf.x(), x, m_singlePtTf.z());
-    //m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(), x,
-    //  m_simuParams.tfPoint[0].z());
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1223,8 +1219,6 @@ void ParamSimu3DDialog::OnTfPointZ(wxCommandEvent& event)
   if ((st.ToDouble(&x)) && (x >= -100.) && (x <= 100.))
   {
     m_singlePtTf = Point_3(m_singlePtTf.x(), m_singlePtTf.y(), x);
-    //m_simuParams.tfPoint[0] = Point_3(m_simuParams.tfPoint[0].x(),
-    //  m_simuParams.tfPoint[0].y(), x);
   }
   chkMultiTFPts->SetValue(false);
   updateWidgets();
@@ -1248,6 +1242,7 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   if (success)
   {
     log << "Importation successfull" << endl;
+    updateParams();
     updatePictures();
   }
   else

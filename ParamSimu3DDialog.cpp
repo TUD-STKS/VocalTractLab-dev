@@ -1247,6 +1247,10 @@ void ParamSimu3DDialog::OnLoadTfPts(wxCommandEvent& event)
   }
   else
   {
+    wxMessageDialog* dial = new wxMessageDialog(NULL,
+      wxT("Error loading file"), wxT("Error"), wxOK | wxICON_ERROR);
+    dial->ShowModal();
+
     log << "Importation failed" << endl;
   }
   log.close();

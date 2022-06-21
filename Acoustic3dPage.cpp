@@ -699,12 +699,16 @@ void Acoustic3dPage::computeModesJunctionAndRadMats(bool precomputeRadMat,
           break;
         }
       }
+
+      if (!abort)
+      {
+        simu3d->setNeedToComputeModesAndJunctions(false);
+      }
+
       end = std::chrono::system_clock::now();
       time = end - start;
       log << "Time junction matrices: " << time.count() << endl;
     }
-
-    simu3d->setNeedToComputeModesAndJunctions(false);
 
     //*********************************************************
     // precompute radiation impedance
@@ -846,8 +850,25 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
       }
     }
 
+    // destroy progress dialog
+    progressDialog->Destroy();
+    progressDialog = NULL;
+
+    if (!abort)
+    {
+      wxMessageDialog* dial = new wxMessageDialog(NULL,
+        wxT("Computation of acoustic field finished"), wxT("Info"), wxOK);
+      dial->ShowModal();
+    }
+
     // generate spectra values for negative frequencies
     simu3d->generateSpectraForSynthesis(m_idxTfPoint);
+  }
+  else
+  {
+    // destroy progress dialog
+    progressDialog->Destroy();
+    progressDialog = NULL;
   }
 
   // print the times of the different parts of the process
@@ -867,10 +888,6 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     << hours << " h " << minutes << " m " << seconds << " s" << endl;
 
   log.close();
-
-  // destroy progress dialog
-  progressDialog->Destroy();
-  progressDialog = NULL;
 
   updateWidgets();
   OnPlayLongVowel();
@@ -957,36 +974,51 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 
   computeModesJunctionAndRadMats(false, progressDialog, abort);
 
-  simu3d->solveWaveProblem(tract, freq, timePropa, &timeExp);
-
-  simu3d->prepareAcousticFieldComputation();
-  nPtx = simu3d->numPtXField();
-  nPty = simu3d->numPtYField();
-
-  progressDialog->Update(0,
-    "Wait until the acoustic field computation finished or press [Cancel]");
-  progressDialog->SetRange(nPtx);
-  log << "Num points on x: " << nPtx << " Num points on y: " << nPty << endl;
-
-  for (int i(0); i < nPtx; i++)
+  if (!abort)
   {
-    simu3d->acousticFieldInLine(i);
-    cnt += nPty;
+    simu3d->solveWaveProblem(tract, freq, timePropa, &timeExp);
 
-    log << 100 * cnt / nPtx / nPty << " % of field points computed" << endl;
+    simu3d->prepareAcousticFieldComputation();
+    nPtx = simu3d->numPtXField();
+    nPty = simu3d->numPtYField();
 
-    // stop if [Cancel] is pressed
-    if (progressDialog->Update(i) == false)
+    progressDialog->Update(0,
+      "Wait until the acoustic field computation finished or press [Cancel]");
+    progressDialog->SetRange(nPtx);
+    log << "Num points on x: " << nPtx << " Num points on y: " << nPty << endl;
+
+    for (int i(0); i < nPtx; i++)
     {
-      break;
+      simu3d->acousticFieldInLine(i);
+      cnt += nPty;
+
+      log << 100 * cnt / nPtx / nPty << " % of field points computed" << endl;
+
+      // stop if [Cancel] is pressed
+      if (progressDialog->Update(i) == false)
+      {
+        abort = true;
+        break;
+      }
+    }
+
+    // destroy progress dialog
+    progressDialog->Destroy();
+    progressDialog = NULL;
+
+    if (!abort)
+    {
+      wxMessageDialog* dial = new wxMessageDialog(NULL,
+        wxT("Computation of acoustic field finished"), wxT("Info"), wxOK);
+      dial->ShowModal();
     }
   }
-
-  //simu3d->computeAcousticField(tract);
-
-  // destroy progress dialog
-  progressDialog->Destroy();
-  progressDialog = NULL;
+  else
+  {
+    // destroy progress dialog
+    progressDialog->Destroy();
+    progressDialog = NULL;
+  }
 
   // update pictures
   chkShowField->SetValue(true);
@@ -1082,19 +1114,28 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
     fileName.GetFullName(), ".csv", "Geometry file (*.csv)|*.csv",
     wxFD_OPEN | wxFD_FILE_MUST_EXIST, this);
 
-  simu3d->setGeometryImported(true);
-  simu3d->setContourInterpolationMethod(FROM_FILE);
-  simu3d->setGeometryFile(name.ToStdString());
-  simu3d->requestModesAndJunctionComputation();
-  simu3d->cleanAcousticField();
+  if (name.size() > 0)
+  {
+    simu3d->setGeometryImported(true);
+    simu3d->setContourInterpolationMethod(FROM_FILE);
+    simu3d->setGeometryFile(name.ToStdString());
+    if (importGeometry())
+    {
 
-  importGeometry();
+      simu3d->cleanAcousticField();
+      updateWidgets();
+    }
+    else
+    {
+      simu3d->setGeometryImported(false);
+      simu3d->setContourInterpolationMethod(BOUNDING_BOX);
 
-  //ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
-  //dialog->updateParams();
-  //dialog->updateWidgets();
-
-  updateWidgets();
+      wxMessageDialog* dial = new wxMessageDialog(NULL,
+        wxT("Error loading file"), wxT("Error"), wxOK | wxICON_ERROR);
+      dial->ShowModal();
+    }
+    simu3d->requestModesAndJunctionComputation();
+  }
 }
 
 // ****************************************************************************
@@ -1356,17 +1397,23 @@ void Acoustic3dPage::OnNextTf(wxCommandEvent& event)
 
 // ****************************************************************************
 
-void Acoustic3dPage::importGeometry()
+bool Acoustic3dPage::importGeometry()
 {
-
   VocalTract* tract = data->vocalTract;
 
-  simu3d->importGeometry(tract);
+  if (simu3d->importGeometry(tract))
+  {
+    segPic->resetActiveSegment();
 
-  segPic->resetActiveSegment();
+    ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+    dialog->updateParams();
 
-  ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
-  dialog->updateParams();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 
   //// clean the log file
   //ofstream log;

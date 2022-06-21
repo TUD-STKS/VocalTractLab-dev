@@ -120,7 +120,7 @@ private:
   void OnPreviousTf(wxCommandEvent& event);
   void OnNextTf(wxCommandEvent& event);
 
-  void importGeometry();
+  bool importGeometry();
   void setPicModeObjectTodisplay(enum objectToDisplay object);
 
 // ****************************************************************************

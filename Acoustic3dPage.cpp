@@ -857,7 +857,7 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     if (!abort)
     {
       wxMessageDialog* dial = new wxMessageDialog(NULL,
-        wxT("Computation of acoustic field finished"), wxT("Info"), wxOK);
+        wxT("Computation of transfer functions finished"), wxT("Info"), wxOK);
       dial->ShowModal();
     }
 

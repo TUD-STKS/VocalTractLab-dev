@@ -502,10 +502,10 @@ void MainWindow::initWidgets()
   acoustic3dPage = new Acoustic3dPage(notebook, VocalTractDialog::getInstance(this)->getVocalTractPicture());																											 
 
   notebook->AddPage((wxPanel*)signalPage, "Signals", false);
-  notebook->AddPage((wxPanel*)vocalTractPage, "Vocal tract", true);
+  notebook->AddPage((wxPanel*)vocalTractPage, "Vocal tract", false);
   notebook->AddPage((wxPanel*)tdsPage, "Time domain simulation", false);
   notebook->AddPage((wxPanel*)gesturalScorePage, "Gestural score", false);
-  notebook->AddPage((wxPanel*)acoustic3dPage, "3D acoustic simulation", false);																		   
+  notebook->AddPage((wxPanel*)acoustic3dPage, "3D acoustic simulation", true);																		   
 
   // ****************************************************************
   // Update all widgets.
@@ -545,6 +545,12 @@ void MainWindow::updateWidgets()
     gesturalScorePage->updateWidgets();
     gesturalScorePage->Refresh();
     data->currentPage = Data::GESTURAL_SCORE_PAGE;
+  }
+  else
+  if (notebook->GetCurrentPage() == (wxWindow*)acoustic3dPage)
+  {
+    acoustic3dPage->importGeometry();
+    acoustic3dPage->updateWidgets();
   }
 
   // ****************************************************************

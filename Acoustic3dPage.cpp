@@ -1404,6 +1404,7 @@ bool Acoustic3dPage::importGeometry()
   if (simu3d->importGeometry(tract))
   {
     segPic->resetActiveSegment();
+    simu3d->cleanAcousticField();
 
     ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
     dialog->updateParams();

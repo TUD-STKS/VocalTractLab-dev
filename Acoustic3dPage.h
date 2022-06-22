@@ -26,6 +26,7 @@ class Acoustic3dPage : public wxPanel
 public:
   Acoustic3dPage(wxWindow* parent, VocalTractPicture *picVocalTract);
   void updateWidgets();
+  bool importGeometry();
   
 // ****************************************************************
 // Private data.
@@ -120,7 +121,6 @@ private:
   void OnPreviousTf(wxCommandEvent& event);
   void OnNextTf(wxCommandEvent& event);
 
-  bool importGeometry();
   void setPicModeObjectTodisplay(enum objectToDisplay object);
 
 // ****************************************************************************

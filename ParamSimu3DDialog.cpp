@@ -1003,7 +1003,7 @@ void ParamSimu3DDialog::OnMaxCutOnEnter(wxCommandEvent& event)
 {
     double x = 0.0;
     wxString st = txtMaxCutOnFreq->GetValue();
-    if ((st.ToDouble(&x)) && (x >= 0.0) && (x <= 500000.0))
+    if ((st.ToDouble(&x)) && (x >= 1.0) && (x <= 500000.0))
     {
         m_simuParams.maxCutOnFreq = x;
     }

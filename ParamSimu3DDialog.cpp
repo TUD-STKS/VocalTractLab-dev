@@ -138,8 +138,6 @@ void ParamSimu3DDialog::updateWidgets()
     m_simuParams.numIntegrationStep = m_simuParamsMagnus.numIntegrationStep;
   }
 
-
-
   wxString st;
 
   st = wxString::Format("%2.1f", m_simuParams.temperature);
@@ -162,13 +160,6 @@ void ParamSimu3DDialog::updateWidgets()
 
   st = wxString::Format("%d", m_secNoiseSource);
   txtSecNoiseSource->SetValue(st);
-
-  //st = wxString::Format("%d", m_expSpectrumLgth);
-  //txtExpLgth->SetValue(st);
-
-  //st = wxString::Format(" %2.1f Hz", (double)SAMPLING_RATE / 2./
-      //(double)(1 << (m_expSpectrumLgth - 1)));
-  //txtNbFreqs->SetLabel(st);
 
 	st = wxString::Format("%1.2f", 100. * m_simuParams.percentageLosses);
 	txtPercLoss->SetValue(st);

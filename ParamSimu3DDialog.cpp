@@ -394,7 +394,7 @@ void ParamSimu3DDialog::updatePictures()
 
 ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   wxDialog(parent, wxID_ANY, wxString("Parameters 3D simulations"),
-    wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
+    wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP)
 {
 
   m_simu3d = Acoustic3dSimulation::getInstance();

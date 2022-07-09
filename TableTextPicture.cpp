@@ -4,7 +4,7 @@
 
 TableTextPicture::TableTextPicture()
 {
-  m_cellWidth = 170;
+  m_cellWidth = 200;
   m_cellHeight = 15;
   m_cellSpacing = 30;
   m_nbCols = 2;

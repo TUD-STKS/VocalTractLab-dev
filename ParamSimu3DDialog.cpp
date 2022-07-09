@@ -1092,6 +1092,7 @@ void ParamSimu3DDialog::OnFreqComputeField(wxCommandEvent& event)
     m_simuParams.freqField = x;
   }
   updateWidgets();
+  updatePictures();
 }
 
 // ****************************************************************************

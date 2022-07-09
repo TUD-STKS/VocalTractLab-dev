@@ -57,6 +57,8 @@ private:
   bool m_fieldInLogScale;
 	int m_modeIdx;
   double m_zoom;
+  int lineWidth1{ this->FromDIP(1) };
+  int lineWidth2{ this->FromDIP(2) };
   double m_centerX;
   double m_centerY;
   int m_positionContour;

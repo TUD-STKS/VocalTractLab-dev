@@ -43,6 +43,7 @@ private:
   // segment picture controls
   wxCheckBox* chkShowSegments;
   wxCheckBox* chkShowField;
+  wxCheckBox* chkShowTfPts;
 
   // propagation modes controls
   wxCheckBox* chkShowContour;
@@ -109,6 +110,7 @@ private:
   void OnShowNextSegment(wxCommandEvent& event);
   void OnShowSegments(wxCommandEvent& event);
   void OnShowField(wxCommandEvent& event);
+  void OnShowTfPts(wxCommandEvent& event);
 
   // event handlers for bottom panel
   void OnUpperSpectrumLimitPlus(wxCommandEvent& event);

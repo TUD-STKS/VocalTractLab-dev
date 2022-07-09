@@ -55,6 +55,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_activeSegment(0),
   m_showSegments(true),
   m_showField(false),
+  m_showTfPts(true),
   m_showSndSourceSeg(true),
   m_fieldInLogScale(true)
 {
@@ -234,25 +235,43 @@ void SegmentsPicture::draw(wxDC& dc)
         drawSegment(sec, bbox, dc);
       }
 
-      // plot the active segment
-      sec = m_simu3d->crossSection(m_activeSegment);
-      bbox = sec->contour().bbox();
-      dc.SetPen(wxPen(*wxRED, 2, wxPENSTYLE_SOLID));
-      drawSegment(sec, bbox, dc);
-
       // Plot the sound source segment
       if (m_showSndSourceSeg)
       {
         sec = m_simu3d->crossSection(m_simu3d->idxSecNoiseSource());
         bbox = sec->contour().bbox();
-        if (m_activeSegment == m_simu3d->idxSecNoiseSource())
-        {
-          dc.SetPen(wxPen(wxColour(255, 0, 255, 255), 2, wxPENSTYLE_SOLID));
-        }
-        else
-        {
-          dc.SetPen(wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID));
-        }
+        // plot the segment in blue
+        dc.SetPen(wxPen(wxColour(0, 90, 181, 255), 2, wxPENSTYLE_SOLID));
+        drawSegment(sec, bbox, dc);
+      }
+
+      // plot the active segment
+      sec = m_simu3d->crossSection(m_activeSegment);
+      bbox = sec->contour().bbox();
+      if (m_showSndSourceSeg && 
+          (m_activeSegment == m_simu3d->idxSecNoiseSource()
+            || (sec->isJunction() && 
+              (abs(m_simu3d->idxSecNoiseSource() - m_activeSegment) == 1)))
+          )
+      {
+        // plot the segment in green
+        dc.SetPen(wxPen(wxColour(68, 170, 153, 255), 2, wxPENSTYLE_SOLID));
+      }
+      else
+      {
+        // plot the segment in red
+        dc.SetPen(wxPen(wxColour(220, 50, 32, 255), 2, wxPENSTYLE_SOLID));
+      }
+      drawSegment(sec, bbox, dc);
+      
+      // if the noise source segment is a junction segment replot it 
+      // if it is hidden behind the current segment
+      sec = m_simu3d->crossSection(m_simu3d->idxSecNoiseSource());
+      if (sec->isJunction() &&
+          (abs(m_simu3d->idxSecNoiseSource() - m_activeSegment) == 1))
+      {
+        // plot the segment in green
+        dc.SetPen(wxPen(wxColour(68, 170, 153, 255), 2, wxPENSTYLE_SOLID));
         drawSegment(sec, bbox, dc);
       }
 
@@ -260,40 +279,43 @@ void SegmentsPicture::draw(wxDC& dc)
       // Draw transfer function points
       //************************************************
 
-      // plot the reception points of the transfer functions
-      struct simulationParameters simuParams = m_simu3d->simuParams();
-      wxCoord crossSize(7);
-      int penWidth(2);
-      // make a blue pen
-      dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
-      Point_3 pt;
-      int cnt(0);
-
-      for (auto it : simuParams.tfPoint)
+      if (m_showTfPts)
       {
-        pt = m_simu3d->movePointFromExitLandmarkToGeoLandmark(it);
-        xBig = getPixelCoordX(pt.x());
-        yBig = getPixelCoordY(pt.z());
-        if (cnt == m_idxPtTf)
-        {
-          // make the pen red
-          dc.SetPen(wxPen(wxColour(220, 50, 32, 255), penWidth, wxPENSTYLE_SOLID));
+        // plot the reception points of the transfer functions
+        struct simulationParameters simuParams = m_simu3d->simuParams();
+        wxCoord crossSize(7);
+        int penWidth(2);
+        // make a blue pen
+        dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
+        Point_3 pt;
+        int cnt(0);
 
-          // draw a cross
-          dc.DrawLine(xBig - crossSize, yBig, xBig + crossSize - 1, yBig);
-          dc.DrawLine(xBig, yBig - crossSize, xBig, yBig + crossSize - 1);
-
-          // reset the pen as blue
-          dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
-          dc.DrawPoint(xBig, yBig);
-        }
-        else
+        for (auto it : simuParams.tfPoint)
         {
-          // draw a cross
-          dc.DrawLine(xBig - crossSize + 0, yBig, xBig + crossSize, yBig);
-          dc.DrawLine(xBig, yBig - crossSize + 0, xBig, yBig + crossSize);
+          pt = m_simu3d->movePointFromExitLandmarkToGeoLandmark(it);
+          xBig = getPixelCoordX(pt.x());
+          yBig = getPixelCoordY(pt.z());
+          if (cnt == m_idxPtTf)
+          {
+            // make the pen red
+            dc.SetPen(wxPen(wxColour(220, 50, 32, 255), penWidth, wxPENSTYLE_SOLID));
+
+            // draw a cross
+            dc.DrawLine(xBig - crossSize, yBig, xBig + crossSize - 1, yBig);
+            dc.DrawLine(xBig, yBig - crossSize, xBig, yBig + crossSize - 1);
+
+            // reset the pen as blue
+            dc.SetPen(wxPen(wxColour(0, 90, 181, 255), penWidth, wxPENSTYLE_SOLID));
+            dc.DrawPoint(xBig, yBig);
+          }
+          else
+          {
+            // draw a cross
+            dc.DrawLine(xBig - crossSize + 0, yBig, xBig + crossSize, yBig);
+            dc.DrawLine(xBig, yBig - crossSize + 0, xBig, yBig + crossSize);
+          }
+          cnt++;
         }
-        cnt++;
       }
     }
   }

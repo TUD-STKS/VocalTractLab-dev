@@ -80,7 +80,11 @@ void PropModesPicture::draw(wxDC& dc)
 	double cumLength(0.), minDist(1e-15);
 	int sectionIdx(0);
   ostringstream info;
-  TableTextPicture tbText;
+  TableTextPicture tbText(
+      this->FromDIP(200),  // cell width
+      this->FromDIP(20),   // cell height
+      this->FromDIP(30),   // cell spacing
+      2);                  // nb columns
 
   // clear info strings
   m_infoStr.clear();
@@ -179,7 +183,8 @@ void PropModesPicture::draw(wxDC& dc)
 			std::chrono::duration<double> tTri;
 			std::chrono::duration<double> tCoord;
 
-			dc.SetPen(*wxBLACK_PEN);
+      wxPen pen(*wxBLACK, lineWidth1);
+			dc.SetPen(pen);
 			tTri.zero();
 			tCoord.zero();
 			for (int it(0); it < numFaces; ++it)

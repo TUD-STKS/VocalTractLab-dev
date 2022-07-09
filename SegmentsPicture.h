@@ -22,12 +22,14 @@ public:
   void resetActiveSegment();
   void setShowSegments(bool showSegs) { m_showSegments = showSegs; }
   void setShowField(bool showField) { m_showField = showField; }
+  void setShowTfPts(bool showTfPts) {m_showTfPts = showTfPts;}
   void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
   bool showSegements() const { return m_showSegments; }
   bool showField() const { return m_showField; }
+  bool showTfPts() const { return m_showTfPts; }
 
 // **************************************************************************
 // Private data.
@@ -45,6 +47,7 @@ private:
   int m_activeSegment;
   bool m_showSegments;
   bool m_showField;
+  bool m_showTfPts;
   bool m_showSndSourceSeg;
   bool m_fieldInLogScale;
   int m_idxPtTf;

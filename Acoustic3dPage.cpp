@@ -63,6 +63,7 @@ static const int IDB_SHOW_PREVIOUS_SEGMENT        = 6027;
 static const int IDB_SHOW_NEXT_SEGMENT            = 6028;
 static const int IDB_SHOW_SEGMENTS                = 6029;
 static const int IDB_SHOW_FIELD                   = 6030;
+static const int IDB_SHOW_TF_PTS                  = 6031;
 
 // Spectrum panel controls
 static const int IDB_UPPER_SPECTRUM_LIMIT_PLUS		= 7000;
@@ -120,6 +121,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_SHOW_NEXT_SEGMENT, Acoustic3dPage::OnShowNextSegment)
   EVT_CHECKBOX(IDB_SHOW_SEGMENTS, Acoustic3dPage::OnShowSegments)
   EVT_CHECKBOX(IDB_SHOW_FIELD, Acoustic3dPage::OnShowField)
+  EVT_CHECKBOX(IDB_SHOW_TF_PTS, Acoustic3dPage::OnShowTfPts)
 
   // Spectrum panel controls
   EVT_BUTTON(IDB_UPPER_SPECTRUM_LIMIT_PLUS, Acoustic3dPage::OnUpperSpectrumLimitPlus)
@@ -186,6 +188,7 @@ void Acoustic3dPage::updateWidgets()
   // options for segment picture
   segPic->setShowSegments(chkShowSegments->GetValue());
   segPic->setShowField(chkShowField->GetValue());
+  segPic->setShowTfPts(chkShowTfPts->GetValue());
 
   // option for spectrum 3D picture
   chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
@@ -362,6 +365,12 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   chkShowField = new wxCheckBox(topPanel, IDB_SHOW_FIELD, "Show field");
   sizer->Add(chkShowField, 0, wxALIGN_BOTTOM | wxALL, 2);
+
+  sizer->AddStretchSpacer(1);
+
+  chkShowTfPts = new wxCheckBox(topPanel, IDB_SHOW_TF_PTS, "Show TF points");
+  sizer->Add(chkShowTfPts, 0, wxALIGN_BOTTOM | wxALL, 2);
+  chkShowTfPts->SetValue(true);
 
   sizer->AddStretchSpacer(1);
 
@@ -1307,6 +1316,13 @@ void Acoustic3dPage::OnShowSegments(wxCommandEvent& event)
 void Acoustic3dPage::OnShowField(wxCommandEvent& event)
 {
   segPic->setShowField(chkShowField->GetValue());
+  segPic->Refresh();
+}
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowTfPts(wxCommandEvent& event)
+{
+  segPic->setShowTfPts(chkShowTfPts->GetValue());
   segPic->Refresh();
 }
 

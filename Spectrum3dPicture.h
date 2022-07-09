@@ -39,6 +39,11 @@ private:
   bool m_showGlottalTf;
   bool m_showNoiseTf;
 
+  // for acoustic field computation
+  bool m_changeFreqField;
+  int m_lastMousePosX;
+  int m_lastMousePosY;
+
   int m_idxPtTf;
 
   // **************************************************************************

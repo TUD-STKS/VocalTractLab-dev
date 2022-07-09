@@ -1,4 +1,5 @@
 #include "Spectrum3dPicture.h"
+#include "ParamSimu3DDialog.h"
 #include <fstream>
 #include <wx/filename.h>
 
@@ -55,6 +56,7 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
     true, 10);
 
   graph.isLinearOrdinate = false;
+  m_changeFreqField = false;
 
   // ****************************************************************
   // The context menu
@@ -77,6 +79,21 @@ void Spectrum3dPicture::draw(wxDC &dc)
   graph.paintOrdinate(dc);
 
   paintSpectrum(dc);
+
+  //***************************************************************************
+  // Draw the acoustic field frequency as a vertical dashed line
+  //***************************************************************************
+
+  int graphX, graphY, graphW, graphH;
+  graph.getDimensions(graphX, graphY, graphW, graphH);
+  double x = graph.getXPos(simu3d->freqAcousticField());
+  if ((x >= graphX) && (x < graphX + graphW))
+  {
+    wxPen pen(*wxBLACK, lineWidth, wxPENSTYLE_LONG_DASH);
+    dc.SetPen(pen);
+    dc.DrawLine(x, graphY, x, graphY+graphH-1);
+    //dc.DrawLine(x, graphY+this->FromDIP(58), x, graphY+graphH-1);
+  }
 }
 
 // ****************************************************************************
@@ -159,10 +176,114 @@ void Spectrum3dPicture::exportResult(enum tfType type)
 
 void Spectrum3dPicture::OnMouseEvent(wxMouseEvent& event)
 {
+  int mx = event.GetX();
+  int my = event.GetY();
+  
+  int graphX, graphY, graphW, graphH;
+  graph.getDimensions(graphX, graphY, graphW, graphH);
+
+  // ****************************************************************
   // Right click
+  // ****************************************************************
+
   if (event.ButtonDown(wxMOUSE_BTN_RIGHT))
   {
     PopupMenu(m_contextMenu);
+  }
+
+  // ****************************************************************
+  // The mouse is entering the window.
+  // ****************************************************************
+
+  if (event.Entering())
+  {
+    m_lastMousePosX = mx;
+    m_lastMousePosY = my;
+    return;
+  }
+
+  // ****************************************************************
+  // Check if the cut position is under the mouse cursor.
+  // ****************************************************************
+
+  bool isOnCutPos = false;
+  int cutPosX = graph.getXPos(simu3d->freqAcousticField());
+  if ((mx >= cutPosX-4) && (mx <= cutPosX+4))
+  {
+    isOnCutPos = true;
+  }
+
+  if (((isOnCutPos) && (event.Dragging() == false)) || (m_changeFreqField))
+  {
+    this->SetCursor( wxCursor(wxCURSOR_SIZEWE) );
+  }
+  else
+  {
+    this->SetCursor( wxCursor(wxCURSOR_ARROW) );
+  }
+
+  // ****************************************************************
+  // Stop dragging a border when the cut pos. is released or the area
+  // is left.
+  // ****************************************************************
+
+  if ((event.ButtonUp()) || (event.Leaving()))
+  {
+    m_changeFreqField = false;
+    m_lastMousePosX = mx;
+    m_lastMousePosY = my;
+    return;
+  }
+
+  // ****************************************************************
+  // The left mouse button just changed to down.
+  // ****************************************************************
+
+  if (event.ButtonDown(wxMOUSE_BTN_LEFT))
+  {
+    // Start moving the cut position.
+    if (isOnCutPos)
+    {
+      m_changeFreqField = true;
+    }
+    m_lastMousePosX = mx;
+    m_lastMousePosY = my;
+    return;
+  }
+  
+  // ****************************************************************
+  // The user is dragging the mouse.
+  // ****************************************************************
+
+  if (event.Dragging())
+  {
+    if ((event.LeftIsDown()) && (mx >= graphX) && (mx < graphX + graphW))
+    {
+      if (m_changeFreqField)
+      {
+        double deltaFreq = 
+          graph.getAbsXValue(mx) - 
+          graph.getAbsXValue(m_lastMousePosX);
+
+        simu3d->setAcousticFieldFreq(
+            simu3d->freqAcousticField() + deltaFreq);
+
+        if (simu3d->freqAcousticField() < 1.0)
+        {
+          simu3d->setAcousticFieldFreq(1.0);
+        }
+
+        // Update the simulation parameter dialog.
+        ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+        dialog->updateParams();
+
+        this->Refresh();
+      }
+    }
+
+    m_lastMousePosX = mx;
+    m_lastMousePosY = my;
+    return;
   }
 }
 

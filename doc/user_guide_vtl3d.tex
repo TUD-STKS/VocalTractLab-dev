@@ -13,6 +13,8 @@
 \usepackage{hyperref}
 \usepackage{bold-extra}
 \usepackage{tcolorbox}
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{biblio.bib}
 
 \newcommand*{\transp}[2][-3mu]{\ensuremath{\mskip1mu\prescript{\smash{\mathrm t\mkern#1}}{}{\mathstrut#2}}}
 \newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
@@ -28,13 +30,14 @@
 	\section{Introduction}
 	
 	VocalTractLab3D is a special version of the articulatory synthesizer
-	VocalTractLab 2.3 which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 and the 
+	VocalTractLab 2.3 which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 
+	\cite{birkholz2013modeling} and the 
 	reader is referred to the manual of VocalTractLab 2.3 to learn
 	how to use them.
 	The 3D acoustic simulations are performed with a frequency domain
 	multimodal method which have been designed to be particularly 
 	fast and accurate. The details of this simulation method are 
-	provided in an article \hl{[CITE ACCESS HERE]}.
+	provided in \textcite{blandin2022efficient}.
 	
 	\subsection{What are 3D acoustic simulations?}
 	
@@ -42,7 +45,7 @@
 	Vocal tract acoustic simulations consists in describing how acoustic waves travel
 	inside the vocal tract volume, are reflected at the discontinuities, such as 
 	changes of cross-section or the mouth opening and create resonances. 
-	This allows one to compute transfer functions, as an exemple between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips. It can also be used to 
+	This allows one to compute transfer functions, as an example between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips. It can also be used to 
 	compute the acoustic field, which describes the variations of the  
 	properties of the acoustic waves (acoustic pressure and particle velocity) over space.
 	
@@ -51,13 +54,13 @@
 	are guided to travel mainly along its length. One can say that the
 	waves are guided by the vocal tract walls and thus, from the point
 	of view of wave propagation, the vocal tract can be called a 
-	\emph{waveguide} \hl{check if wave-guide or waveguide}.
+	\emph{waveguide}.
 	This property of the vocal tract makes it easy to approximate the 
 	propagation of acoustic waves as a single value of acoustic 
 	pressure varying along its length, thus neglecting transverse 
 	variations of the acoustic field. This have lead to 1D simulation 
 	methods and electrical analogies which are very widely used to 
-	simulate vocal tract acoustics \hl{[PUT RELEVANT REFERENCES HERE]}.
+	simulate vocal tract acoustics \cite{sondhi1987hybrid}.
 	
 	\textbf{What is 3D vocal tract acoustics?}\\
 	Even though not very important below 4-5~kHz, 
@@ -121,16 +124,106 @@
 	the simulation method used (constant cross-sectional shape in the 
 	segments, and frequency domain simulations).
 	
+	\subsection{Implementation}
+	
+	\hl{Put here the libraries used and cite them in possible}
+	
 	\subsection{Installation requirements}
 	
 	\subsection{How to cite VocalTractLab3D?}
 	
+	\fullcite{blandin2022efficient}
+	
 	\section{Interface}
+	
+	\subsection{Overview}
 	
 	\hl{SHOW THE INTERFACE}
 	
-	The 3D acoustic simulation can be performed using the 
+	When VocalTractLab3D is started, it shows by default 2 windows:
+	\begin{itemize}
+		\item The main window showing the "3d acoustic simulation" page.
+		\item A small window showing the 3D geometry corresponding to the articulatory model: the vocal tract dialog. The user can interact with the articulatory model using the control points to move the articulators. When closed, this window can be shown again by clicking on the button "Show vocal tract".
+	\end{itemize}
+	
+	The "3d acoustic simulation" is divided in 4 panels:
+	\begin{enumerate}
+		\item the left panel contains buttons to manage the geometries, perform the simulations and synthesis.
+		\item The middle panel shows a sagittal cut of the geometry simulated.
+		\item The right panel shows a transverse cut of the geometry corresponding to a specific segment.
+		\item The bottom panel shows the transfer functions and 
+		input impedance computed. 
+	\end{enumerate}
+
+	\subsection{Loading and visualizing geometries}
+	
+	The geometry simulated can be defined in several ways:
+	\begin{itemize}
+		\item It can be simply defined by moving the control points in
+		the vocal tract dialog. When doing so, one can see the segmented 
+		geometry in the central panel updating.
+		\item If a speaker file containing predefined geometries is loaded, a geometry can be selected using the dialog shown by 
+		clicking on the button "Vocal tract shapes" of the left panel.
+		\item An external geometry can be loaded as a \texttt{.csv} file
+		formated in a specific way. 
+	\end{itemize}
+
+\begin{table}
+	\centering
+	\begin{tabular}{c c c c c c c}
+		\hline
+		\texttt{Centerline} $x$ & \texttt{Normal} $x$ & 
+		\texttt{Input scaling} & \texttt{Contour point 1} $y$ &  
+		\texttt{Contour point 2} $y$ & ... 
+		& \texttt{Contour point N} $y$ \\
+		\hline
+		\texttt{Centerline} $y$ & \texttt{Normal} $y$ & 
+		\texttt{Output scaling} & \texttt{Contour point 1} $z$ &  
+		\texttt{Contour point 2} $z$ & ... 
+		& \texttt{Contour point N} $z$ \\
+		\hline
+	\end{tabular}
+\caption{Csv file format to encode segmented vocal tract geometries.}
+\label{table:csv_file_format}
+\end{table}
+	
+	\textbf{Csv format for externally defined geometries:}\\
+	The file describes a list of segments by specifying
+	\begin{itemize}
+		\item a centerline point,
+		\item a normal,
+		\item input and output scaling factors,
+		\item and a contour.
+	\end{itemize}
+	One segment is defined on two lines: the first one describes the 
+	first coordinates ($x$ or $y$) and the input scaling factor, the second one the second coordinates ($y$ or $z$) and the output scaling factor. 
+	This is summarized in the Tab.~\ref{table:csv_file_format}.
+	The columns must be separated by semi-columns ";". 
+	An example of such \texttt{.csv} file encoding a simple waveguide
+	geometry is provided in Tab.~\ref{table:example_csv_file}.
+	A minimal number of two segments must be provided. 
+	A segment is considered to start at the location on the centerline 
+	\hl{Explain here how the segments and their curvature are defined}.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{c c c c c c c }
+			-2.;& -1.;& 0.5;& -1.;& -1.;& 1.;& 1.; \\
+			0.;& 0.;& 1.;& -1.;& 1.;& 1.;& -1.; \\
+			-1.4142;& -0.5;& 1.;& -1.;& -1.;& 1.;& 1.; \\
+			1.4142;& 0.5;& 1.5;& -1.;& 1.;& 1.;& -1.; 
+		\end{tabular}
+		\caption{Example of \texttt{.csv} file which can be imported to generate a waveguide geometry.}
+		\label{table:example_csv_file}
+	\end{table}
+
+	\hl{Explain that the geometry can be also exported in such format} \\
+	
+	\hl{Describe how the geometry is displayed}
 	
 	
+	\printbibliography
+%	\bibliography{biblio}
+%	\bibliographystyle{plain}
 
 \end{document}

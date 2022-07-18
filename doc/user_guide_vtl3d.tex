@@ -27,22 +27,110 @@
 	
 	\section{Introduction}
 	
-	VocalTractLab3D is an articulatory synthesiser closely related to VocalTractLab 2.3. It has, to some very little differences, the same functionalities as 
-	VocalTractLab 2.3, but it integrates a module that performs 3D acoustic 
-	simulations, hence its name VocalTractLab3D.
+	VocalTractLab3D is a special version of the articulatory synthesizer
+	VocalTractLab 2.3 which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 and the 
+	reader is referred to the manual of VocalTractLab 2.3 to learn
+	how to use them.
+	The 3D acoustic simulations are performed with a frequency domain
+	multimodal method which have been designed to be particularly 
+	fast and accurate. The details of this simulation method are 
+	provided in an article \hl{[CITE ACCESS HERE]}.
 	
 	\subsection{What are 3D acoustic simulations?}
 	
-	Vocal tract acoustic simulations consists in descibing how acoustic waves travel
+	\textbf{What are vocal tract acoustic simulations?}\\ 
+	Vocal tract acoustic simulations consists in describing how acoustic waves travel
 	inside the vocal tract volume, are reflected at the discontinuities, such as 
 	changes of cross-section or the mouth opening and create resonances. 
-	This allows one to compute transfer functions, as an exemple between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips.
+	This allows one to compute transfer functions, as an exemple between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips. It can also be used to 
+	compute the acoustic field, which describes the variations of the  
+	properties of the acoustic waves (acoustic pressure and particle velocity) over space.
 	
-	Up to about 4-5 kHz, the acoustic waves consist in variations of the acoustic 
-	pressure which are almost uniform over the transverse cross-section of the vocal tract. Therefore, they are often refered to as \emph{plane waves}.
-	Their properties depend only on the cross-sectional area and it is not necessary to take into account the cross-sectional contour shape and the curvature of the vocal tract to describe them. 
-	That is why it is sufficient to describe the vocal tract as a 1D area function 
-	when plane wave propagation is assumed. 
-	This is type of simulation is one-dimensional, it cannot account for transverse 
-	variation of the acoustic field or of the precise 3D shape of the vocal tract.
+	\textbf{What is specific to vocal tract acoustics?}\\
+	The vocal tract has an elongated shape in which the acoustic waves 
+	are guided to travel mainly along its length. One can say that the
+	waves are guided by the vocal tract walls and thus, from the point
+	of view of wave propagation, the vocal tract can be called a 
+	\emph{waveguide} \hl{check if wave-guide or waveguide}.
+	This property of the vocal tract makes it easy to approximate the 
+	propagation of acoustic waves as a single value of acoustic 
+	pressure varying along its length, thus neglecting transverse 
+	variations of the acoustic field. This have lead to 1D simulation 
+	methods and electrical analogies which are very widely used to 
+	simulate vocal tract acoustics \hl{[PUT RELEVANT REFERENCES HERE]}.
+	
+	\textbf{What is 3D vocal tract acoustics?}\\
+	Even though not very important below 4-5~kHz, 
+	the acoustic field has transverse variations, and thus, varies in
+	all the three dimensions of space. At low frequency these variations
+	appear as a curvature of the acoustic field related to variations
+	of cross-sectional dimensions \hl{Illustrate this with acoustic field pictures}. At higher frequency, the 3D nature of the acoustic field is more obvious as transverse resonances can be observed
+	\hl{illustrate that}.
+	
+	\textbf{What does it changes to account for the 3D acoustic in comparison with using a 1D simplifying assumption?}\\
+	The impact of accounting for the 3D nature of the acoustic field 
+	inside the vocal tract is rather limited up to about 3~kHz. 
+	It consists mainly in small changes in the resonance properties
+	(frequency, amplitude and bandwidth). From 3~kHz on, the changes 
+	in the resonance properties can be more substantial and above 
+	4-5~kHz the transverse resonances can induce zeros and additional 
+	peaks in the transfer function. \hl{Illustrate with a TF 3D vs 1D}
+	
+	\subsection{What can VocalTractLab3D do and not do?}
+	
+	\textbf{What VocalTractLab3D can do?}
+	\begin{itemize}
+		\item Compute the transfer function between the volume velocity
+		at the location of the vocal folds and one are several points inside or outside the vocal tract.
+		\item Compute the transfer function between the acoustic pressure on a transverse plane anywhere inside the vocal tract and one or several points inside or outside the vocal tract.
+		This is useful to emulate noise generation by aeroacoustic 
+		sound sources.
+		\item Compute the input impedance of the plane mode at the 
+		location of the vocal folds.
+		\item Compute and visualize the transverse modes.
+		\item Compute the acoustic field at a specific frequency in the sagittal plane and in transverse planes anywhere inside the vocal tract.
+		\item Compute the above listed quantities for vocal tract 
+		geometries generated with the articulatory model implemented 
+		in VocalTractLab3D or vocal tract geometries imported from 
+		external .csv file coded in a specific format. Note that in 
+		this last case any waveguide geometry can be imported and not only vocal tract geometry (e.g. airways of other animals, wind instruments ...). However, the parameters of VocalTractLab3D 
+		are optimized for human vocal tracts and may not be optimal for
+		other applications.
+		\item Synthesize vowel and fricative sounds.
+	\end{itemize}
+
+	\textbf{What VocalTractLab3D cannot do?} \\
+	The simulation method implemented in VocalTractLab3D has been 
+	designed primarily to be efficient, and this comes with some 
+	limitations regarding the geometries which can be simulated.
+	However, it is to be noted that some of the geometrical simplifications are also used with simulation methods, such as finite
+	elemnents, in order to reduce the computation time, or simplify the task of describing the geometry.
+	VocalTractLab3D cannot:
+	\begin{itemize}
+		\item Simulate continuous cross-sectional shape variations within the segments of the vocal tract geometry. The cross-sectional shape can be scaled to account for area variation, but the shape reamins constant.
+		\item Simulate lip shapes. The mouth opening is contained 
+		inside a plane, and thus, the 3D lip shape cannot be simulated.
+		\item Simulate branches such as piriform sinus or the nasal 
+		cavity.
+		\item Similate the diffraction by the head and the torso outside
+		of the vocal tract.
+		\item Perform time domain simulation.
+	\end{itemize}
+	Some of the limitations listed may be overcomed with future developments of the simulation method used (3D lip shape, branches 
+	and diffraction by the head and torso), and some are inherent to 
+	the simulation method used (constant cross-sectional shape in the 
+	segments, and frequency domain simulations).
+	
+	\subsection{Installation requirements}
+	
+	\subsection{How to cite VocalTractLab3D?}
+	
+	\section{Interface}
+	
+	\hl{SHOW THE INTERFACE}
+	
+	The 3D acoustic simulation can be performed using the 
+	
+	
+
 \end{document}

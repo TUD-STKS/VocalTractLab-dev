@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{bold-extra}
 \usepackage{tcolorbox}
+\usepackage{listings}
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{biblio.bib}
 
@@ -155,9 +156,13 @@
 		input impedance computed. 
 	\end{enumerate}
 
-	\subsection{Loading and visualizing geometries}
+	\subsection{Geometries}
+
+	\subsubsection{Defining vocal tract geometries}
 	
-	The geometry simulated can be defined in several ways:
+	When VocalTractLab is started, the default geometry of the articulatory model is already loaded and ready to use for 
+	simulations.
+	However, the geometry can be defined or modified in several ways:
 	\begin{itemize}
 		\item It can be simply defined by moving the control points in
 		the vocal tract dialog. When doing so, one can see the segmented 
@@ -201,9 +206,13 @@
 	The columns must be separated by semi-columns ";". 
 	An example of such \texttt{.csv} file encoding a simple waveguide
 	geometry is provided in Tab.~\ref{table:example_csv_file}.
-	A minimal number of two segments must be provided. 
-	A segment is considered to start at the location on the centerline 
-	\hl{Explain here how the segments and their curvature are defined}.
+	The length and curvature of a segment are defined by its centerline
+	point and normal and the centerline point and normal of the 
+	following segment.
+	Thus, a minimal number of two segments must be provided. 
+	The before-last and the last segment are defined by computing an 
+	intermediate centerline point and normal between the last and 
+	before last centerline points and normals provided.
 	
 	\begin{table}
 		\centering
@@ -217,10 +226,171 @@
 		\label{table:example_csv_file}
 	\end{table}
 
-	\hl{Explain that the geometry can be also exported in such format} \\
+	The geometry can also be exported in the same format through 
+	the context menu which appear with a right click on the central panel
+	"Export geometry in a csv file". 
 	
-	\hl{Describe how the geometry is displayed}
+	It can be chosen to take into account or not the curvature and 
+	the area variations of the segments. This is done using the 
+	simulation parameters dialog displayed by clicking on the 
+	button "Simulation parameters" in the left panel. 
+	These options are found in the "Geometry options" section.
+	When "Varying area" is check, the variation of area are taken into 
+	account through the scaling factor which is set to vary linearly
+	between its value at the entrance and the exit of the segments (these values are displayed in the information of the right panel).
+	The variations of the scaling factor can be computed in two different
+	ways, or directly provided by the user when the geometry is loaded 
+	as a \texttt{.csv} file. These options can be selected in the 
+	"Geometry options" as well. One scaling factor computation method, 
+	"Area", 
+	consists simply in linearly interpolating the cross-sectional area.
+	The other one, "Bounding box", interpolates the largest dimension of the bounding 
+	box of the segments, provided that the resulting scaled contour 
+	do not exceed the area of the following contour, in which case it 
+	is set to interpolate the area. 
+	Finaly, one can specify that the scaling factors provided in the 
+	input \texttt{.csv} file must be used by selecting "From file".
 	
+
+	\subsubsection{Visualizing the vocal tract geometry}
+	
+	The geometry is visualized both in the central and the right panels.
+	The central panel shows a sagittal cut of the bounding box of the 
+	segments. This bounding box is a rectangle whose dimensions are 
+	the maximal and minimal dimensions of the cross-sectional 
+	contour.
+	
+	This sagittal cut of the segments can be exported as a list of 
+	coordinates in a text file using the context menu of the central 
+	panel "Export segment picture".
+	This can be used to plot the same picture with other softwares such 
+	as Matlab. This can be easily done with this kind of Matlab code:
+	\begin{lstlisting}
+	file_name = "segment_picture.txt";
+	load(file_name);
+	plot(segment_picture(:,1), segment_picture(:,2));
+	\end{lstlisting}
+	
+	When cliking on a segment, its outline becomes red to confirm that
+	it has been selected, and the contour and some information 
+	regarding the segment are displayed in the right panel.
+	When the geometry is provided by the articulatory model, it is 
+	possible to identify the type of surfaces which constitutes the 
+	edges of the the contour (tongue, teeth, lips, air at the lip corner, uvula, epiglottis and other walls \hl{check other surfaces}).
+	The color code for these different surfaces is given in 
+	Fig.\hl{PUT A FIGURE WITH THE COLOR CODE OF THE SURFACES}.
+	By clicking on the arrows "<" and ">" at the bottom of the right  
+	panel, one can display the contour with its original dimensions 
+	("Mode computation size") and scaled at the entrance and exit of the
+	segment.
+	
+	The coordinates of the points of the contour can also be exported 
+	in a text file through the context menu of the right panel obtained
+	with a right click "Export contour in text file". 
+	Note that the contour exported has the scaling with which it is 
+	displayed: if at this entrance the scaling is 0.5 and the entrance 
+	contour is displayed, the coordinate of the exported contour will
+	be the ones of the original contour multiplied by 0.5.
+	The exported contour can easily be plotted using another software in 
+	the same way as the segment picture.
+	
+	\hl{Speak about centerline}
+	
+	\subsection{Transverse modes}
+	
+	\subsubsection{Computation of the transverse modes}
+	
+	The transverse modes can be computed by clicking the button
+	"Compute modes" of the left panel. This can be useful if one is interested in analyzing the transverse modes only without 
+	computing the acoustic field or the transfer functions.
+	
+	The computation of the transverse modes is parametrized by two 
+	paramaters: 
+	\begin{itemize}
+		\item the density of the mesh which is used to solve with 
+		\hl{2D finite elements} the 
+		eigenvalue problem giving the transverse modes and their 
+		associated cutoff frequencies. This is related to the average
+		side length of the elements through the relationship
+		$average~side~length = \frac{\sqrt{cross-sectional~area}}{mesh~density}$. 
+		The mesh density is thus, an indication of the number of
+		elements per characteristic length.
+		\item The maximal cutoff frequency. It is a upper limit for the 
+		cutoff frequency of the transverse modes included in the 
+		simulations: for a given segment, only the modes having a cutoff
+		frequency lower than this value are kept. Thus, segments having 
+		a small cross-section have less transverse modes than the ones
+		having a bigger one. This is done so to increase the efficiency 
+		of the simulations.
+	\end{itemize}
+
+	The cutoff frequency is related to the sound speed, which itself 
+	is related to the temperature. Both the sound speed and the 
+	temperature can be set in the "Physical constants" section of 
+	the "Simulation parameters" dialog. Since both quantities are
+	related, they cannot be modified independantly: changing the 
+	temperature will change the sound speed and conversely.
+
+	\subsubsection{Visualization of the transverse modes}
+	
+	The mesh used to compute the transverse modes can be visualized
+	in the right panel by selecting "Mesh" in the bottom.
+	The transverse modes can be visualized by 
+	selecting "Modes" at the bottom. 
+	One can browse the different modes using the arrows "<" and ">".
+	The amplitude variation of the modes is displayed, and its cutoff 
+	frequency is given in the text information.
+	
+	\subsection{Transfer functions}
+	
+	\subsubsection{Computation of the transfer functions}
+	
+	The transfer functions can be computed by clicking on the button 
+	"Compute transfer functions" in the left panel.
+	
+	The computation of the transfer function requires to solve the 
+	walve problem. In this purpose, the simulation of wave propagation can be achieved either with an anlytical 
+	solution \cite{blandin2015effects} or a numerical Magnus-Möbius 
+	scheme \cite{PAGNEUX20101834}.
+	This can be selected in the section "Numerical scheme options" of
+	the "Simulation parameters" dialog. The analytical solution is 
+	enabled by selecting "Straight". However, this solution has strong limitations regarding the geometry and the losses: it cannot take into account the curvature, cross-sectional area variations and 
+	wall losses. The numerical scheme is enabled by selecting "Magnus".
+	In this case a number of integration steps is given and can be 
+	modified if necessary. This number is the same for each segment.
+	Note that since the segmentation generally used for vocal tract geometries gives segments having approximately the same length, 
+	this parameters is expected to affect the accuracy in a similar way
+	for each segment. However, for other applications for which the 
+	segment length would be inhomogeneous, this parameter need to be considered more carefully.
+	
+	The boundary conditions can be set in the "Boundary conditions options" section of the "Simulation parameters" dialog. 
+	It includes the mouth boundary condition which can be described
+	with a radiation boundary condition computed following 
+	\textcite{blandin2019multimodal},
+	or a zero pressure condition.
+	Several types of wall losses can be selected: 
+	\begin{itemize}
+		\item "Visco-thermal losses" includes frequency dependent 
+		visco-thermal losses implemented according to 
+		\textcite{bruneau1987boundary},
+		\item "Soft Walls" includes frequency dependent losses 
+		corresponding to soft walls \hl{[find ref]}
+		\item "Constant wall admittance" includes a frequency
+		independent wall admittance whose real and imaginary parts 
+		can be set by the user.
+	\end{itemize}
+
+	\hl{Maximal frequency and frequency steps}
+	
+	\hl{noise source location}
+	
+	\hl{Reception points}
+	
+	\subsubsection{Visualization of the transfer functions}
+	
+	\hl{bottom panel}
+	
+	\hl{exportation of the transfer functions}
 	
 	\printbibliography
 %	\bibliography{biblio}

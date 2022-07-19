@@ -206,6 +206,9 @@
 	The columns must be separated by semi-columns ";". 
 	An example of such \texttt{.csv} file encoding a simple waveguide
 	geometry is provided in Tab.~\ref{table:example_csv_file}.
+	Note that in this example the normal of the second segment is not normalized.
+	In this case the normalization is done when the file is imported, otherwise
+	this would be equivalent to applying a scaling factor.
 	The length and curvature of a segment are defined by its centerline
 	point and normal and the centerline point and normal of the 
 	following segment.

@@ -38,6 +38,7 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
 
   m_showGlottalTf = true;
   m_showNoiseTf = true;
+  m_showInputImped = true;
 
   // ****************************************************************
   // The spectrum graph
@@ -110,6 +111,11 @@ void Spectrum3dPicture::paintSpectrum(wxDC &dc)
   {
     drawTf(dc, NOISE);
   }
+  
+  if (m_showInputImped)
+  {
+    drawTf(dc, INPUT_IMPED);
+  }
 }
 
 // ****************************************************************************
@@ -130,6 +136,9 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
     break;
   case NOISE:
     dc.SetPen(wxPen(*wxBLUE, lineWidth));
+    break;
+  case INPUT_IMPED:
+    dc.SetPen(wxPen(*wxGREEN, lineWidth));
     break;
   }
 

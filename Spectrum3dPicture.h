@@ -38,6 +38,7 @@ private:
   Acoustic3dSimulation *simu3d;
   bool m_showGlottalTf;
   bool m_showNoiseTf;
+  bool m_showInputImped;
 
   // for acoustic field computation
   bool m_changeFreqField;

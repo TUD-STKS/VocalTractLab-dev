@@ -135,10 +135,10 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
     dc.SetPen(wxPen(*wxBLACK, lineWidth));
     break;
   case NOISE:
-    dc.SetPen(wxPen(*wxBLUE, lineWidth));
+    dc.SetPen(wxPen(wxColour(0, 90, 181, 255), lineWidth));
     break;
   case INPUT_IMPED:
-    dc.SetPen(wxPen(*wxGREEN, lineWidth));
+    dc.SetPen(wxPen(wxColour(68, 170, 153, 255), lineWidth));
     break;
   }
 

@@ -74,8 +74,9 @@ static const int IDB_FREQUENCY_RANGE_MINUS			  = 7006;
 static const int IDB_FREQUENCY_RANGE_PLUS 		  	= 7007;
 
 static const int IDB_SHOW_NOISE_SOURCE_SPEC       = 7008;
-static const int IDB_PREVIOUS_TF                  = 7009;
-static const int IDB_NEXT_TF                      = 7010;
+static const int IDB_SHOW_INPUT_IMPED_SPEC        = 7009;
+static const int IDB_PREVIOUS_TF                  = 7010;
+static const int IDB_NEXT_TF                      = 7011;
 
 // ****************************************************************************
 // The event table.
@@ -131,6 +132,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_MINUS, Acoustic3dPage::OnFrequencyRangeMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_PLUS, Acoustic3dPage::OnFrequencyRangePlus)
   EVT_CHECKBOX(IDB_SHOW_NOISE_SOURCE_SPEC, Acoustic3dPage::OnShowNoiseSourceSpec)
+  EVT_CHECKBOX(IDB_SHOW_INPUT_IMPED_SPEC, Acoustic3dPage::OnShowInputImpedSpec)
   EVT_BUTTON(IDB_PREVIOUS_TF, Acoustic3dPage::OnPreviousTf)
   EVT_BUTTON(IDB_NEXT_TF, Acoustic3dPage::OnNextTf)
 END_EVENT_TABLE()
@@ -192,6 +194,7 @@ void Acoustic3dPage::updateWidgets()
 
   // option for spectrum 3D picture
   chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
+  chkShowInputImped->SetValue(picSpectrum->showInputImped());
 
   picPropModes->Refresh();
   picSpectrum->Refresh();
@@ -471,6 +474,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise source");
   sizer->Add(chkShowNoiseSourceSpec, 0, wxALL, 2);
+
+  chkShowInputImped = new wxCheckBox(bottomPanel, IDB_SHOW_INPUT_IMPED_SPEC, "Input impedance");
+  sizer->Add(chkShowInputImped, 0, wxALL, 2);
 
   // text to display the transfer function point coordinates
   wxStaticText* label = new wxStaticText(bottomPanel, wxID_ANY, "Transfer function point:");
@@ -1379,6 +1385,14 @@ void Acoustic3dPage::OnFrequencyRangePlus(wxCommandEvent &event)
 void Acoustic3dPage::OnShowNoiseSourceSpec(wxCommandEvent& event)
 {
   picSpectrum->setShowNoiseTf(chkShowNoiseSourceSpec->GetValue());
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowInputImpedSpec(wxCommandEvent& event)
+{
+  picSpectrum->setShowInputImped(chkShowInputImped->GetValue());
   picSpectrum->Refresh();
 }
 

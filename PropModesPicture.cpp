@@ -23,6 +23,7 @@ typedef Eigen::VectorXd Vec;
 // typedef for CGAL
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polygon_2<K>                            Polygon_2;
+typedef CGAL::Aff_transformation_2<K>           Transformation;
 
 // for the colormap
 typedef int(*ColorMap)[256][3];
@@ -113,6 +114,7 @@ void PropModesPicture::draw(wxDC& dc)
 // ****************************************************************
 
   sectionIdx = m_segPic->activeSegment();
+  auto seg = m_simu3d->crossSection(sectionIdx);
 
 // ****************************************************************
 // Determine the zoom (pix/cm).
@@ -145,7 +147,7 @@ void PropModesPicture::draw(wxDC& dc)
     m_zoom = (double)height * 1 / maxLength;
 	}
 
-  if (((m_simu3d->crossSection(sectionIdx))->numberOfFaces() == 0)) {
+  if ((seg->numberOfFaces() == 0)) {
     m_objectToDisplay = CONTOUR;
   }
 
@@ -155,28 +157,28 @@ void PropModesPicture::draw(wxDC& dc)
 
   tbText.addCell("Segment index", sectionIdx);
   tbText.addCell(" ", " ");
-  tbText.addCell("Area (cm^2)", m_simu3d->crossSection(sectionIdx)->area());
-  tbText.addCell("Length (cm)", m_simu3d->crossSection(sectionIdx)->length());
+  tbText.addCell("Area (cm^2)", seg->area());
+  tbText.addCell("Length (cm)", seg->length());
   tbText.addCell("Curv angle (deg)",
-    180. * m_simu3d->crossSection(sectionIdx)->circleArcAngle() / M_PI);
-  tbText.addCell("Curv radius (cm)", m_simu3d->crossSection(sectionIdx)->curvRadius());
-  tbText.addCell("Scaling in", m_simu3d->crossSection(sectionIdx)->scaleIn());
-  tbText.addCell("Scaling out", m_simu3d->crossSection(sectionIdx)->scaleOut());
+    180. * seg->circleArcAngle() / M_PI);
+  tbText.addCell("Curv radius (cm)", seg->curvRadius());
+  tbText.addCell("Scaling in", seg->scaleIn());
+  tbText.addCell("Scaling out", seg->scaleOut());
 
 // ****************************************************************
 // Draw the mesh
 // ****************************************************************
 
-    vector<int> surf = (m_simu3d->crossSection(sectionIdx))->surfaceIdx();
+    vector<int> surf = seg->surfaceIdx();
 
 		switch (m_objectToDisplay) {
 		case MESH: {
 
 			array<int, 3> tri;
 
-			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
-			vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
-			vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
+			int numFaces = seg->numberOfFaces();
+			vector<array<double, 2>> pts = seg->getPoints();
+			vector<array<int, 3>> triangles = seg->getTriangles();
 
 			auto start = std::chrono::system_clock::now();
 			auto end = std::chrono::system_clock::now();
@@ -210,8 +212,8 @@ void PropModesPicture::draw(wxDC& dc)
       drawContour(sectionIdx, surf, dc);
 
 			// display number of vertex, segments and triangles
-      tbText.addCell("Nb vertexes", (m_simu3d->crossSection(sectionIdx))->numberOfVertices());
-      tbText.addCell("nb faces", (m_simu3d->crossSection(sectionIdx))->numberOfFaces());
+      tbText.addCell("Nb vertexes", seg->numberOfVertices());
+      tbText.addCell("nb faces", seg->numberOfFaces());
 
 			//end = std::chrono::system_clock::now();
 			//elapsed_seconds = end - start;
@@ -243,9 +245,7 @@ void PropModesPicture::draw(wxDC& dc)
 
 			// check if the mode index is in the range of the number
 			// of modes
-			m_modeIdx = max(0, min((
-				m_simu3d->crossSection(sectionIdx))->numberOfModes()-1,
-				m_modeIdx));
+			m_modeIdx = max(0, min(seg->numberOfModes()-1, m_modeIdx));
 
 			ColorMap colorMap = ColorScale::getColorMap();
 
@@ -266,15 +266,15 @@ void PropModesPicture::draw(wxDC& dc)
 				p.OffsetY(data, 1);
 			}
 
-			int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
-			int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
-			vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
-			vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
-			Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
+			int numFaces = seg->numberOfFaces();
+			int numVertex = seg->numberOfVertices();
+			vector<array<double, 2>> pts = seg->getPoints();
+			vector<array<int, 3>> triangles = seg->getTriangles();
+			Matrix modes = seg->getModes();
 
 			// extract the maximum and minimum of amplitude
-			maxAmp = (m_simu3d->crossSection(sectionIdx))->getMaxAmplitude(m_modeIdx);
-			minAmp = (m_simu3d->crossSection(sectionIdx))->getMinAmplitude(m_modeIdx);
+			maxAmp = seg->getMaxAmplitude(m_modeIdx);
+			minAmp = seg->getMinAmplitude(m_modeIdx);
 
 
 			// draw the propagation mode
@@ -345,10 +345,10 @@ void PropModesPicture::draw(wxDC& dc)
 			// write informations about the mode
       info.str("");
       info << m_modeIdx + 1 << " / "
-        << (m_simu3d->crossSection(sectionIdx))->numberOfModes();
+        << seg->numberOfModes();
       tbText.addCell("mode", info.str());
       tbText.addCell("Cutoff freq (Hz)",
-        (m_simu3d->crossSection(sectionIdx))->eigenFrequency(m_modeIdx));
+        seg->eigenFrequency(m_modeIdx));
 
 			dc.DrawBitmap(bmp, 0, 0, 0);
 
@@ -363,7 +363,7 @@ void PropModesPicture::draw(wxDC& dc)
     // ****************************************************************
 
 		case JUNCTION_MATRIX: {
-			vector<Matrix> F = (m_simu3d->crossSection(sectionIdx))->getMatrixF();
+			vector<Matrix> F = seg->getMatrixF();
 			int numCont(F.size());
 			int maxNumF(0);
 
@@ -431,7 +431,7 @@ void PropModesPicture::draw(wxDC& dc)
 
     case ACOUSTIC_FIELD: {
 
-      if (m_simu3d->crossSection(sectionIdx)->Pout().rows() > 0)
+      if (seg->Pout().rows() > 0)
       {
         ColorMap colorMap = ColorScale::getColorMap();
         double maxAmp;
@@ -468,14 +468,14 @@ void PropModesPicture::draw(wxDC& dc)
           p.OffsetY(data, 1);
         }
 
-        int numFaces = (m_simu3d->crossSection(sectionIdx))->numberOfFaces();
-        int numVertex = (m_simu3d->crossSection(sectionIdx))->numberOfVertices();
-        vector<array<double, 2>> pts = (m_simu3d->crossSection(sectionIdx))->getPoints();
-        vector<array<int, 3>> triangles = (m_simu3d->crossSection(sectionIdx))->getTriangles();
-        Matrix modes = (m_simu3d->crossSection(sectionIdx))->getModes();
+        int numFaces = seg->numberOfFaces();
+        int numVertex = seg->numberOfVertices();
+        vector<array<double, 2>> pts = seg->getPoints();
+        vector<array<int, 3>> triangles = seg->getTriangles();
+        Matrix modes = seg->getModes();
         int mn(modes.cols());
 
-        auto modesAmpl(m_simu3d->crossSection(sectionIdx)->Pout());
+        auto modesAmpl(seg->Pout());
 
         Vec amplitudes((modes * modesAmpl).cwiseAbs());
 
@@ -560,20 +560,41 @@ void PropModesPicture::draw(wxDC& dc)
     }
 
       default:
+      {
+        double scaling;
+        bool needToScale(false);
+
         switch (m_positionContour)
         {
         case 0:
+        {
+          scaling = seg->scaleIn();
+          needToScale = true;
           tbText.addCell("Entrance", "");
           break;
+        }
         case 1:
           tbText.addCell("Mode computation size", "");
           break;
         case 2:
+          scaling = seg->scaleOut();
+          needToScale = true;
           tbText.addCell("Exit", "");
           break;
         }
+
+        if (needToScale)
+        {
+          Transformation scale(CGAL::SCALING, scaling);
+          double scaledArea = abs(transform(scale, seg->contour()).area());
+
+          // modify the value of te cross-sectional area displayed
+          tbText.setCell(2, "Area (cm^2)", scaledArea);
+        }
+
         drawContour(sectionIdx, surf, dc);
         break;
+      }
 		}
 
     tbText.printCells(dc);

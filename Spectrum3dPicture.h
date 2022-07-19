@@ -23,8 +23,12 @@ public:
   virtual void draw(wxDC &dc);
   void paintSpectrum(wxDC &dc);
   void setShowNoiseTf(bool show) { m_showNoiseTf = show; }
-  bool showNoise() const { return m_showNoiseTf; }
+  void setShowInputImped(bool show) { m_showInputImped = show; }
   void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
+
+  // accessors
+  bool showNoise() const { return m_showNoiseTf; }
+  bool showInputImped() const { return m_showInputImped; }
   
   // **************************************************************************
   // Private data.

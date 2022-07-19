@@ -36,6 +36,21 @@ public:
     m_cells.push_back(cellToAdd);
   };
 
+  template <typename T> void setCell(int cellIdx, string label, T value)
+  {
+    ostringstream ost;
+    cell cellToAdd;
+
+    cellToAdd.label = label;
+
+    ost << setprecision(2) << fixed;
+    ost << value;
+
+    cellToAdd.value = ost.str();
+
+    m_cells[cellIdx] = cellToAdd;
+  }
+
   void printCells(wxDC& dc);
 
 private:

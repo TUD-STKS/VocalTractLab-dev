@@ -51,6 +51,7 @@ private:
   wxCheckBox* chkShowMode;
   wxCheckBox* chkShowTransField;
   wxCheckBox* chkShowNoiseSourceSpec;
+  wxCheckBox* chkShowInputImped;
   //wxCheckBox* chkShowF;
 
   // spectrum picture controls
@@ -120,6 +121,7 @@ private:
   void OnFrequencyRangeMinus(wxCommandEvent& event);
   void OnFrequencyRangePlus(wxCommandEvent& event);
   void OnShowNoiseSourceSpec(wxCommandEvent& event);
+  void OnShowInputImpedSpec(wxCommandEvent& event);
   void OnPreviousTf(wxCommandEvent& event);
   void OnNextTf(wxCommandEvent& event);
 

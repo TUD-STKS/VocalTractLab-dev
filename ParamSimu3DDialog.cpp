@@ -290,16 +290,16 @@ void ParamSimu3DDialog::updateWidgets()
     lstMouthBcond->SetValue(m_listMouthBcond[0]);
     break;
   case HARD_WALL:
-    lstMouthBcond->SetValue(m_listMouthBcond[1]);
+    lstMouthBcond->SetValue(m_listMouthBcond[0]);
     break;
   case ADMITTANCE_1:
-    lstMouthBcond->SetValue(m_listMouthBcond[1]);
+    lstMouthBcond->SetValue(m_listMouthBcond[0]);
     break;
   case ZERO_PRESSURE:
-    lstMouthBcond->SetValue(m_listMouthBcond[2]);
+    lstMouthBcond->SetValue(m_listMouthBcond[1]);
     break;
   default:
-    lstMouthBcond->SetValue(m_listMouthBcond[1]);
+    lstMouthBcond->SetValue(m_listMouthBcond[0]);
     break;
   }
 
@@ -425,7 +425,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   // create the list of boundary conditions
   m_listMouthBcond.clear();
   m_listMouthBcond.push_back("Radiation");
-  m_listMouthBcond.push_back("Constant admittance");
+  //m_listMouthBcond.push_back("Constant admittance");
   m_listMouthBcond.push_back("Zero pressure");
 
   lstMouthBcond->Clear();
@@ -468,36 +468,30 @@ void ParamSimu3DDialog::initWidgets()
     wxButton* button; 
 
     ///////////////////////////////////////////////////////////////////
-    // Physical constants
+    // Geometry options
     ///////////////////////////////////////////////////////////////////
 
-    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Physical constants");
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Geometry options");
 
     // ****************************************************************
-    // Set temperature or sound speed.
+    // Select the geometrical features
     // ****************************************************************
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Temperature (°C): ");
-    lineSizer->Add(label, 6, wxALL | wxALIGN_CENTER, 3);
+    chkCurv = new wxCheckBox(this, IDB_CHK_CURV, "Curved");
+    lineSizer->Add(chkCurv, 1, wxALL, 2);
 
-    txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,
-      wxSize(10, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtTemperature, 4, wxALL, 3);
+    chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
+    lineSizer->Add(chkVarArea, 1, wxALL, 2);
 
-    lineSizer->AddStretchSpacer(2);
+    lstScalingFacMethods = new wxComboBox(this, IDL_SCALING_FAC_METHOD, "", wxDefaultPosition,
+      this->FromDIP(wxSize(10, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstScalingFacMethods, 1, wxALL, 3);
 
-    label = new wxStaticText(this, wxID_ANY, "Sound speed (m/s): ");
-    lineSizer->Add(label, 6, wxALL | wxALIGN_CENTER, 3);
+    lineSizer->AddStretchSpacer();
 
-    txtSndSpeed = new wxTextCtrl(this, IDE_SND_SPEED, "", wxDefaultPosition,
-      wxSize(10, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtSndSpeed, 4, wxALL, 3);
-
-    lineSizer->AddStretchSpacer(2);
-
-    sz->Add(lineSizer, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
@@ -545,6 +539,41 @@ void ParamSimu3DDialog::initWidgets()
     topLevelSizer->Add(sz, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
     ///////////////////////////////////////////////////////////////////
+    // Physical constants
+    ///////////////////////////////////////////////////////////////////
+
+    topLevelSizer->AddSpacer(10);
+    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Physical constants");
+
+    // ****************************************************************
+    // Set temperature or sound speed.
+    // ****************************************************************
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    label = new wxStaticText(this, wxID_ANY, "Temperature (°C): ");
+    lineSizer->Add(label, 6, wxALL | wxALIGN_CENTER, 3);
+
+    txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,
+      wxSize(10, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtTemperature, 4, wxALL, 3);
+
+    lineSizer->AddStretchSpacer(2);
+
+    label = new wxStaticText(this, wxID_ANY, "Sound speed (m/s): ");
+    lineSizer->Add(label, 6, wxALL | wxALIGN_CENTER, 3);
+
+    txtSndSpeed = new wxTextCtrl(this, IDE_SND_SPEED, "", wxDefaultPosition,
+      wxSize(10, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtSndSpeed, 4, wxALL, 3);
+
+    lineSizer->AddStretchSpacer(2);
+
+    sz->Add(lineSizer, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+
+    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    ///////////////////////////////////////////////////////////////////
     // Numerical scheme options
     ///////////////////////////////////////////////////////////////////
 
@@ -584,34 +613,7 @@ void ParamSimu3DDialog::initWidgets()
 
     topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
-    ///////////////////////////////////////////////////////////////////
-    // Geometry options
-    ///////////////////////////////////////////////////////////////////
-
-    topLevelSizer->AddSpacer(10);
-    sz = new wxStaticBoxSizer(wxVERTICAL, this, "Geometry options");
-
-    // ****************************************************************
-    // Select the geometrical features
-    // ****************************************************************
-
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    chkCurv = new wxCheckBox(this, IDB_CHK_CURV, "Curved");
-    lineSizer->Add(chkCurv, 1, wxALL, 2);
-
-    chkVarArea = new wxCheckBox(this, IDB_CHK_VAR_AREA, "Varying area");
-    lineSizer->Add(chkVarArea, 1, wxALL, 2);
-
-    lstScalingFacMethods = new wxComboBox(this, IDL_SCALING_FAC_METHOD, "", wxDefaultPosition,
-      this->FromDIP(wxSize(10, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
-    lineSizer->Add(lstScalingFacMethods, 1, wxALL, 3);
-
-    lineSizer->AddStretchSpacer();
-
-    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
-
-    topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+    
 
     ///////////////////////////////////////////////////////////////////
     // Boundary conditions options
@@ -643,7 +645,7 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Percentage of losses: ");
+    label = new wxStaticText(this, wxID_ANY, "Percentage of wall losses: ");
     lineSizer->Add(label, 4, wxALL | wxALIGN_CENTER, 3);
 
     txtPercLoss = new wxTextCtrl(this, IDE_PERCENT_LOSSES, "", wxDefaultPosition,
@@ -716,6 +718,23 @@ void ParamSimu3DDialog::initWidgets()
     sz = new wxStaticBoxSizer(wxVERTICAL, this, "Transfer functions options");
 
     // ****************************************************************
+    // Set the section containing the noise source
+    // ****************************************************************
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    label = new wxStaticText(this, wxID_ANY, "Index of noise source section: ");
+    lineSizer->Add(label, 4, wxALL | wxALIGN_CENTER, 3);
+
+    txtSecNoiseSource = new wxTextCtrl(this, IDE_SEC_NOISE_SOURCE, "", wxDefaultPosition,
+      wxSize(10, -1), wxTE_PROCESS_ENTER);
+    lineSizer->Add(txtSecNoiseSource, 1, wxALL, 3);
+
+    lineSizer->AddStretchSpacer(3);
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
+
+    // ****************************************************************
     // Set the maximal computed frequency
     // ****************************************************************
 
@@ -727,23 +746,6 @@ void ParamSimu3DDialog::initWidgets()
     txtMaxSimFreq = new wxTextCtrl(this, IDE_MAX_SIM_FREQ, "", wxDefaultPosition,
         wxSize(10, -1), wxTE_PROCESS_ENTER);
     lineSizer->Add(txtMaxSimFreq, 1, wxALL, 3);
-
-    lineSizer->AddStretchSpacer(3);
-
-    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
-
-    // ****************************************************************
-    // Set the section containing the noise source
-    // ****************************************************************
-
-    lineSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    label = new wxStaticText(this, wxID_ANY, "Index of noise source section: ");
-    lineSizer->Add(label, 4, wxALL | wxALIGN_CENTER, 3);
-
-    txtSecNoiseSource = new wxTextCtrl(this, IDE_SEC_NOISE_SOURCE, "", wxDefaultPosition,
-        wxSize(10, -1), wxTE_PROCESS_ENTER);
-    lineSizer->Add(txtSecNoiseSource, 1, wxALL, 3);
 
     lineSizer->AddStretchSpacer(3);
 
@@ -1427,10 +1429,10 @@ void ParamSimu3DDialog::OnMouthBcond(wxCommandEvent& event)
   case 0:
     m_mouthBoundaryCond = RADIATION;
     break;
+  //case 1:
+  //  m_mouthBoundaryCond = ADMITTANCE_1;
+  //  break;
   case 1:
-    m_mouthBoundaryCond = ADMITTANCE_1;
-    break;
-  case 2:
     m_mouthBoundaryCond = ZERO_PRESSURE;
     break;
   default:

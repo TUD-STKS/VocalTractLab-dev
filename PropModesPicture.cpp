@@ -490,7 +490,7 @@ void PropModesPicture::draw(wxDC& dc)
         }
         if (m_fieldInLogScale) {
           maxAmp = 20. * log10(maxAmp);
-          minAmp = 20. * log10(minAmp);
+          minAmp = max(maxAmp - 80, 20. * log10(minAmp));
           maxAmp = maxAmp - minAmp + dbShift;
         }
 

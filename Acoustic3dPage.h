@@ -50,12 +50,13 @@ private:
   wxCheckBox* chkShowMesh;
   wxCheckBox* chkShowMode;
   wxCheckBox* chkShowTransField;
-  wxCheckBox* chkShowNoiseSourceSpec;
-  wxCheckBox* chkShowInputImped;
   //wxCheckBox* chkShowF;
 
   // spectrum picture controls
   wxStaticText* txtTfPoint;
+  wxCheckBox* chkShowGlottalSourceTf;
+  wxCheckBox* chkShowNoiseSourceSpec;
+  wxCheckBox* chkShowInputImped;
 
   wxGenericProgressDialog* progressDialog;
 
@@ -89,13 +90,12 @@ private:
   void OnComputeModes(wxCommandEvent& event);
   void OnComputeTf(wxCommandEvent& event);
   void OnComputeAcousticField(wxCommandEvent& event);
-  void OnExportGlottalSourceTf(wxCommandEvent& event);
-  void OnExportNoiseSourceTf(wxCommandEvent& event);
+  //void OnExportGlottalSourceTf(wxCommandEvent& event);
+  //void OnExportNoiseSourceTf(wxCommandEvent& event);
   void OnLfPulse(wxCommandEvent& event);
   void OnPlayLongVowel(wxCommandEvent& event);
   void OnPlayLongVowel();
   void OnPlayNoiseSource(wxCommandEvent& event);
-  //void OnExportField(wxCommandEvent& event);
 
   // event handlers for mode picture
   void OnShowPrevious(wxCommandEvent& event);
@@ -120,6 +120,7 @@ private:
   void OnLowerSpectrumLimitMinus(wxCommandEvent& event);
   void OnFrequencyRangeMinus(wxCommandEvent& event);
   void OnFrequencyRangePlus(wxCommandEvent& event);
+  void OnShowGlottalSourceTf(wxCommandEvent& event);
   void OnShowNoiseSourceSpec(wxCommandEvent& event);
   void OnShowInputImpedSpec(wxCommandEvent& event);
   void OnPreviousTf(wxCommandEvent& event);

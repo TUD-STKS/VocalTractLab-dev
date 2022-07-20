@@ -40,8 +40,8 @@ static const int IDB_IMPORT_GEOMETRY              = 6003;
 static const int IDB_COMPUTE_MODES                = 6004;
 static const int IDB_COMPUTE_TF                   = 6005;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6006;
-static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6007;
-static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6008;
+//static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6007;
+//static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6008;
 static const int IDB_LF_PULSE                     = 6009;
 static const int IDB_PLAY_LONG_VOWEL              = 6010;
 static const int IDB_PLAY_NOISE_SOURCE            = 6011;
@@ -71,12 +71,12 @@ static const int IDB_UPPER_SPECTRUM_LIMIT_MINUS		= 7001;
 static const int IDB_LOWER_SPECTRUM_LIMIT_PLUS		= 7002;
 static const int IDB_LOWER_SPECTRUM_LIMIT_MINUS		= 7003;
 static const int IDB_FREQUENCY_RANGE_MINUS			  = 7006;
-static const int IDB_FREQUENCY_RANGE_PLUS 		  	= 7007;
-
-static const int IDB_SHOW_NOISE_SOURCE_SPEC       = 7008;
-static const int IDB_SHOW_INPUT_IMPED_SPEC        = 7009;
-static const int IDB_PREVIOUS_TF                  = 7010;
-static const int IDB_NEXT_TF                      = 7011;
+static const int IDB_FREQUENCY_RANGE_PLUS         = 7007;
+static const int IDB_SHOW_GLOTTAL_SOURCE_TF       = 7008;
+static const int IDB_SHOW_NOISE_SOURCE_SPEC       = 7009;
+static const int IDB_SHOW_INPUT_IMPED_SPEC        = 7010;
+static const int IDB_PREVIOUS_TF                  = 7011;
+static const int IDB_NEXT_TF                      = 7012;
 
 // ****************************************************************************
 // The event table.
@@ -101,8 +101,8 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_TF, Acoustic3dPage::OnComputeTf)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
-  EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
-  EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
+  //EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
+  //EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
   EVT_BUTTON(IDB_LF_PULSE, Acoustic3dPage::OnLfPulse)
   EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
@@ -131,6 +131,7 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_LOWER_SPECTRUM_LIMIT_MINUS, Acoustic3dPage::OnLowerSpectrumLimitMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_MINUS, Acoustic3dPage::OnFrequencyRangeMinus)
   EVT_BUTTON(IDB_FREQUENCY_RANGE_PLUS, Acoustic3dPage::OnFrequencyRangePlus)
+  EVT_CHECKBOX(IDB_SHOW_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnShowGlottalSourceTf)
   EVT_CHECKBOX(IDB_SHOW_NOISE_SOURCE_SPEC, Acoustic3dPage::OnShowNoiseSourceSpec)
   EVT_CHECKBOX(IDB_SHOW_INPUT_IMPED_SPEC, Acoustic3dPage::OnShowInputImpedSpec)
   EVT_BUTTON(IDB_PREVIOUS_TF, Acoustic3dPage::OnPreviousTf)
@@ -193,6 +194,7 @@ void Acoustic3dPage::updateWidgets()
   segPic->setShowTfPts(chkShowTfPts->GetValue());
 
   // option for spectrum 3D picture
+  chkShowGlottalSourceTf->SetValue(picSpectrum->showGlottalTf());
   chkShowNoiseSourceSpec->SetValue(picSpectrum->showNoise());
   chkShowInputImped->SetValue(picSpectrum->showInputImped());
 
@@ -236,9 +238,6 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   wxBoxSizer* leftSizer = new wxBoxSizer(wxVERTICAL);
 
-  button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
   button = new wxButton(this, IDB_VOCAL_TRACT_DIALOG, "Show vocal tract");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
@@ -249,6 +248,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(20);
+
+  button = new wxButton(this, IDB_PARAM_SIMU_DIALOG, "Simulation parameters");
+  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   //button = new wxButton(this, IDB_RUN_TEST_JUNCTION, "Run test junction");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
@@ -265,6 +267,8 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   //button = new wxButton(this, IDB_RUN_TEST_ELEPHANT, "Run test elphant");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
+  leftSizer->AddSpacer(20);
+
   button = new wxButton(this, IDB_COMPUTE_MODES, "Compute modes");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
@@ -274,15 +278,12 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  leftSizer->AddSpacer(20);
+  //leftSizer->AddSpacer(20);
   
-  button = new wxButton(this, IDB_EXPORT_GLOTTAL_SOURCE_TF, "Export glottal transfer function");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
+  //button = new wxButton(this, IDB_EXPORT_GLOTTAL_SOURCE_TF, "Export glottal transfer function");
+  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
-  button = new wxButton(this, IDB_EXPORT_NOISE_SOURCE_TF, "Export noise transfer function");
-  leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  //button = new wxButton(this, IDB_EXPORT_FIELD, "Export acoustic field");
+  //button = new wxButton(this, IDB_EXPORT_NOISE_SOURCE_TF, "Export noise transfer function");
   //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(20);
@@ -322,26 +323,19 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   wxPanel* topPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   wxPanel* bottomPanel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize);
   splitter->SplitHorizontally(topPanel, bottomPanel);
-  splitter->SetSashPosition(550);
+  splitter->SetSashPosition(600);
 
   topLevelSizer->Add(splitter, 1, wxEXPAND);
 
 // ****************************************************************
-// Create the top panel (area function picture and cross-section
-// picture).
+// Create the top panel (segment picture and modes picture).
 // ****************************************************************
 
   wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
   topPanel->SetSizer(topSizer);
 
-  //wxBoxSizer* topLeftSizer = new wxBoxSizer(wxVERTICAL);
-
-  //picAreaFunction = new AreaFunctionPicture(topPanel, picVocalTract, this);
-  //picAreaFunction->showSideBranches = false;
-  //topLeftSizer->Add(picAreaFunction, 1, wxEXPAND | wxALL, 2);
-
-  //topSizer->Add(topLeftSizer, 2, wxEXPAND | wxALL, 2);
-
+  // ****************************************************************
+  // Create segment picture.
   // ****************************************************************
 
   wxBoxSizer* middleSizer = new wxBoxSizer(wxVERTICAL);
@@ -383,8 +377,11 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   sizer->AddStretchSpacer(1);
 
   middleSizer->Add(sizer, 0, wxEXPAND | wxALIGN_CENTER_HORIZONTAL);
+
   topSizer->Add(middleSizer, 1, wxEXPAND | wxALL, 2);
 
+  // ****************************************************************
+  // Create transverse plane picture.
   // ****************************************************************
 
   wxBoxSizer* topRightSizer = new wxBoxSizer(wxVERTICAL);
@@ -471,6 +468,9 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
   // the bottom side
 
   sizer = new wxBoxSizer(wxVERTICAL);
+
+  chkShowGlottalSourceTf = new wxCheckBox(bottomPanel, IDB_SHOW_GLOTTAL_SOURCE_TF, "Glottal source");
+  sizer->Add(chkShowGlottalSourceTf, 0, wxALL, 2);
 
   chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise source");
   sizer->Add(chkShowNoiseSourceSpec, 0, wxALL, 2);
@@ -1045,40 +1045,27 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-void Acoustic3dPage::OnExportGlottalSourceTf(wxCommandEvent& event)
-{
-  wxFileName fileName;
-  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
-    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
-    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
-
-  simu3d->exportTransferFucntions(name.ToStdString(), GLOTTAL);
-}
-
-// ****************************************************************************
-// ****************************************************************************
-
-void Acoustic3dPage::OnExportNoiseSourceTf(wxCommandEvent& event)
-{
-  wxFileName fileName;
-  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
-    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
-    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
-
-  simu3d->exportTransferFucntions(name.ToStdString(), NOISE);
-}
-
-// ****************************************************************************
-// ****************************************************************************
-
-//void Acoustic3dPage::OnExportField(wxCommandEvent& event)
+//void Acoustic3dPage::OnExportGlottalSourceTf(wxCommandEvent& event)
 //{
 //  wxFileName fileName;
-//  wxString name = wxFileSelector("Save acoustic field", fileName.GetPath(),
+//  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
 //    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
 //    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 //
-//  simu3d->exportAcousticField(name.ToStdString());
+//  simu3d->exportTransferFucntions(name.ToStdString(), GLOTTAL);
+//}
+//
+//// ****************************************************************************
+//// ****************************************************************************
+//
+//void Acoustic3dPage::OnExportNoiseSourceTf(wxCommandEvent& event)
+//{
+//  wxFileName fileName;
+//  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
+//    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
+//    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
+//
+//  simu3d->exportTransferFucntions(name.ToStdString(), NOISE);
 //}
 
 // ****************************************************************************
@@ -1377,6 +1364,14 @@ void Acoustic3dPage::OnFrequencyRangeMinus(wxCommandEvent &event)
 void Acoustic3dPage::OnFrequencyRangePlus(wxCommandEvent &event)
 {
   picSpectrum->graph.zoomOutAbscissa(false, true);
+  picSpectrum->Refresh();
+}
+
+// ****************************************************************************
+
+void Acoustic3dPage::OnShowGlottalSourceTf(wxCommandEvent& event)
+{
+  picSpectrum->setShowGlottalTf(chkShowGlottalSourceTf->GetValue());
   picSpectrum->Refresh();
 }
 

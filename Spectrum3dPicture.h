@@ -22,11 +22,13 @@ public:
   Spectrum3dPicture(wxWindow *parent, Acoustic3dSimulation *simu3d);
   virtual void draw(wxDC &dc);
   void paintSpectrum(wxDC &dc);
+  void setShowGlottalTf(bool show) { m_showGlottalTf = show; }
   void setShowNoiseTf(bool show) { m_showNoiseTf = show; }
   void setShowInputImped(bool show) { m_showInputImped = show; }
   void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
 
   // accessors
+  bool showGlottalTf() const { return m_showGlottalTf; }
   bool showNoise() const { return m_showNoiseTf; }
   bool showInputImped() const { return m_showInputImped; }
   

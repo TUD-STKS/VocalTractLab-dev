@@ -139,15 +139,20 @@
 	
 	\subsection{Overview}
 	
-	\hl{SHOW THE INTERFACE}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=0.35]{acoustic_3d_simu_page.png}
+		\caption{The different panels of the "3D acoustic simulation" page.}
+		\label{figure:acoustic_3d_simu_page}
+	\end{figure}
 	
 	When VocalTractLab3D is started, it shows by default 2 windows:
 	\begin{itemize}
 		\item The main window showing the "3d acoustic simulation" page.
 		\item A small window showing the 3D geometry corresponding to the articulatory model: the vocal tract dialog. The user can interact with the articulatory model using the control points to move the articulators. When closed, this window can be shown again by clicking on the button "Show vocal tract".
 	\end{itemize}
-	
-	The "3d acoustic simulation" is divided in 4 panels:
+
+	The "3d acoustic simulation" is divided in 4 panels (see Fig.~\ref{figure:acoustic_3d_simu_page}):
 	\begin{enumerate}
 		\item the left panel contains buttons to manage the geometries, perform the simulations and synthesis.
 		\item The middle panel shows a sagittal cut of the geometry simulated.
@@ -159,6 +164,10 @@
 	\subsection{Geometries}
 
 	\subsubsection{Defining vocal tract geometries}
+	
+	\hl{MENTION THE POSSIBILITY TO CREATE GEOMETRY FILES WITH VTTF} \\
+	
+	\hl{MENTION THAT GEOMTRIES ARE PROVIDED FOR SOME PHONEMES} \\
 	
 	When VocalTractLab is started, the default geometry of the articulatory model is already loaded and ready to use for 
 	simulations.
@@ -173,25 +182,6 @@
 		formated in a specific way. 
 	\end{itemize}
 
-\begin{table}
-	\centering
-	\begin{tabular}{c c c c c c c}
-		\hline
-		\texttt{Centerline} $x$ & \texttt{Normal} $x$ & 
-		\texttt{Input scaling} & \texttt{Contour point 1} $y$ &  
-		\texttt{Contour point 2} $y$ & ... 
-		& \texttt{Contour point N} $y$ \\
-		\hline
-		\texttt{Centerline} $y$ & \texttt{Normal} $y$ & 
-		\texttt{Output scaling} & \texttt{Contour point 1} $z$ &  
-		\texttt{Contour point 2} $z$ & ... 
-		& \texttt{Contour point N} $z$ \\
-		\hline
-	\end{tabular}
-\caption{Csv file format to encode segmented vocal tract geometries.}
-\label{table:csv_file_format}
-\end{table}
-	
 	\textbf{Csv format for externally defined geometries:}\\
 	The file describes a list of segments by specifying
 	\begin{itemize}
@@ -200,6 +190,26 @@
 		\item input and output scaling factors,
 		\item and a contour.
 	\end{itemize}
+
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{c c c c c c c}
+			\hline
+			\texttt{Centerline} $x$ & \texttt{Normal} $x$ & 
+			\texttt{Input scaling} & \texttt{Contour point 1} $y$ &  
+			\texttt{Contour point 2} $y$ & ... 
+			& \texttt{Contour point N} $y$ \\
+			\hline
+			\texttt{Centerline} $y$ & \texttt{Normal} $y$ & 
+			\texttt{Output scaling} & \texttt{Contour point 1} $z$ &  
+			\texttt{Contour point 2} $z$ & ... 
+			& \texttt{Contour point N} $z$ \\
+			\hline
+		\end{tabular}
+		\caption{Csv file format to encode segmented vocal tract geometries.}
+		\label{table:csv_file_format}
+	\end{table}
+
 	One segment is defined on two lines: the first one describes the 
 	first coordinates ($x$ or $y$) and the input scaling factor, the second one the second coordinates ($y$ or $z$) and the output scaling factor. 
 	This is summarized in the Tab.~\ref{table:csv_file_format}.
@@ -217,7 +227,7 @@
 	intermediate centerline point and normal between the last and 
 	before last centerline points and normals provided.
 	
-	\begin{table}
+	\begin{table}[h!]
 		\centering
 		\begin{tabular}{c c c c c c c }
 			-2.;& -1.;& 0.5;& -1.;& -1.;& 1.;& 1.; \\
@@ -277,15 +287,28 @@
 	When cliking on a segment, its outline becomes red to confirm that
 	it has been selected, and the contour and some information 
 	regarding the segment are displayed in the right panel.
+	It also possible to move to the previous and next segments using the buttons
+	"<" and ">" at the bottom of the central panel.
+	Note that this is the only way to visualize the junction segments which have 
+	a zero length.
 	When the geometry is provided by the articulatory model, it is 
 	possible to identify the type of surfaces which constitutes the 
-	edges of the the contour (tongue, teeth, lips, air at the lip corner, uvula, epiglottis and other walls \hl{check other surfaces}).
+	edges of the the contour (tongue, teeth, lips, openings on the sides of the 
+	lips, uvula, epiglottis and other walls).
 	The color code for these different surfaces is given in 
-	Fig.\hl{PUT A FIGURE WITH THE COLOR CODE OF THE SURFACES}.
+	Fig.~\ref{figure:colormap_anatomical_parts}.
 	By clicking on the arrows "<" and ">" at the bottom of the right  
 	panel, one can display the contour with its original dimensions 
 	("Mode computation size") and scaled at the entrance and exit of the
 	segment.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{colormap_anatomical_parts.pdf}
+		\caption{Correspondance between the colors and the anatomical parts to which
+		the walls corresponds.}
+		\label{figure:colormap_anatomical_parts}
+	\end{figure}
 	
 	The coordinates of the points of the contour can also be exported 
 	in a text file through the context menu of the right panel obtained
@@ -301,7 +324,7 @@
 	
 	\subsection{Transverse modes}
 	
-	\subsubsection{Computation of the transverse modes}
+	\subsubsection{Computation}
 	
 	The transverse modes can be computed by clicking the button
 	"Compute modes" of the left panel. This can be useful if one is interested in analyzing the transverse modes only without 
@@ -334,7 +357,7 @@
 	related, they cannot be modified independantly: changing the 
 	temperature will change the sound speed and conversely.
 
-	\subsubsection{Visualization of the transverse modes}
+	\subsubsection{Visualization}
 	
 	The mesh used to compute the transverse modes can be visualized
 	in the right panel by selecting "Mesh" in the bottom.
@@ -346,7 +369,7 @@
 	
 	\subsection{Transfer functions}
 	
-	\subsubsection{Computation of the transfer functions}
+	\subsubsection{Computation}
 	
 	The transfer functions can be computed by clicking on the button 
 	"Compute transfer functions" in the left panel.
@@ -383,17 +406,102 @@
 		can be set by the user.
 	\end{itemize}
 
-	\hl{Maximal frequency and frequency steps}
+	The index of the segement in which the noise source is integrated can be 
+	set either in the "Transfer functions options" section of the "Simulation parameters"
+	dialog, of through the context menu of the central panel by selecting 
+	"Define current segment as noise source location". 
+	The noise source segment is highlighted in blue (or green when selected) in the 
+	central panel.
+	When the segment has a non-zero length, the noise source if implemented at 
+	the end of the segment which is closer to the mouth exit.
+	The noise source implemented is uniform over the cross-sectional surface, which
+	is equivalent to exciting the vocal tract with a plane wave at the specified location.
+	The transfer function computed for the noise source is a pressure-pressure 
+	transfer function, contrarily to the glottal transfer function which is a 
+	velocity-pressure transfer function.
 	
-	\hl{noise source location}
+	The upper frequency limit for the transfer function computation can be set
+	in the "Transfer functions options" section of the "Simulation parameters".
+	The frequency step size can be selected in a list. 
+	The proposed values corresponds to division of the sampling frequency by powers
+	of 2 to make the synthesis which can be done afterward faster.
 	
-	\hl{Reception points}
+	The coordinates of the reception point of the transfer functions can also be set
+	in the "Transfer functions options" section of the "Simulation parameters".
+	It can be chosen iether to use a single point whose coordinates can be 
+	directly set, ot to use several points whose coordinates can be loaded from
+	a \texttt{.csv} file. 
+	The origin of the landmark in which the coordinates of the reception points are
+	expressed is the center of the mouth exit. 
+	The $\bm{n_y}$ unit vector of this landmark is the normal to the centerline
+	at the mouth exit.
+	\\ \hl{SHOW A LANDMARK AND SEGMENT SOMEWHERE} \\
+	The reception points can be place anywhere. 
+	However, if it is located in the half-space behind the mouth exit and not 
+	inside the vocal tract, the returned value will be a NAN.
 	
-	\subsubsection{Visualization of the transfer functions}
+	When point coordinates are loaded from a \texttt{.csv} file, they must be given
+	in 3 columns corresponding to the $x$, $y$ and $z$ coordinates. 
+	This functionality can be useful to compute the directivity patterns of the 
+	radiated sound, or the acoustic field at multiple frequencies.
+	\\ \hl{GIVE EXAMPLES OF DIRECTIVITY PATTERN COMPUTATION AND ACOUSTIC 
+		FIELD COMPUTATION WITH CORRESPONDING MATLAB CODE TO EXTRACT AND PLOT 
+		THE MAPS} \\
 	
-	\hl{bottom panel}
+	\subsubsection{Visualization}
 	
-	\hl{exportation of the transfer functions}
+	The transfer function points are visualized as "+" on the midle panel.
+	It is possible to hide them by unchecking "Show TF points" on the bottom of 
+	the panel. This can be useful if many points are used and their visualization 
+	disturbs the visualization of the segments.
+	Note that if the point is located outside of the area of the sagittal cut displayed,
+	it will not be visible.
+	
+	The transfer fucntion and the input impedance computed are displayed in the bottom panel.
+	The glottal transfer function, the noise source transfer function and the input 
+	impedance are plotted in black, blue and green respectively.
+	It is possible to show or hide each of them by checking or unchecking 
+	"Glottal transfer function", "Noise transfer function" or "Input impedance" on the 
+	right of the bottom panel. 
+	In case several points are used, 
+	the transfer functions corresponding to the different reception points can be visualized
+	by clicking on the "<" and ">" buttons on the right of the bottom panel.
+	The coordinates of the point corresponding to the transfer function plotted appear above 
+	these buttons, and the corresponding point is displayed as a red "+" in the middle panel.
+	Note that the input impedance does not depend on a reception point location, and hence
+	it will be the same for each point.
+	
+	The transfer functions and the input impedance can be exported using the context 
+	menu which is displayed by a right click on the bottom panel. 
+	They are save in a text file format in which the first column gives the frequency, 
+	the second and third the magnitude and phase of the first point, and the following 
+	columns the magnitude and phase of the other points if other points have been included.
+	Such text files can easily be loaded in another software such as Matlab to plot and 
+	analyse the data.
+	This can be done easily with Matlab with the following code:
+	\begin{lstlisting}
+		load transfer_function.txt
+		figure
+		subplot 211
+		plot(transfer_function(:,1), 20*log10(transfer_function(:,2)))
+		xlabel("f (Hz)")
+		ylabel("Magnitude (dB)")
+		subplot 212
+		plot(transfer_function(:,1), transfer_function(:,3))
+		xlabel("f (Hz)")
+		ylabel("Phase (rad)")
+	\end{lstlisting}
+	
+	\subsection{Acoustic field}
+	
+	\subsubsection{Computation}
+	
+	\subsubsection{Visualization}
+	
+	\subsection{Phoneme synthesis}
+	
+	\section{Log file}
+	
 	
 	\printbibliography
 %	\bibliography{biblio}

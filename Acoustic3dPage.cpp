@@ -469,10 +469,10 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   sizer = new wxBoxSizer(wxVERTICAL);
 
-  chkShowGlottalSourceTf = new wxCheckBox(bottomPanel, IDB_SHOW_GLOTTAL_SOURCE_TF, "Glottal source");
+  chkShowGlottalSourceTf = new wxCheckBox(bottomPanel, IDB_SHOW_GLOTTAL_SOURCE_TF, "Glottal transfer function");
   sizer->Add(chkShowGlottalSourceTf, 0, wxALL, 2);
 
-  chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise source");
+  chkShowNoiseSourceSpec = new wxCheckBox(bottomPanel, IDB_SHOW_NOISE_SOURCE_SPEC, "Noise transfer function");
   sizer->Add(chkShowNoiseSourceSpec, 0, wxALL, 2);
 
   chkShowInputImped = new wxCheckBox(bottomPanel, IDB_SHOW_INPUT_IMPED_SPEC, "Input impedance");

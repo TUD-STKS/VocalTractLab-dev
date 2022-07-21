@@ -26,7 +26,27 @@
 \author{R{\'e}mi Blandin}
 
 \begin{document}
+	
+	\lstset{ 
+		language=Matlab, 
+		tabsize=2, 
+		showspaces=false, 
+		showstringspaces=false, 
+%		backgroundcolor=\color{listgray}, 
+		float=[htb], 
+		captionpos=b, 
+		basicstyle=\footnotesize, 
+		frame=tbrl, %t: top, r, b, l 
+		frameround=tttt, 
+		numbers=left, 
+		numberstyle=\tiny, 
+		numberblanklines=false, 
+	} 
+	
+	
 	\maketitle
+	
+	\tableofcontents
 	
 	\section{Introduction}
 	
@@ -125,11 +145,41 @@
 	the simulation method used (constant cross-sectional shape in the 
 	segments, and frequency domain simulations).
 	
-	\subsection{Implementation}
+	\subsection{Download, intallation and requirements}
 	
-	\hl{Put here the libraries used and cite them in possible}
+	VoocalTractLab3D is distributed as a free and open source software under the
+	GNU General Public Licence (GPL).
+	It is written in C++ and developped for both Windows and Linux platforms.
+	Addptation to MacOS should be easy as cross-platform libraries are used.
+	The software is free of charge and available for download as a ZIP file from
+	\url{www.vocaltractlab.de}.
+	It needs no special installation: just unzip the acheive and run the executable
+	"VocalTractLab.exe" for Windows, or "VocalTractLab" for Linux. 
+	contained in the folder.
+	VoocalTractLab3D was tested on Windows 10 and Ubuntu \hl{version} but can probably 
+	run on other versions of Windows and Linux.
+	A fast computer and a high screen resolution are strongly recommended. 
+	Tablet computers and netbooks are generally not suited to work with VTL. 
+	On some Windows systems it could be necessary to explicitly install OpenGL. 
+	Without OpenGL, the 3D model of the vocal tract will not
+	be displayed properly.
 	
-	\subsection{Installation requirements}
+	The source are freely available on the git repository: \hl{give url to repository}.	
+	Since the simulation method requires to solve complex problems it was necessary to 
+	rely on external libraries for specific issues:
+	\begin{itemize}
+		\item wxWidgets 3.1.5 (\url{https://www.wxwidgets.org}) 
+		is used for the graphical interface.
+		\item boost 1.71.0 (\url{https://www.boost.org/}) is used for Bessel functions
+		and Gauss integration.
+		\item The Computational Geometry Algorithms Library (CGAL 5.0) 
+		(\url{https://www.cgal.org})
+		is used for the generation of mesh and other geometrical problems.
+		\item Eigen 3.3.9 (\url{http://eigen.tuxfamily.org}) for solving linear algebra problems, in particular
+		eigen value decomposition for the computation of the transverse modes.
+	\end{itemize}
+
+	Note that VoocalTractLab3D comes with no warranty of any kind.
 	
 	\subsection{How to cite VocalTractLab3D?}
 	
@@ -496,15 +546,186 @@
 	
 	\subsubsection{Computation}
 	
+	The acoustic pressure field can be computed in the sagittal plane and the 
+	transverse planes by clicking the button "Compute acoustic field".
+	THe frequency at which it is computed can be set by moving the vertical dashed line 
+	in the transfer function plot in the bottom panel. 
+	A precise frequency can also be set in the section "Acoustic field options" of the 
+	"Simulation parameters" dialog.
+	
+	In the sagittal plane the acoustic field is computed in a rectangular area displayed
+	as a gray rectangle in the middle panel. 
+	By default, this rectangle is the bounding box of the geometry outline.
+	The dimensions of this rectangle can be modified by clicking 
+	"Define bounding box lower corner" or "Define bounding box upper corner" in the 
+	context menu which is displayed by right clicking on the middle panel.
+	In this case, the location of the right click is attributed to the lower left corner
+	or the upper right corner of the field rectangular area repsectively.
+	This functionality is useful for looking in more details at a specific area.
+	Alternatively the de dimention of this rectangular area can be manualy set in the
+	"Acoustic field options" of the "Simulation parameters" dialog.
+	This can be useful if one want to visualize the radiated field as well.
+	In this case, the maximal value of $x$ can be increased to extend the area to the 
+	radiated field.
+	The original dimension of the acoustic fieldd area can be restored by double 
+	clicking on the middle panel, or clicking "Reset bounding box" in the context
+	menu of the middle panel.
+	
+	The resolution of the grid of points used to compute the sagittal plane 
+	acoustic field can be set in the "Acoustic field options". 
+	In the transverse plane the resolution of the field corresponds to the resolution 
+	of the image displayed on the screen.
+	
+	The computation of the radiated field takes a bit more time than the internal field,
+	so it is possible to avoid computing the radiated field by unchecking the 
+	option "Compute radiated field" in the "Acoustic field options".
+	
 	\subsubsection{Visualization}
+	
+	Once computed, the acoustic field is displayed as a logarythmic colorscale in the
+	middle and right panels. 
+	For a better visualization, the segments and/or the transfer function points can
+	be hided by unchecking the options "Show segments" and "Show TF points" in the middle
+	panel. 
+	Alternatively, the acoustic field can also be hidden by unchecking the option 
+	"Show field".
+	This can be useful if the acoustic field disturbs the visualization of the segments
+	and/or transfer function points.
+	In the transverse plane the acoustic field corresponds to the exit plane of the segments.
+	
+	The acoustic field can be exported in text files and easily loaded in other softwares 
+	such as Matlab for further analyzis or different visualisation.
+	This can be done by clicking "Export acoustic field as text file" in the context 
+	menues shown by right clicking on the middle and right panels.
+	The acoustic field can be easily loaded and plotted with Matlab with the following code:
+	\begin{lstlisting}
+		load "acoustic_field.txt"
+		figure
+		imagesc(20*log10(acoustic_field));
+		axis xy
+		axis equal
+	\end{lstlisting}
+	
+	\subsection{Default parameters}
+	
+	Default simulation parameters can be set by clicking the buttons "Default (fast)" and
+	"Default (accurate)" at the bottom of the "Simulation parameters" dialog.
+	The fast default parameters correspond to the parameters set by default when 
+	VocalTractLab3D is started.
+	They ensure fast simulation with computation times of the order of a few minutes only,
+	but give innacurate results. 
+	Thus, they should not be considered as trustable.
+	This can be useful to test the software or to test quickly simulations before runing 
+	a more accurate one.
+	The accurate default parameters have been optimize to have a good compromise between
+	accuracy and computation time (see \textcite{blandin2022efficient}). 
+	With these parameters, the computation time for a transfer function is of the order of
+	one hour.
+	However, these computation times depends on the geometry simulated and obviously on the
+	computer used to perform them.
 	
 	\subsection{Phoneme synthesis}
 	
+	Once the transfer functions have been computed, it is possible to synthesize 
+	static phonemes with the buttons "Play vowel" and "Play noise source" of the left panel.
+	The button "Play vowel" synthesize a vowel sound by convolving the a glottal pulse
+	synthetic signal with the impulse response computed from the glottal transfer function
+	displayed in the bottom panel. 
+	The glottal pulses are generated with a LF \hl{Put full names} model [cite LF model]
+	whose parameters can be set with the dialog shown by clicking on the button 
+	"LF glottal flow pulse" in the left panel.
+	
+	The noise synthesis can be useful to synthesize fricative consonants.
+	A synthetic noise signal corresponding to a white noise filtered with a first order 
+	low-pass filter having a cutoff frequency of 5~kHz is convolved with the 
+	impulse response of the noise source transfer function displayed in the bottom panel.
+	
+	The synthetic sound generated correspond to the point at which the transfer functions
+	displayed have been computed.
+	Thus, it is possible to listen to the synthetic vowel generated at various locations.
+	This can be useful to study directivity effects.
+	However, note that phenomena important for directivity such as the head and torso
+	diffraction are not simulated. Thus, the directivity effects which can be studied 
+	are uniquely due to the mouth opening dimension and the influence of the vocal tract
+	on the acoustic field at the mouth exit.
+	
 	\section{Log file}
 	
+	The parameters used for each simulation and information regarding the evolution of the 
+	simulation process are given in a log file. An example of such file is given below:
+	\lstset{language=}
+	\begin{lstlisting}
+		Wed Jul 20 15:06:09 2022
+		
+		Geometry is from VocalTractLab
+		
+		PHYSICAL PARAMETERS:
+		Temperature 31.4266 C
+		Volumic mass: 0.00115771 g/cm^3
+		Sound speed: 35000 cm/s
+		
+		BOUNDARY CONDITIONS:
+		Percentage losses 100 %
+		Visco-thermal losses included
+		viscous boundary specific admittance (2.02984e-05,2.02984e-05) g.cm^-2 .s^-1
+		thermal boundary specific admittance (4.84832e-05,4.84832e-05) g.cm^-2 .s^-1
+		Wall losse included
+		glottis boundary condition: IFINITE_WAVGUIDE
+		mouth boundary condition: ZERO_PRESSURE
+		
+		MODE COMPUTATION PARAMETERS:
+		Mesh density: 5
+		Max cut-on frequency: 20000 Hz
+		Compute modes and junction matrices: NO
+		
+		INTEGRATION SCHEME PARAMETERS:
+		Propagation mmethod: MAGNUS order 2
+		Number of integration steps: 3
+		Take into account curvature
+		Area variation within segments taken into account
+		scaling factor computation method : AREA
+		
+		TRANSFER FUNCTION COMPUTATION PARAMETERS:
+		Index of noise source section: 25
+		Maximal computed frequency: 10000 Hz
+		Spectrum exponent 10
+		Frequency steps: 43.0664 Hz
+		Number of simulated frequencies: 233
+		Transfer function point (cm): 
+		3 0 0
+		
+		ACOUSTIC FIELD COMPUTATION PARAMETERS:
+		Acoustic field computation at 1206.9 Hz with 30 points per cm
+		Spatial resolution for field picture: 30 points per cm
+		Bounding box:
+		min x -3.34796
+		max x 5.94298
+		min y -7.95
+		max y 1.57243
+		Compute radiated field YES
+	\end{lstlisting}
+	
+	This file named \texttt{log.txt} is generated and modified automatically in the working 
+	directory of VocalTractLab3D.
+	It can be useful to assert which parameters have been used for a specfific simulation,
+	or to follow in more details the simulation process.
+	During a simulation, its uptates can followed in real time with an appropriate software.
+	This can be done with Notepad++ by selecting the option "Monitoring" in "View".
+	In linux this can be done in the command line with 
+	\lstset{language=bash}
+	\begin{lstlisting}
+		tail -f log.txt
+	\end{lstlisting}
+	A copy of the log file can be saved
+	to keep track of the parameters used for a specific simulation.
+	
+	\section{Aknowledgement}
+	
+	\hl{Peter as autor as well?}
+	
+	We acknowledge the contribution of Jingyan Geng for the creation of the geometry files 
+	from MRI data.
 	
 	\printbibliography
-%	\bibliography{biblio}
-%	\bibliographystyle{plain}
 
 \end{document}

@@ -73,7 +73,6 @@ private:
   wxString generateTfPointCoordString();
   void computeModesJunctionAndRadMats(bool precomputeRadMat,
     wxGenericProgressDialog* progressDialog, bool& abort);
-  void computeModesJunctionAndRadMats(bool precomputeRadMat, bool& abort);
 
   void OnUpdateRequest(wxCommandEvent& event);
 

@@ -1087,8 +1087,8 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
   log << "\nTransfer function time "
     << hours << " h " << minutes << " m " << seconds << " s" << endl;
 
-  updateWidgets();
-  OnPlayLongVowel();
+  //updateWidgets();
+  //OnPlayLongVowel();
 
   log << "Transfer function finished" << endl;
   log.close();

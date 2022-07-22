@@ -51,35 +51,34 @@
 	\section{Introduction}
 	
 	VocalTractLab3D is a special version of the articulatory synthesizer
-	VocalTractLab 2.3 which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 
-	\cite{birkholz2013modeling} and the 
-	reader is referred to the manual of VocalTractLab 2.3 to learn
+	VocalTractLab 2.3 \cite{birkholz2013modeling} (\url{www.vocaltractlab.de})
+	which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 
+	and the reader is referred to the manual of VocalTractLab~2.3 to learn
 	how to use them.
 	The 3D acoustic simulations are performed with a frequency domain
-	multimodal method which have been designed to be particularly 
+	multimodal method which has been designed to be particularly 
 	fast and accurate. The details of this simulation method are 
 	provided in \textcite{blandin2022efficient}.
 	
 	\subsection{What are 3D acoustic simulations?}
 	
 	\textbf{What are vocal tract acoustic simulations?}\\ 
-	Vocal tract acoustic simulations consists in describing how acoustic waves travel
+	It consists in describing how acoustic waves travel
 	inside the vocal tract volume, are reflected at the discontinuities, such as 
 	changes of cross-section or the mouth opening and create resonances. 
-	This allows one to compute transfer functions, as an example between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips. It can also be used to 
+	This allows one to compute transfer functions, as an example, between the acoustic volume flow created at the vocal folds and the acoustic pressure radiated in front of the lips. It can also be used to 
 	compute the acoustic field, which describes the variations of the  
-	properties of the acoustic waves (acoustic pressure and particle velocity) over space.
+	acoustic pressure and the particle velocity over space.
 	
 	\textbf{What is specific to vocal tract acoustics?}\\
 	The vocal tract has an elongated shape in which the acoustic waves 
-	are guided to travel mainly along its length. One can say that the
-	waves are guided by the vocal tract walls and thus, from the point
+	are guided to travel mainly along its length. From the point
 	of view of wave propagation, the vocal tract can be called a 
 	\emph{waveguide}.
-	This property of the vocal tract makes it easy to approximate the 
-	propagation of acoustic waves as a single value of acoustic 
+	This specificity of the vocal tract makes easy to approximate the 
+	propagation of acoustic waves using a single value of the acoustic 
 	pressure varying along its length, thus neglecting transverse 
-	variations of the acoustic field. This have lead to 1D simulation 
+	variations of the acoustic field. This has led to 1D simulation 
 	methods and electrical analogies which are very widely used to 
 	simulate vocal tract acoustics \cite{sondhi1987hybrid}.
 	
@@ -91,14 +90,44 @@
 	of cross-sectional dimensions \hl{Illustrate this with acoustic field pictures}. At higher frequency, the 3D nature of the acoustic field is more obvious as transverse resonances can be observed
 	\hl{illustrate that}.
 	
-	\textbf{What does it changes to account for the 3D acoustic in comparison with using a 1D simplifying assumption?}\\
+	\textbf{What does accounting for the 3D acoustics changes in comparison to using a 1D simplifying assumption?}\\
 	The impact of accounting for the 3D nature of the acoustic field 
 	inside the vocal tract is rather limited up to about 3~kHz. 
 	It consists mainly in small changes in the resonance properties
 	(frequency, amplitude and bandwidth). From 3~kHz on, the changes 
-	in the resonance properties can be more substantial and above 
+	in the resonance properties can be more substantial. Above 
 	4-5~kHz the transverse resonances can induce zeros and additional 
 	peaks in the transfer function. \hl{Illustrate with a TF 3D vs 1D}
+	
+	\textbf{Why is it important to have efficient 3D simulations for studying 
+		vocal tract acoustics?}\\
+	Speech is a dynamic process in which the vocal tract shape is constantly changing.
+	Simulating acoustic propagation for a whole sentence with 3D simulations is a challenge 
+	which to our knowledge have not been met yet. 
+	The methods traditionally used for 3D acoustic simulation, such as finite elements,
+	requires a lot of computational ressources which makes difficult to reach this goal.
+	Several solutions are explored to overcome this limitation. 
+	One of them is the simulation method which is implemented in VocalTractLab3D.
+	In the future developments it may be used to study speech at sentence level, but this 
+	still requires substantial development.
+	
+	\textbf{What is the multimodal method?}\\
+	It is a simulation method which rely on the projection on eigen-function basis. 
+	Such an approach is very efficient to reduce computation times and memory requirements.
+	It is applied for many problems in physics, signal processing or informatics.
+	As an example, one of the key of the efficiency of the JPEG image compression is that
+	it relies in part on such a projection. The method implemented in VocalTractLab3D 
+	is described in details in \textcite{blandin2022efficient}.
+	
+	\textbf{What are the advantages of VocalTractLab3D?}\\
+	Another benefit of this method is that it do not requires specific computing facilities
+	to be efficient: it can be run on a standard laptop.
+	The graphical interface makes VocalTractLab3D easy to use without requiring knowledge 
+	in programmation. Thus, it is one of the most accessible solutions to perform 3D acoustic
+	simulations of the vocal tract. 
+	The 3D acoustic simulations framework are combined with an articulatory model and 
+	phoneme synthesis functionalities which makes it very complete solution to study vocal 
+	tract acoustics.
 	
 	\subsection{What can VocalTractLab3D do and not do?}
 	
@@ -156,7 +185,7 @@
 	It needs no special installation: just unzip the acheive and run the executable
 	"VocalTractLab.exe" for Windows, or "VocalTractLab" for Linux. 
 	contained in the folder.
-	VoocalTractLab3D was tested on Windows 10 and Ubuntu \hl{version} but can probably 
+	VoocalTractLab3D was tested on Windows 10 and Ubuntu 20.04.4 LTS but can probably 
 	run on other versions of Windows and Linux.
 	A fast computer and a high screen resolution are strongly recommended. 
 	Tablet computers and netbooks are generally not suited to work with VTL. 
@@ -448,9 +477,9 @@
 	\begin{itemize}
 		\item "Visco-thermal losses" includes frequency dependent 
 		visco-thermal losses implemented according to 
-		\textcite{bruneau1987boundary},
+		\textcite{bruneau1987boundary}.
 		\item "Soft Walls" includes frequency dependent losses 
-		corresponding to soft walls \hl{[find ref]}
+		corresponding to soft walls.
 		\item "Constant wall admittance" includes a frequency
 		independent wall admittance whose real and imaginary parts 
 		can be set by the user.
@@ -631,7 +660,7 @@
 	The button "Play vowel" synthesize a vowel sound by convolving the a glottal pulse
 	synthetic signal with the impulse response computed from the glottal transfer function
 	displayed in the bottom panel. 
-	The glottal pulses are generated with a LF \hl{Put full names} model [cite LF model]
+	The glottal pulses are generated with a Liljencrants-Fant model \cite{fant1985four}
 	whose parameters can be set with the dialog shown by clicking on the button 
 	"LF glottal flow pulse" in the left panel.
 	

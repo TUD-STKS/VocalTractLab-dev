@@ -16,6 +16,8 @@
 \usepackage{listings}
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{biblio.bib}
+% Nice acronym management
+\usepackage{acro}
 
 \newcommand*{\transp}[2][-3mu]{\ensuremath{\mskip1mu\prescript{\smash{\mathrm t\mkern#1}}{}{\mathstrut#2}}}
 \newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
@@ -24,6 +26,15 @@
 %opening
 \title{User guide for VocalTractLab3D}
 \author{R{\'e}mi Blandin}
+
+\DeclareAcronym{FEM}{
+	short = FEM,
+	long = finite element method
+}
+\DeclareAcronym{MRI}{
+	short = MRI,
+	long = magnetic resonance image
+}
 
 \begin{document}
 	
@@ -52,7 +63,7 @@
 	
 	VocalTractLab3D is a special version of the articulatory synthesizer
 	VocalTractLab 2.3 \cite{birkholz2013modeling} (\url{www.vocaltractlab.de})
-	which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences the same as the original VocalTractLab 2.3 
+	which integrates a module that performs 3D acoustic simulations. The other modules are, to some very little differences, the same as the original VocalTractLab 2.3 
 	and the reader is referred to the manual of VocalTractLab~2.3 to learn
 	how to use them.
 	The 3D acoustic simulations are performed with a frequency domain
@@ -82,13 +93,23 @@
 	methods and electrical analogies which are very widely used to 
 	simulate vocal tract acoustics \cite{sondhi1987hybrid}.
 	
+	\begin{figure}
+		\centering
+		\includegraphics{1d_vs_3d.pdf}
+		\caption{Transfer function and acoustic fields computed for the vowel /u/.
+			The transfer function has been computed with a 1D and a 3D simulation. The acoustic fields have been computed at frequencies shown on the transfer function with arrows.
+			They are shown in the sagittal plane and some selected transverse planes  
+			indicated with dashed lines.}
+		\label{figure:1d_vs_3d}
+	\end{figure}
+	
 	\textbf{What is 3D vocal tract acoustics?}\\
 	Even though not very important below 4-5~kHz, 
 	the acoustic field has transverse variations, and thus, varies in
 	all the three dimensions of space. At low frequency these variations
 	appear as a curvature of the acoustic field related to variations
-	of cross-sectional dimensions \hl{Illustrate this with acoustic field pictures}. At higher frequency, the 3D nature of the acoustic field is more obvious as transverse resonances can be observed
-	\hl{illustrate that}.
+	of cross-sectional dimensions (see Fig.~\ref{figure:1d_vs_3d}a). At higher frequency, the 3D nature of the acoustic field is more obvious as transverse resonances can be observed
+	(see Fig.~\ref{figure:1d_vs_3d}b).
 	
 	\textbf{What does accounting for the 3D acoustics changes in comparison to using a 1D simplifying assumption?}\\
 	The impact of accounting for the 3D nature of the acoustic field 
@@ -97,45 +118,44 @@
 	(frequency, amplitude and bandwidth). From 3~kHz on, the changes 
 	in the resonance properties can be more substantial. Above 
 	4-5~kHz the transverse resonances can induce zeros and additional 
-	peaks in the transfer function. \hl{Illustrate with a TF 3D vs 1D}
+	peaks in the transfer function (see Fig.\ref{figure:1d_vs_3d}c). 
 	
-	\textbf{Why is it important to have efficient 3D simulations for studying 
-		vocal tract acoustics?}\\
-	Speech is a dynamic process in which the vocal tract shape is constantly changing.
-	Simulating acoustic propagation for a whole sentence with 3D simulations is a challenge 
-	which to our knowledge have not been met yet. 
-	The methods traditionally used for 3D acoustic simulation, such as finite elements,
-	requires a lot of computational ressources which makes difficult to reach this goal.
-	Several solutions are explored to overcome this limitation. 
-	One of them is the simulation method which is implemented in VocalTractLab3D.
-	In the future developments it may be used to study speech at sentence level, but this 
-	still requires substantial development.
+%	\textbf{Why is it important to have efficient 3D simulations for studying 
+%		vocal tract acoustics?}\\
+%	Speech is a dynamic process in which the vocal tract shape is constantly changing.
+%	Simulating acoustic propagation for a whole sentence with 3D simulations is a challenge 
+%	which to our knowledge have not been met yet. 
+%	The methods traditionally used for 3D acoustic simulation, such as finite elements,
+%	requires a lot of computational ressources which makes difficult to reach this goal.
+%	Several solutions are explored to overcome this limitation. 
+%	One of them is the simulation method which is implemented in VocalTractLab3D.
+%	In the future developments it may be used to study speech at sentence level, but this 
+%	still requires substantial development.
 	
 	\textbf{What is the multimodal method?}\\
-	It is a simulation method which rely on the projection on eigen-function basis. 
+	It is a simulation method which relies on the projection on eigen-function basis. 
 	Such an approach is very efficient to reduce computation times and memory requirements.
-	It is applied for many problems in physics, signal processing or informatics.
-	As an example, one of the key of the efficiency of the JPEG image compression is that
-	it relies in part on such a projection. The method implemented in VocalTractLab3D 
+	In the case of the vocal tract, the 3D geometry is cut in multiple segments in which 
+	the local transverse eigen modes are computed and on which the acoustic field is decomposed.
+	The method implemented in VocalTractLab3D 
 	is described in details in \textcite{blandin2022efficient}.
 	
-	\textbf{What are the advantages of VocalTractLab3D?}\\
-	Another benefit of this method is that it do not requires specific computing facilities
-	to be efficient: it can be run on a standard laptop.
-	The graphical interface makes VocalTractLab3D easy to use without requiring knowledge 
-	in programmation. Thus, it is one of the most accessible solutions to perform 3D acoustic
-	simulations of the vocal tract. 
-	The 3D acoustic simulations framework are combined with an articulatory model and 
-	phoneme synthesis functionalities which makes it very complete solution to study vocal 
-	tract acoustics.
+%	\textbf{What are the advantages of VocalTractLab3D?}\\
+%	Another benefit of this method is that it does not require specific computing facilities
+%	to be efficient: it can be run on a standard laptop.
+%	The graphical interface makes VocalTractLab3D easy to use without requiring knowledge 
+%	in programmation. Thus, it is one of the most accessible solutions to perform 3D acoustic
+%	simulations of the vocal tract. 
+%	The 3D acoustic simulations framework are combined with an articulatory model and 
+%	phoneme synthesis functionalities which makes it very complete solution to study vocal 
+%	tract acoustics.
 	
-	\subsection{What can VocalTractLab3D do and not do?}
+	\subsection{What VocalTractLab3D can do?}
 	
-	\textbf{What VocalTractLab3D can do?}
 	\begin{itemize}
-		\item Compute the transfer function between the volume velocity
-		at the location of the vocal folds and one are several points inside or outside the vocal tract.
-		\item Compute the transfer function between the acoustic pressure on a transverse plane anywhere inside the vocal tract and one or several points inside or outside the vocal tract.
+		\item Compute transfer functions between the volume velocity
+		at the location of the vocal folds and one or several points inside or outside the vocal tract.
+		\item Compute transfer functions between the acoustic pressure on a transverse plane anywhere inside the vocal tract and one or several points inside or outside the vocal tract.
 		This is useful to emulate noise generation by aeroacoustic 
 		sound sources.
 		\item Compute the input impedance of the plane mode at the 
@@ -152,24 +172,26 @@
 		\item Synthesize vowel and fricative sounds.
 	\end{itemize}
 
-	\textbf{What VocalTractLab3D cannot do?} \\
+	\subsection{What VocalTractLab3D cannot do?} 
 	The simulation method implemented in VocalTractLab3D has been 
 	designed primarily to be efficient, and this comes with some 
 	limitations regarding the geometries which can be simulated.
-	However, it is to be noted that some of the geometrical simplifications are also used with simulation methods, such as finite
-	elemnents, in order to reduce the computation time, or simplify the task of describing the geometry.
+	However, it is to be noted that some of the geometrical simplifications are also used with other simulation methods, such as the \ac{FEM}, 
+	in order to reduce the computation time, or simplify the task of describing the geometry.
+	
 	VocalTractLab3D cannot:
 	\begin{itemize}
-		\item Simulate continuous cross-sectional shape variations within the segments of the vocal tract geometry. The cross-sectional shape can be scaled to account for area variation, but the shape reamins constant.
+		\item Simulate continuous cross-sectional shape variations within the segments of the vocal tract geometry. The cross-sectional shape can be scaled to account for area variation, but the shape remains constant.
 		\item Simulate lip shapes. The mouth opening is contained 
-		inside a plane, and thus, the 3D lip shape cannot be simulated.
+		in a plane, and thus, the 3D lip shape cannot be simulated.
 		\item Simulate branches such as piriform sinus or the nasal 
 		cavity.
-		\item Similate the diffraction by the head and the torso outside
+		\item Simulate the diffraction by the head and the torso outside
 		of the vocal tract.
 		\item Perform time domain simulation.
 	\end{itemize}
-	Some of the limitations listed may be overcomed with future developments of the simulation method used (3D lip shape, branches 
+
+	Some of the limitations listed above may be overcomed with future developments of the simulation method used (3D lip shape, branches 
 	and diffraction by the head and torso), and some are inherent to 
 	the simulation method used (constant cross-sectional shape in the 
 	segments, and frequency domain simulations).
@@ -178,14 +200,14 @@
 	
 	VoocalTractLab3D is distributed as a free and open source software under the
 	GNU General Public Licence (GPL).
-	It is written in C++ and developped for both Windows and Linux platforms.
-	Addptation to MacOS should be easy as cross-platform libraries are used.
+	It is written in C++ and developed for both Windows and Linux platforms.
+	Adaptation to MacOS should be easy as cross-platform libraries are used.
 	The software is free of charge and available for download as a ZIP file from
 	\url{www.vocaltractlab.de}.
-	It needs no special installation: just unzip the acheive and run the executable
+	It needs no special installation: just unzip the achive and run the executable
 	"VocalTractLab.exe" for Windows, or "VocalTractLab" for Linux. 
 	contained in the folder.
-	VoocalTractLab3D was tested on Windows 10 and Ubuntu 20.04.4 LTS but can probably 
+	VoocalTractLab3D was tested on Windows 10 and Ubuntu 20.04.4 LTS, but can probably 
 	run on other versions of Windows and Linux.
 	A fast computer and a high screen resolution are strongly recommended. 
 	Tablet computers and netbooks are generally not suited to work with VTL. 
@@ -193,7 +215,9 @@
 	Without OpenGL, the 3D model of the vocal tract will not
 	be displayed properly.
 	
-	The source are freely available on the git repository: \hl{give url to repository}.	
+	The sources are freely available on the git repository: 
+	\url{https://github.com/TUD-STKS/VocalTractLab-dev/tree/3d_simulation}
+	\hl{(the link will probably be changed later)}.	
 	Since the simulation method requires to solve complex problems it was necessary to 
 	rely on external libraries for specific issues:
 	\begin{itemize}
@@ -203,9 +227,9 @@
 		and Gauss integration.
 		\item The Computational Geometry Algorithms Library (CGAL 5.0) 
 		(\url{https://www.cgal.org})
-		is used for the generation of mesh and other geometrical problems.
+		is used for the generation of mesh and other geometry problems.
 		\item Eigen 3.3.9 (\url{http://eigen.tuxfamily.org}) for solving linear algebra problems, in particular
-		eigen value decomposition for the computation of the transverse modes.
+		eigenvalue decomposition for the computation of the transverse modes.
 	\end{itemize}
 
 	Note that VoocalTractLab3D comes with no warranty of any kind.
@@ -225,40 +249,37 @@
 		\label{figure:acoustic_3d_simu_page}
 	\end{figure}
 	
-	When VocalTractLab3D is started, it shows by default 2 windows:
+	When VocalTractLab3D is started, it shows by default two windows:
 	\begin{itemize}
 		\item The main window showing the "3d acoustic simulation" page.
-		\item A small window showing the 3D geometry corresponding to the articulatory model: the vocal tract dialog. The user can interact with the articulatory model using the control points to move the articulators. When closed, this window can be shown again by clicking on the button "Show vocal tract".
+		\item A small window showing the 3D geometry corresponding to the articulatory model (called the vocal tract dialog). The user can interact with the articulatory model using the control points to move the articulators. When closed, this window can be shown again by clicking on the button "Show vocal tract".
 	\end{itemize}
 
-	The "3d acoustic simulation" is divided in 4 panels (see Fig.~\ref{figure:acoustic_3d_simu_page}):
+	The "3d acoustic simulation" page is divided into 4 panels (see Fig.~\ref{figure:acoustic_3d_simu_page}):
 	\begin{enumerate}
-		\item the left panel contains buttons to manage the geometries, perform the simulations and synthesis.
+		\item the left panel contains buttons to manage the geometries, launch the simulations and synthesize phonemes.
 		\item The middle panel shows a sagittal cut of the geometry simulated.
 		\item The right panel shows a transverse cut of the geometry corresponding to a specific segment.
 		\item The bottom panel shows the transfer functions and 
 		input impedance computed. 
 	\end{enumerate}
 
-	\subsection{Geometries}
+	\subsection{Vocal tract geometry}
 
-	\subsubsection{Defining vocal tract geometries}
+	\subsubsection{Defining a vocal tract geometry}
 	
-	\hl{MENTION THE POSSIBILITY TO CREATE GEOMETRY FILES WITH VTTF} \\
-	
-	\hl{MENTION THAT GEOMTRIES ARE PROVIDED FOR SOME PHONEMES} \\
-	
-	When VocalTractLab is started, the default geometry of the articulatory model is already loaded and ready to use for 
+	When VocalTractLab3D is started, the default geometry of the articulatory model is already loaded and ready to use for 
 	simulations.
 	However, the geometry can be defined or modified in several ways:
 	\begin{itemize}
 		\item It can be simply defined by moving the control points in
-		the vocal tract dialog. When doing so, one can see the segmented 
-		geometry in the central panel updating.
+		the vocal tract dialog (shown by clicking on "Show vocal tract" in the left panel). 
+		When doing so, one can see the updates of the segmented 
+		geometry in the central panel.
 		\item If a speaker file containing predefined geometries is loaded, a geometry can be selected using the dialog shown by 
 		clicking on the button "Vocal tract shapes" of the left panel.
 		\item An external geometry can be loaded as a \texttt{.csv} file
-		formated in a specific way. 
+		formatted in a specific way detailed hereafter. 
 	\end{itemize}
 
 	\textbf{Csv format for externally defined geometries:}\\
@@ -318,18 +339,29 @@
 		\label{table:example_csv_file}
 	\end{table}
 
+	Examples of such files generated for vowel geometries measured on \ac{MRI} are provided in the archive in the folder "geometries\_from\_MRI". 
+	They have been generated with VocalTractTransferFunction from \ac{MRI} provided in the
+	Dresden Vocal Tract Dataset \cite{birkholz2020printable}.
+	The software VocalTractTransferFunction can be downloaded at 
+	\url{www.vocaltractlab.de} and used to load a surface mesh and save it in the 
+	\texttt{.csv} format specified above \hl{(Not yet though)}.
+
 	The geometry can also be exported in the same format through 
-	the context menu which appear with a right click on the central panel
+	the context menu which appears with a right click on the central panel
 	"Export geometry in a csv file". 
 	
-	It can be chosen to take into account or not the curvature and 
-	the area variations of the segments. This is done using the 
+	\textbf{Geometry options:}\\
+	When a geometry is loaded,
+	it can be chosen to take into account or not the curvature and 
+	the area variations in the segments. This is done using the 
 	simulation parameters dialog displayed by clicking on the 
 	button "Simulation parameters" in the left panel. 
 	These options are found in the "Geometry options" section.
-	When "Varying area" is check, the variation of area are taken into 
+	When "Varying area" is checked, the variation of area is taken into 
 	account through the scaling factor which is set to vary linearly
-	between its value at the entrance and the exit of the segments (these values are displayed in the information of the right panel).
+	from the entrance to the exit of the segments.
+	The entrance and exit scaling factors are displayed in the 
+	information text of the right panel.
 	The variations of the scaling factor can be computed in two different
 	ways, or directly provided by the user when the geometry is loaded 
 	as a \texttt{.csv} file. These options can be selected in the 
@@ -337,10 +369,10 @@
 	"Area", 
 	consists simply in linearly interpolating the cross-sectional area.
 	The other one, "Bounding box", interpolates the largest dimension of the bounding 
-	box of the segments, provided that the resulting scaled contour 
-	do not exceed the area of the following contour, in which case it 
+	box of the contour of the segments, provided that the resulting scaled contour 
+	does not exceed the area of the following contour, in which case it 
 	is set to interpolate the area. 
-	Finaly, one can specify that the scaling factors provided in the 
+	Finally, one can specify that the scaling factors provided in the 
 	input \texttt{.csv} file must be used by selecting "From file".
 	
 
@@ -350,7 +382,7 @@
 	The central panel shows a sagittal cut of the bounding box of the 
 	segments. This bounding box is a rectangle whose dimensions are 
 	the maximal and minimal dimensions of the cross-sectional 
-	contour.
+	contour. The center of the segment is shown as a red line.
 	
 	This sagittal cut of the segments can be exported as a list of 
 	coordinates in a text file using the context menu of the central 
@@ -358,21 +390,20 @@
 	This can be used to plot the same picture with other softwares such 
 	as Matlab. This can be easily done with this kind of Matlab code:
 	\begin{lstlisting}
-	file_name = "segment_picture.txt";
-	load(file_name);
+	load("segment_picture.txt");
 	plot(segment_picture(:,1), segment_picture(:,2));
 	\end{lstlisting}
 	
-	When cliking on a segment, its outline becomes red to confirm that
+	When clicking on a segment, its outline becomes red to confirm that
 	it has been selected, and the contour and some information 
 	regarding the segment are displayed in the right panel.
-	It also possible to move to the previous and next segments using the buttons
+	It is also possible to move to the previous and next segments using the buttons
 	"<" and ">" at the bottom of the central panel.
 	Note that this is the only way to visualize the junction segments which have 
 	a zero length.
 	When the geometry is provided by the articulatory model, it is 
 	possible to identify the type of surfaces which constitutes the 
-	edges of the the contour (tongue, teeth, lips, openings on the sides of the 
+	edges of the contour (tongue, teeth, lips, openings on the sides of the 
 	lips, uvula, epiglottis and other walls).
 	The color code for these different surfaces is given in 
 	Fig.~\ref{figure:colormap_anatomical_parts}.
@@ -384,48 +415,45 @@
 	\begin{figure}[h!]
 		\centering
 		\includegraphics{colormap_anatomical_parts.pdf}
-		\caption{Correspondance between the colors and the anatomical parts to which
-		the walls corresponds.}
+		\caption{Correspondence between the colors of the contour and the 
+			anatomical parts to which the walls corresponds.}
 		\label{figure:colormap_anatomical_parts}
 	\end{figure}
 	
 	The coordinates of the points of the contour can also be exported 
-	in a text file through the context menu of the right panel obtained
+	into a text file through the context menu of the right panel obtained
 	with a right click "Export contour in text file". 
 	Note that the contour exported has the scaling with which it is 
-	displayed: if at this entrance the scaling is 0.5 and the entrance 
+	displayed: if at the entrance the scaling is 0.5 and the entrance 
 	contour is displayed, the coordinate of the exported contour will
 	be the ones of the original contour multiplied by 0.5.
 	The exported contour can easily be plotted using another software in 
 	the same way as the segment picture.
-	
-	\hl{Speak about centerline}
 	
 	\subsection{Transverse modes}
 	
 	\subsubsection{Computation}
 	
 	The transverse modes can be computed by clicking the button
-	"Compute modes" of the left panel. This can be useful if one is interested in analyzing the transverse modes only without 
+	"Compute modes" of the left panel. This can be useful if one is interested in analyzing the transverse modes without 
 	computing the acoustic field or the transfer functions.
 	
-	The computation of the transverse modes is parametrized by two 
-	paramaters: 
+	The computation of the transverse modes is parametrized by: 
 	\begin{itemize}
 		\item the density of the mesh which is used to solve with 
-		\hl{2D finite elements} the 
+		2D \ac{FEM} the 
 		eigenvalue problem giving the transverse modes and their 
 		associated cutoff frequencies. This is related to the average
 		side length of the elements through the relationship
 		$average~side~length = \frac{\sqrt{cross-sectional~area}}{mesh~density}$. 
-		The mesh density is thus, an indication of the number of
+		Thus, the mesh density is an estimation of the number of
 		elements per characteristic length.
-		\item The maximal cutoff frequency. It is a upper limit for the 
+		\item The maximal cutoff frequency. It is an upper limit to the 
 		cutoff frequency of the transverse modes included in the 
 		simulations: for a given segment, only the modes having a cutoff
 		frequency lower than this value are kept. Thus, segments having 
 		a small cross-section have less transverse modes than the ones
-		having a bigger one. This is done so to increase the efficiency 
+		having a bigger one. This is done to increase the efficiency 
 		of the simulations.
 	\end{itemize}
 
@@ -433,7 +461,7 @@
 	is related to the temperature. Both the sound speed and the 
 	temperature can be set in the "Physical constants" section of 
 	the "Simulation parameters" dialog. Since both quantities are
-	related, they cannot be modified independantly: changing the 
+	related, they cannot be modified independently: changing the 
 	temperature will change the sound speed and conversely.
 
 	\subsubsection{Visualization}
@@ -443,7 +471,7 @@
 	The transverse modes can be visualized by 
 	selecting "Modes" at the bottom. 
 	One can browse the different modes using the arrows "<" and ">".
-	The amplitude variation of the modes is displayed, and its cutoff 
+	The amplitude variation of the modes is displayed as a color scale, and their cutoff 
 	frequency is given in the text information.
 	
 	\subsection{Transfer functions}
@@ -454,19 +482,20 @@
 	"Compute transfer functions" in the left panel.
 	
 	The computation of the transfer function requires to solve the 
-	walve problem. In this purpose, the simulation of wave propagation can be achieved either with an anlytical 
+	walve problem. In this purpose, the simulation of wave propagation can be achieved either with an analytical 
 	solution \cite{blandin2015effects} or a numerical Magnus-Möbius 
 	scheme \cite{PAGNEUX20101834}.
 	This can be selected in the section "Numerical scheme options" of
 	the "Simulation parameters" dialog. The analytical solution is 
-	enabled by selecting "Straight". However, this solution has strong limitations regarding the geometry and the losses: it cannot take into account the curvature, cross-sectional area variations and 
+	enabled by selecting "Straight". However, this solution has strong limitations: it cannot take into account the curvature, cross-sectional area variations and 
 	wall losses. The numerical scheme is enabled by selecting "Magnus".
 	In this case a number of integration steps is given and can be 
 	modified if necessary. This number is the same for each segment.
 	Note that since the segmentation generally used for vocal tract geometries gives segments having approximately the same length, 
-	this parameters is expected to affect the accuracy in a similar way
-	for each segment. However, for other applications for which the 
-	segment length would be inhomogeneous, this parameter need to be considered more carefully.
+	this parameter is expected to affect the accuracy in a similar way
+	for each segment. However, if the 
+	segment length is made inhomogeneous (e.g. in an imported geometry), this parameter 
+	needs to be considered more carefully.
 	
 	The boundary conditions can be set in the "Boundary conditions options" section of the "Simulation parameters" dialog. 
 	It includes the mouth boundary condition which can be described
@@ -479,69 +508,71 @@
 		visco-thermal losses implemented according to 
 		\textcite{bruneau1987boundary}.
 		\item "Soft Walls" includes frequency dependent losses 
-		corresponding to soft walls.
+		corresponding to soft walls using the same model as the one implemented in 
+		VocalTractLab 2.3.
 		\item "Constant wall admittance" includes a frequency
 		independent wall admittance whose real and imaginary parts 
 		can be set by the user.
 	\end{itemize}
 
-	The index of the segement in which the noise source is integrated can be 
+	The index of the segment in which the noise source is integrated can be 
 	set either in the "Transfer functions options" section of the "Simulation parameters"
-	dialog, of through the context menu of the central panel by selecting 
+	dialog, or through the context menu of the central panel by selecting 
 	"Define current segment as noise source location". 
 	The noise source segment is highlighted in blue (or green when selected) in the 
 	central panel.
-	When the segment has a non-zero length, the noise source if implemented at 
+	When the segment has a non-zero length, the noise source is implemented at 
 	the end of the segment which is closer to the mouth exit.
 	The noise source implemented is uniform over the cross-sectional surface, which
-	is equivalent to exciting the vocal tract with a plane wave at the specified location.
+	is equivalent to excite the vocal tract with a plane wave at the specified location.
 	The transfer function computed for the noise source is a pressure-pressure 
 	transfer function, contrarily to the glottal transfer function which is a 
 	velocity-pressure transfer function.
 	
 	The upper frequency limit for the transfer function computation can be set
-	in the "Transfer functions options" section of the "Simulation parameters".
+	in the "Transfer functions options" section of the "Simulation parameters" dialog.
 	The frequency step size can be selected in a list. 
-	The proposed values corresponds to division of the sampling frequency by powers
+	The proposed values correspond to divisions of the sampling frequency by powers
 	of 2 to make the synthesis which can be done afterward faster.
 	
 	The coordinates of the reception point of the transfer functions can also be set
-	in the "Transfer functions options" section of the "Simulation parameters".
-	It can be chosen iether to use a single point whose coordinates can be 
-	directly set, ot to use several points whose coordinates can be loaded from
+	in the "Transfer functions options" section of the "Simulation parameters" dialog.
+	It can be chosen either to use a single point whose coordinates can be 
+	directly set, or to use several points whose coordinates can be loaded from
 	a \texttt{.csv} file. 
 	The origin of the landmark in which the coordinates of the reception points are
 	expressed is the center of the mouth exit. 
 	The $\bm{n_y}$ unit vector of this landmark is the normal to the centerline
 	at the mouth exit.
-	\\ \hl{SHOW A LANDMARK AND SEGMENT SOMEWHERE} \\
-	The reception points can be place anywhere. 
+%	\\ \hl{SHOW A LANDMARK AND SEGMENT SOMEWHERE} \\
+	The reception points can be placed anywhere. 
 	However, if it is located in the half-space behind the mouth exit and not 
-	inside the vocal tract, the returned value will be a NAN.
+	inside the vocal tract, the returned value will be "nan".
 	
 	When point coordinates are loaded from a \texttt{.csv} file, they must be given
 	in 3 columns corresponding to the $x$, $y$ and $z$ coordinates. 
 	This functionality can be useful to compute the directivity patterns of the 
 	radiated sound, or the acoustic field at multiple frequencies.
-	\\ \hl{GIVE EXAMPLES OF DIRECTIVITY PATTERN COMPUTATION AND ACOUSTIC 
-		FIELD COMPUTATION WITH CORRESPONDING MATLAB CODE TO EXTRACT AND PLOT 
-		THE MAPS} \\
+%	\\ \hl{GIVE EXAMPLES OF DIRECTIVITY PATTERN COMPUTATION AND ACOUSTIC 
+%		FIELD COMPUTATION WITH CORRESPONDING MATLAB CODE TO EXTRACT AND PLOT 
+%		THE MAPS} \\
 	
 	\subsubsection{Visualization}
 	
-	The transfer function points are visualized as "+" on the midle panel.
+	The transfer function points are visualized as "+" on the middle panel.
 	It is possible to hide them by unchecking "Show TF points" on the bottom of 
 	the panel. This can be useful if many points are used and their visualization 
-	disturbs the visualization of the segments.
+	disturbs the visualization of the other elements.
 	Note that if the point is located outside of the area of the sagittal cut displayed,
 	it will not be visible.
 	
-	The transfer fucntion and the input impedance computed are displayed in the bottom panel.
+	The transfer function and the input impedance computed are displayed in the bottom panel.
 	The glottal transfer function, the noise source transfer function and the input 
 	impedance are plotted in black, blue and green respectively.
 	It is possible to show or hide each of them by checking or unchecking 
 	"Glottal transfer function", "Noise transfer function" or "Input impedance" on the 
 	right of the bottom panel. 
+	
 	In case several points are used, 
 	the transfer functions corresponding to the different reception points can be visualized
 	by clicking on the "<" and ">" buttons on the right of the bottom panel.
@@ -552,9 +583,9 @@
 	
 	The transfer functions and the input impedance can be exported using the context 
 	menu which is displayed by a right click on the bottom panel. 
-	They are save in a text file format in which the first column gives the frequency, 
+	They are saved in a text file in which the first column gives the frequency, 
 	the second and third the magnitude and phase of the first point, and the following 
-	columns the magnitude and phase of the other points if other points have been included.
+	columns the magnitude and phase of the other points, if other points have been included.
 	Such text files can easily be loaded in another software such as Matlab to plot and 
 	analyse the data.
 	This can be done easily with Matlab with the following code:
@@ -577,7 +608,8 @@
 	
 	The acoustic pressure field can be computed in the sagittal plane and the 
 	transverse planes by clicking the button "Compute acoustic field".
-	THe frequency at which it is computed can be set by moving the vertical dashed line 
+	It corresponds to a sound source located at the glottis.
+	The frequency at which it is computed can be set by moving the vertical dashed line 
 	in the transfer function plot in the bottom panel. 
 	A precise frequency can also be set in the section "Acoustic field options" of the 
 	"Simulation parameters" dialog.
@@ -589,14 +621,14 @@
 	"Define bounding box lower corner" or "Define bounding box upper corner" in the 
 	context menu which is displayed by right clicking on the middle panel.
 	In this case, the location of the right click is attributed to the lower left corner
-	or the upper right corner of the field rectangular area repsectively.
+	or the upper right corner of the rectangular area respectively.
 	This functionality is useful for looking in more details at a specific area.
-	Alternatively the de dimention of this rectangular area can be manualy set in the
+	Alternatively the dimensions of this rectangular area can be manually set in the
 	"Acoustic field options" of the "Simulation parameters" dialog.
-	This can be useful if one want to visualize the radiated field as well.
+	This can be useful if one wants to visualize the radiated field as well.
 	In this case, the maximal value of $x$ can be increased to extend the area to the 
 	radiated field.
-	The original dimension of the acoustic fieldd area can be restored by double 
+	The original dimension of the acoustic field area can be restored by double 
 	clicking on the middle panel, or clicking "Reset bounding box" in the context
 	menu of the middle panel.
 	
@@ -611,10 +643,10 @@
 	
 	\subsubsection{Visualization}
 	
-	Once computed, the acoustic field is displayed as a logarythmic colorscale in the
+	Once computed, the acoustic field is displayed as a logarithmic color scale in the
 	middle and right panels. 
 	For a better visualization, the segments and/or the transfer function points can
-	be hided by unchecking the options "Show segments" and "Show TF points" in the middle
+	be hidden by unchecking the options "Show segments" and "Show TF points" in the middle
 	panel. 
 	Alternatively, the acoustic field can also be hidden by unchecking the option 
 	"Show field".
@@ -623,9 +655,9 @@
 	In the transverse plane the acoustic field corresponds to the exit plane of the segments.
 	
 	The acoustic field can be exported in text files and easily loaded in other softwares 
-	such as Matlab for further analyzis or different visualisation.
+	such as Matlab for further analysis or different visualization.
 	This can be done by clicking "Export acoustic field as text file" in the context 
-	menues shown by right clicking on the middle and right panels.
+	menu shown by right clicking on the middle and right panels.
 	The acoustic field can be easily loaded and plotted with Matlab with the following code:
 	\begin{lstlisting}
 		load "acoustic_field.txt"
@@ -639,29 +671,29 @@
 	
 	Default simulation parameters can be set by clicking the buttons "Default (fast)" and
 	"Default (accurate)" at the bottom of the "Simulation parameters" dialog.
-	The fast default parameters correspond to the parameters set by default when 
+	The fast default parameters are set by default when 
 	VocalTractLab3D is started.
 	They ensure fast simulation with computation times of the order of a few minutes only,
-	but give innacurate results. 
-	Thus, they should not be considered as trustable.
-	This can be useful to test the software or to test quickly simulations before runing 
+	but give inacurate results. 
+	Thus, they should not be considered as reliable.
+	This can be useful to test the software or to test quickly a simulation before runing 
 	a more accurate one.
-	The accurate default parameters have been optimize to have a good compromise between
+	The accurate default parameters have been optimized to offer a good compromise between
 	accuracy and computation time (see \textcite{blandin2022efficient}). 
-	With these parameters, the computation time for a transfer function is of the order of
-	one hour.
-	However, these computation times depends on the geometry simulated and obviously on the
-	computer used to perform them.
+	With these parameters, the computation time for a 1000 frequencies transfer function 
+	is of the order of one hour.
+	However, these computation times depend on the geometry simulated and obviously on the
+	computer used.
 	
 	\subsection{Phoneme synthesis}
 	
 	Once the transfer functions have been computed, it is possible to synthesize 
-	static phonemes with the buttons "Play vowel" and "Play noise source" of the left panel.
-	The button "Play vowel" synthesize a vowel sound by convolving the a glottal pulse
+	static phonemes with the buttons "Play vowel" and "Play noise source" on the left panel.
+	The button "Play vowel" synthesize a vowel sound by convolving a glottal pulse
 	synthetic signal with the impulse response computed from the glottal transfer function
 	displayed in the bottom panel. 
 	The glottal pulses are generated with a Liljencrants-Fant model \cite{fant1985four}
-	whose parameters can be set with the dialog shown by clicking on the button 
+	whose parameters can be defined using the dialog shown by clicking on the button 
 	"LF glottal flow pulse" in the left panel.
 	
 	The noise synthesis can be useful to synthesize fricative consonants.
@@ -675,8 +707,12 @@
 	This can be useful to study directivity effects.
 	However, note that phenomena important for directivity such as the head and torso
 	diffraction are not simulated. Thus, the directivity effects which can be studied 
-	are uniquely due to the mouth opening dimension and the influence of the vocal tract
+	are only due to the mouth opening dimension and the influence of the vocal tract
 	on the acoustic field at the mouth exit.
+	
+	The synthesized sounds can be visualized and analyzed in the "Signal" page. 
+	It is also possible to export them as \texttt{.wav} files by clicking "Save WAV" or
+	"Save WAV as TXT" in the "File" menu of the main window.
 	
 	\section{Log file}
 	
@@ -734,13 +770,13 @@
 		Compute radiated field YES
 	\end{lstlisting}
 	
-	This file named \texttt{log.txt} is generated and modified automatically in the working 
+	This file, named \texttt{log.txt}, is generated and modified automatically in the working 
 	directory of VocalTractLab3D.
-	It can be useful to assert which parameters have been used for a specfific simulation,
+	It can be useful to assert which parameters have been used for a specific simulation,
 	or to follow in more details the simulation process.
-	During a simulation, its uptates can followed in real time with an appropriate software.
+	During a simulation, on can follow its updates in real time with an appropriate software.
 	This can be done with Notepad++ by selecting the option "Monitoring" in "View".
-	In linux this can be done in the command line with 
+	In Linux this can be done in the command line with 
 	\lstset{language=bash}
 	\begin{lstlisting}
 		tail -f log.txt
@@ -748,10 +784,11 @@
 	A copy of the log file can be saved
 	to keep track of the parameters used for a specific simulation.
 	
-	\section{Aknowledgement}
+	\section{Aknowledgements}
 	
 	\hl{Peter as autor as well?}
 	
+	The development of VocalTractLab3D was supported by the German Research Foundation (DFG) under Grant BI 1639/7-1.
 	We acknowledge the contribution of Jingyan Geng for the creation of the geometry files 
 	from MRI data.
 	

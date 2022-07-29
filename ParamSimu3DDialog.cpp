@@ -981,10 +981,8 @@ void ParamSimu3DDialog::OnMeshDensityEnter(wxCommandEvent& event)
     wxString st = txtMeshDensity->GetValue();
     if ((st.ToDouble(&x)) && (x >= 1.0) && (x <= 50.0))
     {
-        m_meshDensity = x;
+      setMeshDensity(x);
     }
-    m_simuParams.needToComputeModesAndJunctions = true;
-    m_simuParams.radImpedPrecomputed = false;
 
     updateWidgets();
 }
@@ -998,10 +996,8 @@ void ParamSimu3DDialog::OnMaxCutOnEnter(wxCommandEvent& event)
     wxString st = txtMaxCutOnFreq->GetValue();
     if ((st.ToDouble(&x)) && (x >= 1.0) && (x <= 500000.0))
     {
-        m_simuParams.maxCutOnFreq = x;
+      setMaxCutOnFreq(x);
     }
-    m_simuParams.needToComputeModesAndJunctions = true;
-    m_simuParams.radImpedPrecomputed = false;
 
     updateWidgets();
 }
@@ -1479,9 +1475,9 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   // for fast computations, but very innacurate
   if (fast)
   {
-    m_meshDensity = 5.;
+    setMeshDensity(5.);
 
-    m_simuParams.maxCutOnFreq = 20000.;
+    setMaxCutOnFreq(20000.);
 
     m_simuParams.maxComputedFreq = 10000.;
 
@@ -1490,9 +1486,9 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   }
   else
   {
-    m_meshDensity = 15.;
+    setMeshDensity(15.);
 
-    m_simuParams.maxCutOnFreq = 40000.;
+    setMaxCutOnFreq(40000.);
 
     m_simuParams.maxComputedFreq = 20000.;
 
@@ -1535,6 +1531,7 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
   m_simuParams.computeRadiatedField = false;
 
   updateWidgets();
+  updateGeometry();
 }
 
 // ****************************************************************************
@@ -1543,4 +1540,34 @@ void ParamSimu3DDialog::SetDefaultParams(bool fast)
 void ParamSimu3DDialog::OnClose(wxCommandEvent& event)
 {
   this->Close();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::setMeshDensity(double density)
+{
+  // if the mesh density is modified, 
+  // the modes and the radiation impedance must be computed
+  if (density != m_meshDensity)
+  {
+    m_simuParams.needToComputeModesAndJunctions = true;
+    m_simuParams.radImpedPrecomputed = false;
+    m_meshDensity = density;
+  }
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::setMaxCutOnFreq(double freq)
+{
+  // if the maximal cut off frequency is modified,
+  // the modes and the radiation impedance must be computed
+  if (freq != m_simuParams.maxCutOnFreq)
+  {
+    m_simuParams.needToComputeModesAndJunctions = true;
+    m_simuParams.radImpedPrecomputed = false;
+    m_simuParams.maxCutOnFreq = freq;
+  }
 }

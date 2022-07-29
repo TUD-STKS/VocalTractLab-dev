@@ -75,6 +75,7 @@ private:
     
   Acoustic3dSimulation* m_simu3d;
   VocalTract* m_tract;
+
   double m_meshDensity;
   int m_secNoiseSource;
   vector<string> m_listMouthBcond;
@@ -141,6 +142,10 @@ private:
   void SetDefaultParams(bool fast);
 
   void OnClose(wxCommandEvent& event);
+
+  // for updating some variables which imply modifying others
+  void setMeshDensity(double density);
+  void setMaxCutOnFreq(double freq);
 
 // **************************************************************************
 // Declare the event table.

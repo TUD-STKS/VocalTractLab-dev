@@ -470,6 +470,17 @@ void VocalTractDialog::initWidgets()
 
 void VocalTractDialog::updateVocalTractPage()
 {
+  // request reload 3d geometry and recompute modes and junction
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->requestReloadGeometry();
+  simu3d->requestModesAndJunctionComputation();
+  simu3d->setGeometryImported(false);
+  if (simu3d->contInterpMeth() == FROM_FILE)
+  {
+    simu3d->setContourInterpolationMethod(AREA);
+  }
+
+  // refresh the pictures
   if (updateRequestReceiver1 != NULL)
   {
      wxCommandEvent event(updateRequestEvent);

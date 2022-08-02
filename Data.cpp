@@ -35,6 +35,7 @@
 #include "Backend/XmlNode.h"
 #include "Backend/SoundLib.h"
 #include "Backend/Synthesizer.h"
+#include "Backend/Acoustic3dSimulation.h"
 
 
 // Define a custom event type to be used for command events.
@@ -3280,6 +3281,16 @@ void Data::updateModelsFromGesturalScore()
     gesturalScore->vocalTract->param[i].x = tractParams[i];
   }
   gesturalScore->vocalTract->calculateAll();
+
+  // request reload 3d geometry and recompute modes and junction
+  Acoustic3dSimulation* simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->requestReloadGeometry();
+  simu3d->requestModesAndJunctionComputation();
+  simu3d->setGeometryImported(false);
+  if (simu3d->contInterpMeth() == FROM_FILE)
+  {
+    simu3d->setContourInterpolationMethod(AREA);
+  }
 
   for (i=0; i < numGlottisParams; i++)
   {

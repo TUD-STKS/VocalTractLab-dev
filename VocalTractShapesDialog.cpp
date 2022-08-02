@@ -26,6 +26,7 @@
 #include "SilentMessageBox.h"
 #include "Backend/SoundLib.h"
 #include "Backend/Synthesizer.h"
+#include "Backend/Acoustic3dSimulation.h"
 
 // ****************************************************************************
 // IDs.
@@ -393,6 +394,15 @@ void VocalTractShapesDialog::updateVocalTract()
   }
   tract->calculateAll();
   data->updateTlModelGeometry(tract);
+
+  // request reloading the 3d geometry
+  Acoustic3dSimulation * simu3d = Acoustic3dSimulation::getInstance();
+  simu3d->requestReloadGeometry();
+  simu3d->setGeometryImported(false);
+  if (simu3d->contInterpMeth() == FROM_FILE)
+  {
+    simu3d->setContourInterpolationMethod(AREA);
+  }
 
   // Refresh the pictures of the parent window.
   if (updateRequestReceiver1 != NULL)

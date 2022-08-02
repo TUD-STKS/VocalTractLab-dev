@@ -568,7 +568,6 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   else
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
-    //simu3d->setGeometryImported(false);
     simu3d->requestModesAndJunctionComputation();
     simu3d->cleanAcousticField();
     importGeometry();
@@ -1098,11 +1097,11 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
 {
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
-  simu3d->setGeometryImported(false);
-  if (simu3d->contInterpMeth() == FROM_FILE)
-  {
-    simu3d->setContourInterpolationMethod(BOUNDING_BOX);
-  }
+  //simu3d->setGeometryImported(false);
+  //if (simu3d->contInterpMeth() == FROM_FILE)
+  //{
+  //  simu3d->setContourInterpolationMethod(AREA);
+  //}
 }
 
 // ****************************************************************************
@@ -1117,6 +1116,7 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
 
   if (name.size() > 0)
   {
+    simu3d->requestReloadGeometry();
     simu3d->setGeometryImported(true);
     simu3d->setContourInterpolationMethod(FROM_FILE);
     simu3d->setGeometryFile(name.ToStdString());

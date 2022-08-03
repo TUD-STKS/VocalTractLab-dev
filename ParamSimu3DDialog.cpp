@@ -551,7 +551,7 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Temperature (°C): ");
+    label = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Temperature (\xc2\xb0""C): "));
     lineSizer->Add(label, 6, wxALL | wxALIGN_CENTER, 3);
 
     txtTemperature = new wxTextCtrl(this, IDE_TEMPERATURE, "", wxDefaultPosition,

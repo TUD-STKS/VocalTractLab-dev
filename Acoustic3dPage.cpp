@@ -1122,7 +1122,6 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
     simu3d->setGeometryFile(name.ToStdString());
     if (importGeometry())
     {
-
       simu3d->cleanAcousticField();
       updateWidgets();
     }

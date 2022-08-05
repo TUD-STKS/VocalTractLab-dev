@@ -359,6 +359,7 @@ void ParamSimu3DDialog::updateGeometry()
 {
   if (updateRequestReceiver != NULL)
   {
+    m_simu3d->requestReloadGeometry();
     wxCommandEvent event(updateRequestEvent);
     event.SetInt(UPDATE_VOCAL_TRACT);
     wxPostEvent(updateRequestReceiver, event);

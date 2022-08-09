@@ -1,8 +1,8 @@
 // ****************************************************************************
-// This file is part of VocalTractLab.
-// Copyright (C) 2020, Peter Birkholz, Dresden, Germany
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
 // www.vocaltractlab.de
-// author: Peter Birkholz
+// author: Peter Birkholz and Rémi Blandin
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -833,11 +833,6 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
   double areaConst(simu3d->crossSection(0)->area());
   double attenuation(pow(10., -20 / 20));
 
-  //ofstream sig;
-  //ofstream log;
-  //log.open("log.txt", ofstream::app);
-  //log << "Start vowel synthesis" << endl;
-
   // Memorize the pulse params to restore them at the end of the function
   LfPulse origLfPulse = lfPulse;
   double envelop;
@@ -938,14 +933,6 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
     impulseResponseNoise.x[i] = transferFunction.re[i] * window.x[i];
   }
 
-  //sig.open("imp.txt");
-  //for (int i(0); i < impulseResponse.N; i++)
-  //{
-  //  sig << impulseResponse.getValue(i) << "  "
-  //    << impulseResponseNoise.getValue(i) << endl;
-  //}
-  //sig.close();
-
   // ****************************************************************
   // Calc. the speech signal samples.
   // ****************************************************************
@@ -1035,18 +1022,7 @@ int Data::synthesizeVowelLf(Acoustic3dSimulation *simu3d,
 
     filteredValue = 2000.0 * filterNoise.getOutputSample(noisePressureSignal.getValue(i));
     noiseSourceSignal.setValue(i, filteredValue);
-
-    //sig
-    //  << noiseSource.sample << "  "
-    //  << sum << "  "
-    //  << sumN << "  "
-    //  << envelop << "  "
-    //  << filteredValue << "  "
-    //  << vocalFoldSignal.getValue(i) << "  "
-    //  << noiseSourceSignal.getValue(i) << "  "
-    //  << endl;
   }
-  //sig.close();
 
   // normalise the signals 
   double minVf, maxVf, minNs(0.), maxNs(0.);

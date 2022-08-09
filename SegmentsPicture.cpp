@@ -1,3 +1,24 @@
+// ****************************************************************************
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
+// www.vocaltractlab.de
+// author: Peter Birkholz and Rémi Blandin
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//
+// ****************************************************************************
+
 #include <iostream>
 
 #include "SegmentsPicture.h"
@@ -80,9 +101,6 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
-  //ofstream log("log.txt", ofstream::app);
-  //log << "Start draw segments picture" << endl;
-
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
@@ -319,7 +337,6 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
-  //log.close();
 }
 
 // ****************************************************************************
@@ -611,8 +628,6 @@ void SegmentsPicture::OnExportSegPic(wxCommandEvent& event)
 
   CrossSection2d* sec;
   CGAL::Bbox_2 bbox;
-  //auto sec = m_simu3d->crossSection(0);
-  //auto bbox = sec->contour().bbox();
   Point ptInMin, ptInMax, ptOutMin, ptOutMax;
 
   ofstream of(name.ToStdString());

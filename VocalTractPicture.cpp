@@ -1,8 +1,8 @@
 // ****************************************************************************
-// This file is part of VocalTractLab.
-// Copyright (C) 2020, Peter Birkholz, Dresden, Germany
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
 // www.vocaltractlab.de
-// author: Peter Birkholz
+// author: Peter Birkholz and Rémi Blandin
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

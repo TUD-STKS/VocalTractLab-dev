@@ -1,3 +1,24 @@
+// ****************************************************************************
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
+// www.vocaltractlab.de
+// author: Peter Birkholz and Rémi Blandin
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//
+// ****************************************************************************
+
 #include "ParamSimu3DDialog.h"
 #include "Data.h"
 #include <fstream>
@@ -129,8 +150,6 @@ ParamSimu3DDialog* ParamSimu3DDialog::getInstance(wxWindow *parent)
 
 void ParamSimu3DDialog::updateWidgets()
 {
-  //ofstream log("log.txt", ofstream::app);
-
   if (m_simuParams.propMethod == MAGNUS)
   {
     m_simuParams.curved = m_simuParamsMagnus.curved;
@@ -316,8 +335,6 @@ void ParamSimu3DDialog::updateWidgets()
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
 		m_simuParams, m_mouthBoundaryCond, m_contInterpMeth);
-
-  //log.close();
 }
 
 // ****************************************************************************
@@ -346,7 +363,6 @@ void ParamSimu3DDialog::updateParams()
 // ****************************************************************************
 
 void ParamSimu3DDialog::setUpdateRequestReceiver(wxWindow* receiver)
-    
 {
     updateRequestReceiver = receiver;
 }
@@ -426,7 +442,6 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   // create the list of boundary conditions
   m_listMouthBcond.clear();
   m_listMouthBcond.push_back("Radiation");
-  //m_listMouthBcond.push_back("Constant admittance");
   m_listMouthBcond.push_back("Zero pressure");
 
   lstMouthBcond->Clear();
@@ -613,8 +628,6 @@ void ParamSimu3DDialog::initWidgets()
     sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
     topLevelSizer->Add(sz, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
-
-    
 
     ///////////////////////////////////////////////////////////////////
     // Boundary conditions options
@@ -1048,21 +1061,6 @@ void ParamSimu3DDialog::OnSecNoiseSourceEnter(wxCommandEvent& event)
     updateWidgets();
     updatePictures();
 }
-
-// ****************************************************************************
-// ****************************************************************************
-
-//void ParamSimu3DDialog::OnExpSpectrumLgthEnter(wxCommandEvent& event)
-//{
-    //double x(0.);
-    //wxString st = txtExpLgth->GetValue();
-    //if ((st.ToDouble(&x)) && (x >= 0.) && (x <= 16.))
-    //{
-        //m_expSpectrumLgth = (int)x;
-    //}
-
-    //updateWidgets();
-//}
 
 // ****************************************************************************
 // ****************************************************************************

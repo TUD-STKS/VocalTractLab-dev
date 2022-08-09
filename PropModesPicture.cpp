@@ -1,3 +1,24 @@
+// ****************************************************************************
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
+// www.vocaltractlab.de
+// author: Peter Birkholz and Rémi Blandin
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//
+// ****************************************************************************
+
 #include "PropModesPicture.h"
 #include <iostream>
 #include <fstream>
@@ -57,7 +78,6 @@ PropModesPicture::PropModesPicture(wxWindow* parent,
   m_modeIdx(0),
   m_positionContour(1)
 {
-	//this->m_picVocalTract = picVocalTract;
 	this->m_simu3d = simu3d;
   this->m_segPic = segPic;
 
@@ -91,9 +111,6 @@ void PropModesPicture::draw(wxDC& dc)
   m_infoStr.clear();
   m_labelStr.clear();
   m_valueStr.clear();
-
-	//ofstream log("log.txt", ofstream::app);
-	//log << "\nStart draw mode picture" << endl;
 
 	// Clear the background.
 	dc.SetBackground(*wxWHITE_BRUSH);
@@ -214,14 +231,6 @@ void PropModesPicture::draw(wxDC& dc)
 			// display number of vertex, segments and triangles
       tbText.addCell("Nb vertexes", seg->numberOfVertices());
       tbText.addCell("nb faces", seg->numberOfFaces());
-
-			//end = std::chrono::system_clock::now();
-			//elapsed_seconds = end - start;
-			//log << elapsed_seconds.count() << endl;
-			//log << "tri " << tTri.count() << endl;
-			//log << "Coord " << tCoord.count() << endl;
-			//log.close();
-
 			}
 			break;
 			// ****************************************************************
@@ -303,14 +312,12 @@ void PropModesPicture::draw(wxDC& dc)
 
 			for (int it(0); it < numFaces; ++it)
 			{
-				//big = std::chrono::system_clock::now();
 				for (int i(0); i < 3; i++)
 				{
 					vecTri[i] = Point3D(pts[triangles[it][i]][0], pts[triangles[it][i]][1],
-						modes(triangles[it][i], m_modeIdx));// [m_modeIdx * numVertex + triangles[it][i]] );
+						modes(triangles[it][i], m_modeIdx));
 				}
-				//fin = std::chrono::system_clock::now();
-				//tPt3 += fin - big;
+
 				big = std::chrono::system_clock::now();
 				maxDist = max(sqrt(pow(vecTri[1].x - vecTri[0].x, 2) + pow(vecTri[1].y - vecTri[0].y, 2)),
 					max(sqrt(pow(vecTri[2].x - vecTri[0].x, 2) + pow(vecTri[2].y - vecTri[0].y, 2)),
@@ -332,15 +339,7 @@ void PropModesPicture::draw(wxDC& dc)
 						p.Blue() = (*colorMap)[normAmp][2];
 					}
 				}
-				//fin = std::chrono::system_clock::now();
-				//tCalc += fin - big;
 			}
-			//end = std::chrono::system_clock::now();
-			//elapsed_seconds = end - start;
-			//log << "Compute pixels " << elapsed_seconds.count() << endl;
-			//log << "Time extract points " << tPt3.count() << endl;
-			//log << "Time compute pixels " << tCalc.count() << endl;
-			//start = std::chrono::system_clock::now();
 
 			// write informations about the mode
       info.str("");
@@ -351,10 +350,6 @@ void PropModesPicture::draw(wxDC& dc)
         seg->eigenFrequency(m_modeIdx));
 
 			dc.DrawBitmap(bmp, 0, 0, 0);
-
-			//end = std::chrono::system_clock::now();
-			//elapsed_seconds = end - start;
-			//log << "Draw map " << elapsed_seconds.count() << endl;
 		}
 		break;
 
@@ -367,7 +362,7 @@ void PropModesPicture::draw(wxDC& dc)
 			int numCont(F.size());
 			int maxNumF(0);
 
-			maxNumF = 1;// max(maxNumF, numCont);
+			maxNumF = 1;
 
 
 			double widthFn((double)min(width, height) / ((double)maxNumF * 1.1));
@@ -598,8 +593,6 @@ void PropModesPicture::draw(wxDC& dc)
 		}
 
     tbText.printCells(dc);
-
-	//log.close();
 }
 
 // ****************************************************************************

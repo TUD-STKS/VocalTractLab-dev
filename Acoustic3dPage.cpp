@@ -1,3 +1,24 @@
+// ****************************************************************************
+// This file is part of VocalTractLab3D.
+// Copyright (C) 2022, Peter Birkholz, Dresden, Germany
+// www.vocaltractlab.de
+// author: Peter Birkholz and Rémi Blandin
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//
+// ****************************************************************************
+
 #include "Acoustic3dPage.h"
 #include "ParamSimu3DDialog.h"
 #include "VocalTractDialog.h"
@@ -40,14 +61,9 @@ static const int IDB_IMPORT_GEOMETRY              = 6003;
 static const int IDB_COMPUTE_MODES                = 6004;
 static const int IDB_COMPUTE_TF                   = 6005;
 static const int IDB_COMPUTE_ACOUSTIC_FIELD       = 6006;
-//static const int IDB_EXPORT_GLOTTAL_SOURCE_TF     = 6007;
-//static const int IDB_EXPORT_NOISE_SOURCE_TF       = 6008;
-static const int IDB_LF_PULSE                     = 6009;
-static const int IDB_PLAY_LONG_VOWEL              = 6010;
-static const int IDB_PLAY_NOISE_SOURCE            = 6011;
-
-
-//static const int IDB_EXPORT_FIELD = 6010;
+static const int IDB_LF_PULSE                     = 6007;
+static const int IDB_PLAY_LONG_VOWEL              = 6008;
+static const int IDB_PLAY_NOISE_SOURCE            = 6009;
 
 // Modes picture controls
 static const int IDB_SHOW_LOWER_ORDER_MODE        = 6020;
@@ -101,8 +117,6 @@ BEGIN_EVENT_TABLE(Acoustic3dPage, wxPanel)
   EVT_BUTTON(IDB_COMPUTE_MODES, Acoustic3dPage::OnComputeModes)
   EVT_BUTTON(IDB_COMPUTE_TF, Acoustic3dPage::OnComputeTf)
   EVT_BUTTON(IDB_COMPUTE_ACOUSTIC_FIELD, Acoustic3dPage::OnComputeAcousticField)
-  //EVT_BUTTON(IDB_EXPORT_GLOTTAL_SOURCE_TF, Acoustic3dPage::OnExportGlottalSourceTf)
-  //EVT_BUTTON(IDB_EXPORT_NOISE_SOURCE_TF, Acoustic3dPage::OnExportNoiseSourceTf)
   EVT_BUTTON(IDB_LF_PULSE, Acoustic3dPage::OnLfPulse)
   EVT_BUTTON(IDB_PLAY_LONG_VOWEL, Acoustic3dPage::OnPlayLongVowel)
   EVT_BUTTON(IDB_PLAY_NOISE_SOURCE, Acoustic3dPage::OnPlayNoiseSource)
@@ -276,14 +290,6 @@ void Acoustic3dPage::initWidgets(VocalTractPicture* picVocalTract)
 
   button = new wxButton(this, IDB_COMPUTE_ACOUSTIC_FIELD, "Compute acoustic field");
   leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  //leftSizer->AddSpacer(20);
-  
-  //button = new wxButton(this, IDB_EXPORT_GLOTTAL_SOURCE_TF, "Export glottal transfer function");
-  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
-
-  //button = new wxButton(this, IDB_EXPORT_NOISE_SOURCE_TF, "Export noise transfer function");
-  //leftSizer->Add(button, 0, wxGROW | wxALL, 3);
 
   leftSizer->AddSpacer(20);
   
@@ -1042,32 +1048,6 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 // ****************************************************************************
 // ****************************************************************************
 
-//void Acoustic3dPage::OnExportGlottalSourceTf(wxCommandEvent& event)
-//{
-//  wxFileName fileName;
-//  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
-//    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
-//    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
-//
-//  simu3d->exportTransferFucntions(name.ToStdString(), GLOTTAL);
-//}
-//
-//// ****************************************************************************
-//// ****************************************************************************
-//
-//void Acoustic3dPage::OnExportNoiseSourceTf(wxCommandEvent& event)
-//{
-//  wxFileName fileName;
-//  wxString name = wxFileSelector("Save transfer functions", fileName.GetPath(),
-//    fileName.GetFullName(), ".txt", "(*.txt)|*.txt",
-//    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
-//
-//  simu3d->exportTransferFucntions(name.ToStdString(), NOISE);
-//}
-
-// ****************************************************************************
-// ****************************************************************************
-
 void Acoustic3dPage::OnParamSimuDialog(wxCommandEvent& event)
 {
   ParamSimu3DDialog *dialog = ParamSimu3DDialog::getInstance(NULL);
@@ -1097,11 +1077,6 @@ void Acoustic3dPage::OnShapesDialog(wxCommandEvent& event)
 {
   VocalTractShapesDialog* dialog = VocalTractShapesDialog::getInstance();
   dialog->Show(true);
-  //simu3d->setGeometryImported(false);
-  //if (simu3d->contInterpMeth() == FROM_FILE)
-  //{
-  //  simu3d->setContourInterpolationMethod(AREA);
-  //}
 }
 
 // ****************************************************************************
@@ -1438,11 +1413,6 @@ bool Acoustic3dPage::importGeometry()
   {
     return false;
   }
-
-  //// clean the log file
-  //ofstream log;
-  //log.open("log.txt", ofstream::out | ofstream::trunc);
-  //log.close();
 }
 
 // ****************************************************************************

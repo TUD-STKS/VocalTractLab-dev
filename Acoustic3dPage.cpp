@@ -575,7 +575,6 @@ void Acoustic3dPage::OnUpdateRequest(wxCommandEvent& event)
   if (event.GetInt() == UPDATE_VOCAL_TRACT)
   {
     simu3d->requestModesAndJunctionComputation();
-    simu3d->cleanAcousticField();
     importGeometry();
     updateWidgets();
     segPic->Update();
@@ -1097,7 +1096,6 @@ void Acoustic3dPage::OnImportGeometry(wxCommandEvent& event)
     simu3d->setGeometryFile(name.ToStdString());
     if (importGeometry())
     {
-      simu3d->cleanAcousticField();
       updateWidgets();
     }
     else
@@ -1399,13 +1397,20 @@ bool Acoustic3dPage::importGeometry()
 {
   VocalTract* tract = data->vocalTract;
 
+  bool clearAcousticField(
+    simu3d->isReloadGeometryRequested()
+  );
+
   if (simu3d->importGeometry(tract))
   {
-    segPic->resetActiveSegment();
-    simu3d->cleanAcousticField();
+    if (clearAcousticField)
+    {
+      segPic->resetActiveSegment();
+      simu3d->cleanAcousticField();
 
-    ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
-    dialog->updateParams();
+      ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+      dialog->updateParams();
+    }
 
     return true;
   }

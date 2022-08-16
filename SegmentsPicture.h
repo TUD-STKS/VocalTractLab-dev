@@ -45,6 +45,7 @@ public:
   void setShowField(bool showField) { m_showField = showField; }
   void setShowTfPts(bool showTfPts) {m_showTfPts = showTfPts;}
   void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
+  void requestFieldInterpolation() { m_interpolateField = true; }
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
@@ -71,6 +72,7 @@ private:
   bool m_showTfPts;
   bool m_showSndSourceSeg;
   bool m_fieldInLogScale;
+  bool m_interpolateField;
   int m_idxPtTf;
 
   int m_width;
@@ -81,6 +83,8 @@ private:
   double m_bboxHalfWidth;
   double m_bboxHalfHeight;
   pair<Point2D, Point2D> m_bbox;
+
+  wxBitmap m_fieldImage;
 
   int m_mousePosX;
   int m_mousePosY;

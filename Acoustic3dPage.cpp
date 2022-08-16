@@ -1024,6 +1024,10 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
     progressDialog->Destroy();
     progressDialog = NULL;
 
+    // when a new field have been computed, request the interpolation of the 
+    // field to create the field image to display
+    segPic->requestFieldInterpolation();
+
     if (!abort)
     {
       wxMessageDialog* dial = new wxMessageDialog(NULL,

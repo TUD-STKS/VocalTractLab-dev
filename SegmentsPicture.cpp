@@ -79,7 +79,8 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_showField(false),
   m_showTfPts(true),
   m_showSndSourceSeg(true),
-  m_fieldInLogScale(true)
+  m_fieldInLogScale(true),
+  m_interpolateField(true)
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
@@ -102,6 +103,11 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
+  ofstream log("log.txt", ofstream::app);
+
+  auto startTot = std::chrono::system_clock::now();
+  auto end = std::chrono::system_clock::now();
+
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
@@ -129,63 +135,68 @@ void SegmentsPicture::draw(wxDC& dc)
     {
       if (m_simu3d->acousticFieldSize() > 0)
       {
-        ColorMap colorMap = ColorScale::getColorMap();
-
-        Matrix field;
-        int normAmp;
-        double maxAmp(m_simu3d->maxAmpField());
-        double minAmp(m_simu3d->minAmpField());
-        // to avoid singular values when the field is displayed in dB
-        double dbShift(0.5);
-        if (m_fieldInLogScale) { 
-          maxAmp = 20. * log10(maxAmp); 
-          minAmp = max(maxAmp - 80, 20. * log10(minAmp));
-          maxAmp = maxAmp - minAmp + dbShift;
-        }
-
-        // generate the coordinates of the points of the pixel map
-        Vec coordX(m_width), coordY(m_height);
-        for (int i(0); i < m_width; i++)
+        if (m_interpolateField)
         {
-          coordX(i) = getCoordXFromPixel(i);
-        }
-        for (int i(0); i < m_height; i++)
-        {
-          coordY(i) = getCoordYFromPixel(i);
-        }
-        m_simu3d->interpolateAcousticField(coordX, coordY, field);
-        if (m_fieldInLogScale) { field = 20. * field.array().log10() - minAmp + dbShift; }
+          ColorMap colorMap = ColorScale::getColorMap();
 
-        // initialise white bitmap
-        wxBitmap bmp(m_width, m_height, 24);
-        wxNativePixelData data(bmp);
-        wxNativePixelData::Iterator p(data);
-        for (int i(0); i < m_height; ++i)
-        {
-          wxNativePixelData::Iterator rowStart = p;
-          for (int j(0); j < m_width; ++j, ++p)
-          {
-            if (field(i, j) > 0.)
-            {
-              normAmp = max(1, (int)(256. * field(i, j) / maxAmp));
-
-              p.Red() = (*colorMap)[normAmp][0];
-              p.Green() = (*colorMap)[normAmp][1];
-              p.Blue() = (*colorMap)[normAmp][2];
-            }
-            else
-            {
-              p.Red() = 254;
-              p.Green() = 254;
-              p.Blue() = 254;
-            }
-
+          Matrix field;
+          int normAmp;
+          double maxAmp(m_simu3d->maxAmpField());
+          double minAmp(m_simu3d->minAmpField());
+          // to avoid singular values when the field is displayed in dB
+          double dbShift(0.5);
+          if (m_fieldInLogScale) {
+            maxAmp = 20. * log10(maxAmp);
+            minAmp = max(maxAmp - 80, 20. * log10(minAmp));
+            maxAmp = maxAmp - minAmp + dbShift;
           }
-          p = rowStart;
-          p.OffsetY(data, 1);
-        }
 
-        dc.DrawBitmap(bmp, 0, 0, 0);
+          // generate the coordinates of the points of the pixel map
+          Vec coordX(m_width), coordY(m_height);
+          for (int i(0); i < m_width; i++)
+          {
+            coordX(i) = getCoordXFromPixel(i);
+          }
+          for (int i(0); i < m_height; i++)
+          {
+            coordY(i) = getCoordYFromPixel(i);
+          }
+
+          m_simu3d->interpolateAcousticField(coordX, coordY, field);
+          if (m_fieldInLogScale) { field = 20. * field.array().log10() - minAmp + dbShift; }
+
+          // initialise white bitmap
+          m_fieldImage = wxBitmap(m_width, m_height, 24);
+          wxNativePixelData data(m_fieldImage);
+          wxNativePixelData::Iterator p(data);
+          for (int i(0); i < m_height; ++i)
+          {
+            wxNativePixelData::Iterator rowStart = p;
+            for (int j(0); j < m_width; ++j, ++p)
+            {
+              if (field(i, j) > 0.)
+              {
+                normAmp = max(1, (int)(256. * field(i, j) / maxAmp));
+
+                p.Red() = (*colorMap)[normAmp][0];
+                p.Green() = (*colorMap)[normAmp][1];
+                p.Blue() = (*colorMap)[normAmp][2];
+              }
+              else
+              {
+                p.Red() = 254;
+                p.Green() = 254;
+                p.Blue() = 254;
+              }
+
+            }
+            p = rowStart;
+            p.OffsetY(data, 1);
+          }
+
+          m_interpolateField = false;
+        }
+        dc.DrawBitmap(m_fieldImage, 0, 0, 0);
       }
     }
 
@@ -338,6 +349,14 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
+
+  end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end - startTot;
+
+  log << "Time draw segments: " << elapsed_seconds.count() << endl;
+  
+
+  log.close();
 }
 
 // ****************************************************************************

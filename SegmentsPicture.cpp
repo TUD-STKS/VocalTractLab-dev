@@ -24,6 +24,7 @@
 #include "SegmentsPicture.h"
 #include "Acoustic3dPage.h"
 #include "ColorScale.h"
+#include "ParamSimu3DDialog.h"
 
 #include <wx/rawbmp.h>
 
@@ -400,6 +401,9 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
   {
     m_simu3d->updateBoundingBox();
 
+    ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+    dialog->updateParams();
+
     wxCommandEvent event(updateRequestEvent);
     event.SetInt(UPDATE_PICTURES);
     wxPostEvent(updateEventReceiver, event);
@@ -554,6 +558,9 @@ void SegmentsPicture::OnDefineBboxLowerCorner(wxCommandEvent& event)
   newBbox.first.y = getCoordYFromPixel(m_mousePosY);
   m_simu3d->setBoundingBox(newBbox);
 
+  ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+  dialog->updateParams();
+
   wxCommandEvent picUpdateEvent(updateRequestEvent);
   event.SetInt(UPDATE_PICTURES);
   wxPostEvent(updateEventReceiver, picUpdateEvent);
@@ -567,6 +574,9 @@ void SegmentsPicture::OnDefineBboxUpperCorner(wxCommandEvent& event)
   newBbox.second.x = getCoordXFromPixel(m_mousePosX);
   newBbox.second.y = getCoordYFromPixel(m_mousePosY);
   m_simu3d->setBoundingBox(newBbox);
+
+  ParamSimu3DDialog* dialog = ParamSimu3DDialog::getInstance(NULL);
+  dialog->updateParams();
 
   wxCommandEvent picUpdateEvent(updateRequestEvent);
   event.SetInt(UPDATE_PICTURES);

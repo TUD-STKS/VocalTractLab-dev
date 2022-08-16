@@ -417,7 +417,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_singlePtTf = m_simuParams.tfPoint[0];
   m_simuParamsMagnus = m_simu3d->simuParams();
   m_simuParamsFreqDepLosses = m_simu3d->simuParams();
-  m_maxBbox = 100.;
+  m_maxBbox = 1000.;
 
   this->Move(100, 100);
 

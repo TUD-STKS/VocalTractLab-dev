@@ -144,7 +144,7 @@ void Spectrum3dPicture::paintSpectrum(wxDC &dc)
 void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
 {
   int graphX, graphY, graphW, graphH, y, lastY;
-  double freq, val;
+  double val;
 
   graph.getDimensions(graphX, graphY, graphW, graphH);
   lastY = graphY;
@@ -162,12 +162,22 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
     break;
   }
 
-  // 
+  // create the frequency vector
+  vector<double> freqs;
+  freqs.reserve(graphW);
   for (int i(0); i < graphW; i++)
   {
-    freq = graph.getAbsXValue(graphX + i);
-    val = abs(simu3d->interpolateTransferFunction(freq, m_idxPtTf, type));
+    freqs.push_back(graph.getAbsXValue(graphX + i));
+  }
 
+  // interpolate the transfer function
+  vector<complex<double>> interpolatedTF;
+  simu3d->interpolateTransferFunction(freqs, m_idxPtTf, type, interpolatedTF);
+
+  // draw the transfer function curve
+  for (int i(0); i < graphW; i++)
+  {
+    val = abs(interpolatedTF[i]);
     y = graph.getYPos(val);
 
     if (y < graphY)
@@ -181,7 +191,7 @@ void Spectrum3dPicture::drawTf(wxDC& dc, enum tfType type)
 
     if (isnan(val)) { y = NAN; }
 
-      dc.DrawLine(graphX + i - 1, lastY, graphX + i, y);
+    dc.DrawLine(graphX + i - 1, lastY, graphX + i, y);
 
     lastY = y;
   }

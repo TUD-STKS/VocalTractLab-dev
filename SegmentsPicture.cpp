@@ -103,11 +103,6 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
 
 void SegmentsPicture::draw(wxDC& dc)
 {
-  ofstream log("log.txt", ofstream::app);
-
-  auto startTot = std::chrono::system_clock::now();
-  auto end = std::chrono::system_clock::now();
-
   // Clear the background.
   dc.SetBackground(*wxWHITE_BRUSH);
   dc.Clear();
@@ -349,14 +344,6 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
-
-  end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds = end - startTot;
-
-  log << "Time draw segments: " << elapsed_seconds.count() << endl;
-  
-
-  log.close();
 }
 
 // ****************************************************************************
@@ -399,10 +386,9 @@ void SegmentsPicture::OnMouseEvent(wxMouseEvent& event)
     if (idxSeg >= 0)
     {
       m_activeSegment = idxSeg;
-      Refresh();
 
       wxCommandEvent event(updateRequestEvent);
-      event.SetInt(REFRESH_PICTURES_AND_CONTROLS);
+      event.SetInt(REFRESH_PICTURES);
       wxPostEvent(updateEventReceiver, event);
     }
   }

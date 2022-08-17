@@ -92,10 +92,6 @@ PropModesPicture::PropModesPicture(wxWindow* parent,
 
 void PropModesPicture::draw(wxDC& dc)
 {
-  ofstream log("log.txt", ofstream::app);
-
-  auto start = std::chrono::system_clock::now();
-
 	int width, height;
 	//double zoom;
 	int xBig, yBig, xEnd, yEnd;
@@ -596,13 +592,6 @@ void PropModesPicture::draw(wxDC& dc)
 		}
 
     tbText.printCells(dc);
-
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
-
-    log << "\nTime draw cross-section: " << elapsed_seconds.count() << endl;
-
-    log.close();
 }
 
 // ****************************************************************************

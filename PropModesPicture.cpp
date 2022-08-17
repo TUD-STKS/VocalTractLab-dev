@@ -529,8 +529,8 @@ void PropModesPicture::draw(wxDC& dc)
               beta = ((double)(j) / (double)(numPtSide - 1));
               pointToDraw = alpha * vecTri[1] + beta * vecTri[2] +
                 (1. - alpha - beta) * vecTri[0];
-              idxI = (int)(m_zoom * pointToDraw.x + m_centerX);
-              idxJ = (int)(m_centerY - m_zoom * pointToDraw.y);
+              idxI = min((int)(m_zoom * pointToDraw.x + m_centerX), width - 1);
+              idxJ = min((int)(m_centerY - m_zoom * pointToDraw.y), height - 1);
               m_field(height - idxJ -1, idxI) = pointToDraw.z;
               if (m_fieldInLogScale) 
               {

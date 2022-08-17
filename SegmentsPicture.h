@@ -77,6 +77,8 @@ private:
 
   int m_width;
   int m_height;
+  int m_oldWidth;
+  int m_oldHeight;
   double m_zoom;
   double m_halfWidth;
   double m_halfHeight;

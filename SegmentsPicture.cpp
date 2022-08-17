@@ -57,14 +57,14 @@ static const int IDM_EXPORT_SEGMENT_PIC       = 1006;
 // ****************************************************************************
 
 BEGIN_EVENT_TABLE(SegmentsPicture, BasicPicture)
-  EVT_MOUSE_EVENTS(SegmentsPicture::OnMouseEvent)
-  EVT_MENU(IDM_DEFINE_BBOX_LOWER_CORNER, SegmentsPicture::OnDefineBboxLowerCorner)
-  EVT_MENU(IDM_DEFINE_BBOX_UPPER_CORNER, SegmentsPicture::OnDefineBboxUpperCorner)
-  EVT_MENU(IDM_UPDATE_BBOX, SegmentsPicture::OnUpdateBbox)
-  EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, SegmentsPicture::OnExportAcousticField)
-  EVT_MENU(IDM_DEFINE_NOISE_SRC_SEG, SegmentsPicture::OnDefineNoiseSourceSeg)
-  EVT_MENU(IDM_EXPORT_GEO_AS_CSV, SegmentsPicture::OnEXportGeoAsCsv)
-  EVT_MENU(IDM_EXPORT_SEGMENT_PIC, SegmentsPicture::OnExportSegPic)
+EVT_MOUSE_EVENTS(SegmentsPicture::OnMouseEvent)
+EVT_MENU(IDM_DEFINE_BBOX_LOWER_CORNER, SegmentsPicture::OnDefineBboxLowerCorner)
+EVT_MENU(IDM_DEFINE_BBOX_UPPER_CORNER, SegmentsPicture::OnDefineBboxUpperCorner)
+EVT_MENU(IDM_UPDATE_BBOX, SegmentsPicture::OnUpdateBbox)
+EVT_MENU(IDM_EXPORT_ACOUSTIC_FIELD, SegmentsPicture::OnExportAcousticField)
+EVT_MENU(IDM_DEFINE_NOISE_SRC_SEG, SegmentsPicture::OnDefineNoiseSourceSeg)
+EVT_MENU(IDM_EXPORT_GEO_AS_CSV, SegmentsPicture::OnEXportGeoAsCsv)
+EVT_MENU(IDM_EXPORT_SEGMENT_PIC, SegmentsPicture::OnExportSegPic)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -80,7 +80,9 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_showTfPts(true),
   m_showSndSourceSeg(true),
   m_fieldInLogScale(true),
-  m_interpolateField(true)
+  m_interpolateField(true),
+  m_oldWidth(0),
+  m_oldHeight(0)
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
@@ -125,6 +127,12 @@ void SegmentsPicture::draw(wxDC& dc)
     //***************************************************************
     // Plot the acoustic field
     //***************************************************************
+
+    // recompute the field image if the size of the picture is changed
+    if ((m_width != m_oldWidth) || (m_height != m_oldHeight))
+    {
+      m_interpolateField = true;
+    }
 
     if (m_showField)
     {
@@ -192,6 +200,23 @@ void SegmentsPicture::draw(wxDC& dc)
           m_interpolateField = false;
         }
         dc.DrawBitmap(m_fieldImage, 0, 0, 0);
+
+        //// draw the colorbar
+        //dc.SetPen(*wxBLACK_PEN);
+        //wxColor colorBarColor;
+        //yBig = getPixelCoordY(m_bbox.first.y);
+        //int normAmp;
+        //ColorMap colorMap = ColorScale::getColorMap();
+        //for (int i(0); i < m_height; ++i)
+        //{
+        //  normAmp = max(1, 256 * i / m_height);
+        //  colorBarColor = wxColor((*colorMap)[normAmp][0],
+        //    (*colorMap)[normAmp][1],
+        //    (*colorMap)[normAmp][2]);
+        //  dc.SetPen(wxPen(colorBarColor, 1));
+        //  yBig --;
+        //  dc.DrawLine(0, yBig, 15, yBig);
+        //}
       }
     }
 
@@ -344,6 +369,11 @@ void SegmentsPicture::draw(wxDC& dc)
       }
     }
   }
+
+  // save the width and height for comparison to detect if the picture sizze have been 
+  // changed when it drawn next time
+  m_oldWidth = m_width;
+  m_oldHeight = m_height;
 }
 
 // ****************************************************************************

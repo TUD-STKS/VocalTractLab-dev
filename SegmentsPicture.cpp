@@ -82,7 +82,9 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_fieldInLogScale(true),
   m_interpolateField(true),
   m_oldWidth(0),
-  m_oldHeight(0)
+  m_oldHeight(0),
+  m_maxAmp(0.),
+  m_widthColorbar(60)
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
@@ -144,14 +146,15 @@ void SegmentsPicture::draw(wxDC& dc)
 
           Matrix field;
           int normAmp;
-          double maxAmp(m_simu3d->maxAmpField());
-          double minAmp(m_simu3d->minAmpField());
+          m_maxAmp = m_simu3d->maxAmpField();
+          m_minAmp = m_simu3d->minAmpField();
+          double diffAmp(m_maxAmp);
           // to avoid singular values when the field is displayed in dB
           double dbShift(0.5);
           if (m_fieldInLogScale) {
-            maxAmp = 20. * log10(maxAmp);
-            minAmp = max(maxAmp - 80, 20. * log10(minAmp));
-            maxAmp = maxAmp - minAmp + dbShift;
+            m_maxAmp = 20. * log10(m_maxAmp);
+            m_minAmp = max(m_maxAmp - 80, 20. * log10(m_minAmp));
+            diffAmp = m_maxAmp - m_minAmp + dbShift;
           }
 
           // generate the coordinates of the points of the pixel map
@@ -166,7 +169,7 @@ void SegmentsPicture::draw(wxDC& dc)
           }
 
           m_simu3d->interpolateAcousticField(coordX, coordY, field);
-          if (m_fieldInLogScale) { field = 20. * field.array().log10() - minAmp + dbShift; }
+          if (m_fieldInLogScale) { field = 20. * field.array().log10() - m_minAmp + dbShift; }
 
           // initialise white bitmap
           m_fieldImage = wxBitmap(m_width, m_height, 24);
@@ -179,7 +182,7 @@ void SegmentsPicture::draw(wxDC& dc)
             {
               if (field(i, j) > 0.)
               {
-                normAmp = max(1, (int)(256. * field(i, j) / maxAmp));
+                normAmp = max(1, (int)(256. * field(i, j) / diffAmp));
 
                 p.Red() = (*colorMap)[normAmp][0];
                 p.Green() = (*colorMap)[normAmp][1];
@@ -201,22 +204,45 @@ void SegmentsPicture::draw(wxDC& dc)
         }
         dc.DrawBitmap(m_fieldImage, 0, 0, 0);
 
-        //// draw the colorbar
-        //dc.SetPen(*wxBLACK_PEN);
-        //wxColor colorBarColor;
-        //yBig = getPixelCoordY(m_bbox.first.y);
-        //int normAmp;
-        //ColorMap colorMap = ColorScale::getColorMap();
-        //for (int i(0); i < m_height; ++i)
-        //{
-        //  normAmp = max(1, 256 * i / m_height);
-        //  colorBarColor = wxColor((*colorMap)[normAmp][0],
-        //    (*colorMap)[normAmp][1],
-        //    (*colorMap)[normAmp][2]);
-        //  dc.SetPen(wxPen(colorBarColor, 1));
-        //  yBig --;
-        //  dc.DrawLine(0, yBig, 15, yBig);
-        //}
+        // ****************************************************************
+        // draw the colorbar
+        // ****************************************************************
+
+        dc.SetPen(*wxBLACK_PEN);
+        wxColor colorBarColor;
+        yBig = m_height - 14;
+        int normAmp;
+        ColorMap colorMap = ColorScale::getColorMap();
+
+        for (int i(15); i < m_height - 14; ++i)
+        {
+          normAmp = max(1, 255 * (i - 15) / (m_height - 30));
+
+          colorBarColor = wxColor((*colorMap)[normAmp][0],
+            (*colorMap)[normAmp][1],
+            (*colorMap)[normAmp][2]);
+          dc.SetPen(wxPen(colorBarColor, 1));
+
+          yBig --;
+
+          dc.DrawLine(0, yBig, 15, yBig);
+        }
+
+        // print the labels for the max and min amplitude
+        double diffAmp(m_maxAmp - m_minAmp);
+        double graduations[5] = { 0., 0.25, 0.5, 0.75, 1. };
+        ostringstream ost;
+        wxCoord w, h;
+        ost << setprecision(0) << fixed;
+
+        for (int i(0); i < 5; i++)
+        {
+          ost << "-  " << m_minAmp + graduations[i] * diffAmp << " dB";
+          dc.GetTextExtent(ost.str(), &w, &h);
+          dc.DrawText(ost.str(), 13, 
+            (1. - graduations[i]) * (m_height - 30) + 14 - h / 2);
+          ost.str("");
+        }
       }
     }
 
@@ -461,18 +487,18 @@ void SegmentsPicture::getZoomAndBbox()
   // get the dimensions of the picture
   this->GetSize(&m_width, &m_height);
 
-  m_halfWidth = (double)(m_width) / 2.;
+  m_halfWidth = (double)(m_width - m_widthColorbar) / 2.;
   m_halfHeight = (double)(m_height) / 2.;
 
   double bboxWidth(m_bbox.second.x - m_bbox.first.x);
   double bboxHeight(m_bbox.second.y - m_bbox.first.y);
 
   double ratioHeightWidthBbox(bboxHeight / bboxWidth);
-  double ratioHeightWidth((double)m_height / (double)m_width);
+  double ratioHeightWidth((double)m_height / (double)(m_width - m_widthColorbar));
 
   if (ratioHeightWidth > ratioHeightWidthBbox)
   {
-    m_zoom = (double)m_width / bboxWidth / 1.01;
+    m_zoom = (double)(m_width - m_widthColorbar) / bboxWidth / 1.01;
   }
   else
   {
@@ -487,7 +513,7 @@ void SegmentsPicture::getZoomAndBbox()
 
 int SegmentsPicture::getPixelCoordX(double x)
 {
-  return((int)(m_halfWidth - m_bboxHalfWidth
+  return((int)(m_halfWidth - m_bboxHalfWidth + m_widthColorbar
     + m_zoom * (x - m_bbox.first.x)));
 }
 
@@ -503,7 +529,8 @@ int SegmentsPicture::getPixelCoordY(double y)
 
 double SegmentsPicture::getCoordXFromPixel(int Xpix)
 {
-  return(((double)Xpix + m_bboxHalfWidth - m_halfWidth) / m_zoom + m_bbox.first.x);
+  return(((double)Xpix + m_bboxHalfWidth - m_halfWidth - m_widthColorbar) 
+    / m_zoom + m_bbox.first.x);
 }
 
 // ****************************************************************************

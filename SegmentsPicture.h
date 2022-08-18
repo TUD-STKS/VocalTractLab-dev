@@ -85,6 +85,10 @@ private:
   double m_bboxHalfWidth;
   double m_bboxHalfHeight;
   pair<Point2D, Point2D> m_bbox;
+  int m_widthColorbar;
+
+  double m_maxAmp;
+  double m_minAmp;
 
   wxBitmap m_fieldImage;
 

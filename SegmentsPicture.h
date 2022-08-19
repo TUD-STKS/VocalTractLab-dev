@@ -85,6 +85,7 @@ private:
   double m_bboxHalfWidth;
   double m_bboxHalfHeight;
   pair<Point2D, Point2D> m_bbox;
+  pair<Point2D, Point2D> m_oldBbox;
   int m_widthColorbar;
 
   double m_maxAmp;

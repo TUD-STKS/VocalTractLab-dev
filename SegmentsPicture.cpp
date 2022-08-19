@@ -84,7 +84,8 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_oldWidth(0),
   m_oldHeight(0),
   m_maxAmp(0.),
-  m_widthColorbar(60)
+  m_widthColorbar(60),
+  m_oldBbox(Point2D(0., 0.), Point2D(0., 0.))
 {
   this->m_simu3d = simu3d;
   this->updateEventReceiver = updateEventReceiver;
@@ -129,6 +130,12 @@ void SegmentsPicture::draw(wxDC& dc)
     //***************************************************************
     // Plot the acoustic field
     //***************************************************************
+
+    // recompute the field image if the bounding box have been changed
+    if (m_bbox != m_oldBbox)
+    {
+      m_interpolateField = true;
+    }
 
     // recompute the field image if the size of the picture is changed
     if ((m_width != m_oldWidth) || (m_height != m_oldHeight))
@@ -396,8 +403,10 @@ void SegmentsPicture::draw(wxDC& dc)
     }
   }
 
-  // save the width and height for comparison to detect if the picture sizze have been 
+  // save the bounding box, width and height for comparison
+  // to detect if the picture sizze have been 
   // changed when it drawn next time
+  m_oldBbox = m_bbox;
   m_oldWidth = m_width;
   m_oldHeight = m_height;
 }

@@ -469,7 +469,17 @@ void PropModesPicture::draw(wxDC& dc)
         Matrix modes = seg->getModes();
         int mn(modes.cols());
 
-        auto modesAmpl(seg->Pout());
+        Eigen::MatrixXcd modesAmpl;
+        switch (m_simu3d->fieldPhysicalQuantity())
+        {
+        case PRESSURE:
+          modesAmpl = seg->Pout();
+          break;
+
+        case VELOCITY:
+          modesAmpl = seg->Qout();
+          break;
+        }
 
         Vec amplitudes((modes * modesAmpl).cwiseAbs());
 

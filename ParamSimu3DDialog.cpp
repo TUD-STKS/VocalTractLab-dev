@@ -72,10 +72,11 @@ static const int IDB_COMPUTE_RAD_FIELD = 5009;
 static const int IDL_SCALING_FAC_METHOD = 6000;
 static const int IDL_MOUTH_BCOND = 6001;
 static const int IDL_FREQ_RES = 6002;
+static const int IDL_FIELD_PHYSICAL_QUANTITY = 6003;
 
-static const int IDB_SET_DEFAULT_PARAMS_FAST = 6002;
-static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 6003;
-static const int IDB_CLOSE = 6004;
+static const int IDB_SET_DEFAULT_PARAMS_FAST = 7002;
+static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 7003;
+static const int IDB_CLOSE = 7004;
 
 // ****************************************************************************
 // The event table.
@@ -118,6 +119,7 @@ EVT_CHECKBOX(IDB_COMPUTE_RAD_FIELD, ParamSimu3DDialog::OnChkComputeRad)
 EVT_COMBOBOX(IDL_SCALING_FAC_METHOD, ParamSimu3DDialog::OnScalingFactMethod)
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
+EVT_COMBOBOX(IDL_FIELD_PHYSICAL_QUANTITY, ParamSimu3DDialog::OnFieldPhysicalQuantity)
 
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_FAST, ParamSimu3DDialog::OnSetDefaultParamsFast)
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_ACCURATE, ParamSimu3DDialog::OnSetDefaultParamsAccurate)
@@ -331,6 +333,20 @@ void ParamSimu3DDialog::updateWidgets()
   st = wxString::Format("%1.4f", imag(m_simuParams.wallAdmit));
   txtWallAdmitImag->SetValue(st);
 
+  // field physical quantity
+  switch (m_simuParams.fieldPhysicalQuantity)
+  {
+  case PRESSURE:
+    lstFieldPhysicalQuantity->SetValue(m_listFieldPhysicalQuantity[0]);
+    break;
+  case VELOCITY:
+    lstFieldPhysicalQuantity->SetValue(m_listFieldPhysicalQuantity[1]);
+    break;
+  default:
+    lstFieldPhysicalQuantity->SetValue(m_listFieldPhysicalQuantity[0]);
+    break;
+  }
+
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
@@ -448,6 +464,17 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   for (int i(0); i < m_listMouthBcond.size(); i++)
   {
     lstMouthBcond->Append(m_listMouthBcond[i]);
+  }
+
+  // create the list of field physical qunatities
+  m_listFieldPhysicalQuantity.clear();
+  m_listFieldPhysicalQuantity.push_back("Pressure");
+  m_listFieldPhysicalQuantity.push_back("Velocity");
+
+  lstFieldPhysicalQuantity->Clear();
+  for (int i(0); i < m_listFieldPhysicalQuantity.size(); i++)
+  {
+    lstFieldPhysicalQuantity->Append(m_listFieldPhysicalQuantity[i]);
   }
 
   // create the list of frequency resolutions
@@ -838,6 +865,24 @@ void ParamSimu3DDialog::initWidgets()
 
     topLevelSizer->AddSpacer(10);
     sz = new wxStaticBoxSizer(wxVERTICAL, this, "Acoustic field options");
+
+  // ****************************************************************
+  // Select the physical quantity of the acoustic field to compute
+  // ****************************************************************
+
+    lineSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    label = new wxStaticText(this, wxID_ANY, "Physical qunatity");
+    lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
+
+    lstFieldPhysicalQuantity = new wxComboBox(this, IDL_FIELD_PHYSICAL_QUANTITY, "", 
+      wxDefaultPosition, this->FromDIP(wxSize(10, -1)), wxArrayString(), 
+      wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstFieldPhysicalQuantity, 1, wxALL, 3);
+
+    lineSizer->AddStretchSpacer();
+
+    sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
   // ****************************************************************
   // Select the frequency and the resolution for field computation
@@ -1446,6 +1491,29 @@ void ParamSimu3DDialog::OnFreqRes(wxCommandEvent& event)
   auto res = lstFreqRes->GetSelection();
 
   m_simuParams.spectrumLgthExponent = m_expSpectrumLgthStart + res;
+
+  updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnFieldPhysicalQuantity(wxCommandEvent& event)
+{
+  auto res = lstFieldPhysicalQuantity->GetSelection();
+
+  switch (res)
+  {
+  case 0:
+    m_simuParams.fieldPhysicalQuantity = PRESSURE;
+    break;
+  case 1:
+    m_simuParams.fieldPhysicalQuantity = VELOCITY;
+    break;
+  default:
+    m_simuParams.fieldPhysicalQuantity = PRESSURE;
+    break;
+  }
 
   updateWidgets();
 }

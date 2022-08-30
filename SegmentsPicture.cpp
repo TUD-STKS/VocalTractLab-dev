@@ -79,8 +79,7 @@ SegmentsPicture::SegmentsPicture(wxWindow* parent, Acoustic3dSimulation* simu3d,
   m_showField(false),
   m_showTfPts(true),
   m_showSndSourceSeg(true),
-  m_fieldInLogScale(true),
-  m_interpolateField(true),
+  //m_interpolateField(true),
   m_oldWidth(0),
   m_oldHeight(0),
   m_maxAmp(0.),
@@ -134,20 +133,20 @@ void SegmentsPicture::draw(wxDC& dc)
     // recompute the field image if the bounding box have been changed
     if (m_bbox != m_oldBbox)
     {
-      m_interpolateField = true;
+      m_simu3d->setFieldImageComputation(true);
     }
 
     // recompute the field image if the size of the picture is changed
     if ((m_width != m_oldWidth) || (m_height != m_oldHeight))
     {
-      m_interpolateField = true;
+      m_simu3d->setFieldImageComputation(true);
     }
 
     if (m_showField)
     {
       if (m_simu3d->acousticFieldSize() > 0)
       {
-        if (m_interpolateField)
+        if (m_simu3d->computeFieldImage())
         {
           ColorMap colorMap = ColorScale::getColorMap();
 
@@ -156,9 +155,11 @@ void SegmentsPicture::draw(wxDC& dc)
           m_maxAmp = m_simu3d->maxAmpField();
           m_minAmp = m_simu3d->minAmpField();
           double diffAmp(m_maxAmp);
+
           // to avoid singular values when the field is displayed in dB
           double dbShift(0.5);
-          if (m_fieldInLogScale) {
+
+          if (m_simu3d->fieldIndB()) {
             m_maxAmp = 20. * log10(m_maxAmp);
             m_minAmp = max(m_maxAmp - 80, 20. * log10(m_minAmp));
             diffAmp = m_maxAmp - m_minAmp + dbShift;
@@ -176,7 +177,16 @@ void SegmentsPicture::draw(wxDC& dc)
           }
 
           m_simu3d->interpolateAcousticField(coordX, coordY, field);
-          if (m_fieldInLogScale) { field = 20. * field.array().log10() - m_minAmp + dbShift; }
+          if (m_simu3d->fieldIndB()) { field = 20. * field.array().log10() - m_minAmp + dbShift; }
+
+          // if the phase is displayed, ad pi so that only positive values are displayed
+          if (!m_simu3d->showFieldAmplitude())
+          {
+            m_maxAmp += M_PI;
+            m_minAmp += M_PI;
+            field.array() += M_PI;
+            diffAmp = m_maxAmp - m_minAmp;
+          }
 
           // initialise white bitmap
           m_fieldImage = wxBitmap(m_width, m_height, 24);
@@ -207,7 +217,7 @@ void SegmentsPicture::draw(wxDC& dc)
             p.OffsetY(data, 1);
           }
 
-          m_interpolateField = false;
+          m_simu3d->setFieldImageComputation(false);
         }
         dc.DrawBitmap(m_fieldImage, 0, 0, 0);
 
@@ -240,11 +250,27 @@ void SegmentsPicture::draw(wxDC& dc)
         double graduations[5] = { 0., 0.25, 0.5, 0.75, 1. };
         ostringstream ost;
         wxCoord w, h;
-        ost << setprecision(0) << fixed;
+
+        if (m_simu3d->showFieldAmplitude())
+        {
+          ost << setprecision(0) << fixed;
+        }
+        else if (!m_simu3d->showFieldAmplitude())
+        {
+          ost << setprecision(1) << fixed;
+        }
 
         for (int i(0); i < 5; i++)
         {
-          ost << "-  " << m_minAmp + graduations[i] * diffAmp << " dB";
+          ost << "-  " << m_minAmp + graduations[i] * diffAmp;
+          if (m_simu3d->showFieldAmplitude())
+          {
+           ost << " dB";
+          }
+          else if (!m_simu3d->showFieldAmplitude())
+          {
+            ost << " rad";
+          }
           dc.GetTextExtent(ost.str(), &w, &h);
           dc.DrawText(ost.str(), 13, 
             (1. - graduations[i]) * (m_height - 30) + 14 - h / 2);

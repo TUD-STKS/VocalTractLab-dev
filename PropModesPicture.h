@@ -73,7 +73,6 @@ private:
   wxMenu* m_contextMenu;
 
   enum objectToDisplay m_objectToDisplay;
-  bool m_fieldInLogScale;
 	int m_modeIdx;
   double m_zoom;
   int lineWidth1{ this->FromDIP(1) };

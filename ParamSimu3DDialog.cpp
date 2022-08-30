@@ -73,6 +73,7 @@ static const int IDL_SCALING_FAC_METHOD = 6000;
 static const int IDL_MOUTH_BCOND = 6001;
 static const int IDL_FREQ_RES = 6002;
 static const int IDL_FIELD_PHYSICAL_QUANTITY = 6003;
+static const int IDL_AMPLITUDE_PHASE = 6004;
 
 static const int IDB_SET_DEFAULT_PARAMS_FAST = 7002;
 static const int IDB_SET_DEFAULT_PARAMS_ACCURATE = 7003;
@@ -120,6 +121,7 @@ EVT_COMBOBOX(IDL_SCALING_FAC_METHOD, ParamSimu3DDialog::OnScalingFactMethod)
 EVT_COMBOBOX(IDL_MOUTH_BCOND, ParamSimu3DDialog::OnMouthBcond)
 EVT_COMBOBOX(IDL_FREQ_RES, ParamSimu3DDialog::OnFreqRes)
 EVT_COMBOBOX(IDL_FIELD_PHYSICAL_QUANTITY, ParamSimu3DDialog::OnFieldPhysicalQuantity)
+EVT_COMBOBOX(IDL_AMPLITUDE_PHASE, ParamSimu3DDialog::OnAmplitudePhase)
 
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_FAST, ParamSimu3DDialog::OnSetDefaultParamsFast)
 EVT_BUTTON(IDB_SET_DEFAULT_PARAMS_ACCURATE, ParamSimu3DDialog::OnSetDefaultParamsAccurate)
@@ -347,6 +349,16 @@ void ParamSimu3DDialog::updateWidgets()
     break;
   }
 
+  // field type: amplitude or phase
+  if (m_simuParams.showAmplitude)
+  {
+    lstAmpPhase->SetValue(m_listAmplitudePhase[0]);
+  }
+  else
+  {
+    lstAmpPhase->SetValue(m_listAmplitudePhase[1]);
+  }
+
   chkComputeRad->SetValue(m_simuParams.computeRadiatedField);
 
   m_simu3d->setSimulationParameters(m_meshDensity, m_secNoiseSource, 
@@ -475,6 +487,17 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   for (int i(0); i < m_listFieldPhysicalQuantity.size(); i++)
   {
     lstFieldPhysicalQuantity->Append(m_listFieldPhysicalQuantity[i]);
+  }
+
+  // create the list with amplitude and phase
+  m_listAmplitudePhase.clear();
+  m_listAmplitudePhase.push_back("Amplitude");
+  m_listAmplitudePhase.push_back("Phase");
+
+  lstAmpPhase->Clear();
+  for (int i(0); i < m_listAmplitudePhase.size(); i++)
+  {
+    lstAmpPhase->Append(m_listAmplitudePhase[i]);
   }
 
   // create the list of frequency resolutions
@@ -872,7 +895,7 @@ void ParamSimu3DDialog::initWidgets()
 
     lineSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    label = new wxStaticText(this, wxID_ANY, "Physical qunatity");
+    label = new wxStaticText(this, wxID_ANY, "Physical quantity");
     lineSizer->Add(label, 2, wxALL | wxALIGN_CENTER, 3);
 
     lstFieldPhysicalQuantity = new wxComboBox(this, IDL_FIELD_PHYSICAL_QUANTITY, "", 
@@ -880,7 +903,9 @@ void ParamSimu3DDialog::initWidgets()
       wxCB_DROPDOWN | wxCB_READONLY);
     lineSizer->Add(lstFieldPhysicalQuantity, 1, wxALL, 3);
 
-    lineSizer->AddStretchSpacer();
+    lstAmpPhase = new wxComboBox(this, IDL_AMPLITUDE_PHASE, "", wxDefaultPosition,
+      this->FromDIP(wxSize(10, -1)), wxArrayString(), wxCB_DROPDOWN | wxCB_READONLY);
+    lineSizer->Add(lstAmpPhase, 1, wxALL, 3);
 
     sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
@@ -1509,6 +1534,8 @@ void ParamSimu3DDialog::OnFieldPhysicalQuantity(wxCommandEvent& event)
     break;
   case 1:
     m_simuParams.fieldPhysicalQuantity = VELOCITY;
+    // radiated velocity cannot be computed
+    m_simuParams.computeRadiatedField = false;
     break;
   default:
     m_simuParams.fieldPhysicalQuantity = PRESSURE;
@@ -1516,6 +1543,38 @@ void ParamSimu3DDialog::OnFieldPhysicalQuantity(wxCommandEvent& event)
   }
 
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnAmplitudePhase(wxCommandEvent& event)
+{
+  bool showAmplitude;
+  bool fieldIndB;
+  auto res = lstAmpPhase->GetSelection();
+
+  
+  switch (res)
+  {
+  case 0:
+    showAmplitude = true;
+    fieldIndB = true;
+    break;
+  case 1:
+    showAmplitude = false;
+    fieldIndB = false;
+    break;
+  }
+
+  if (showAmplitude != m_simuParams.showAmplitude)
+  {
+    m_simuParams.showAmplitude = showAmplitude;
+    m_simuParams.fieldIndB = fieldIndB;
+    m_simuParams.computeFieldImage = true;
+    updateWidgets();
+    updatePictures();
+  }
 }
 
 // ****************************************************************************

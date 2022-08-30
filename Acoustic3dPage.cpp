@@ -1026,7 +1026,7 @@ void Acoustic3dPage::OnComputeAcousticField(wxCommandEvent& event)
 
     // when a new field have been computed, request the interpolation of the 
     // field to create the field image to display
-    segPic->requestFieldInterpolation();
+    simu3d->setFieldImageComputation(true);
 
     if (!abort)
     {

@@ -73,7 +73,6 @@ END_EVENT_TABLE()
 PropModesPicture::PropModesPicture(wxWindow* parent,
   Acoustic3dSimulation* simu3d, SegmentsPicture* segPic)
   : BasicPicture(parent),
-  m_fieldInLogScale(true),
   m_objectToDisplay(CONTOUR),
   m_modeIdx(0),
   m_positionContour(1)
@@ -232,9 +231,11 @@ void PropModesPicture::draw(wxDC& dc)
       tbText.addCell("nb faces", seg->numberOfFaces());
 			}
 			break;
+
 			// ****************************************************************
 			// plot the modes
 			// ****************************************************************
+
 		case TRANSVERSE_MODE: {
 
 			auto start = std::chrono::system_clock::now();
@@ -481,7 +482,15 @@ void PropModesPicture::draw(wxDC& dc)
           break;
         }
 
-        Vec amplitudes((modes * modesAmpl).cwiseAbs());
+        Vec amplitudes;
+        if (m_simu3d->showFieldAmplitude())
+        {
+          amplitudes = (modes * modesAmpl).cwiseAbs();
+        }
+        else
+        {
+          amplitudes = (modes * modesAmpl).array().arg() + M_PI;
+        }
 
         maxAmp = m_simu3d->maxAmpField();
         minAmp = m_simu3d->minAmpField();
@@ -492,10 +501,16 @@ void PropModesPicture::draw(wxDC& dc)
           maxAmp = amplitudes.maxCoeff();
           minAmp = amplitudes.minCoeff();
         }
-        if (m_fieldInLogScale) {
+        if (m_simu3d->fieldIndB()) {
           maxAmp = 20. * log10(maxAmp);
           minAmp = max(maxAmp - 80, 20. * log10(minAmp));
           maxAmp = maxAmp - minAmp + dbShift;
+        }
+
+        if (!m_simu3d->showFieldAmplitude())
+        {
+          maxAmp += M_PI;
+          minAmp += M_PI;
         }
 
         // draw the acoustic field
@@ -542,7 +557,7 @@ void PropModesPicture::draw(wxDC& dc)
               idxI = min((int)(m_zoom * pointToDraw.x + m_centerX), width - 1);
               idxJ = min((int)(m_centerY - m_zoom * pointToDraw.y), height - 1);
               m_field(height - idxJ -1, idxI) = pointToDraw.z;
-              if (m_fieldInLogScale) 
+              if (m_simu3d->fieldIndB())
               {
                 pointToDraw.z = 20. * log10(pointToDraw.z) - minAmp + dbShift;
               }

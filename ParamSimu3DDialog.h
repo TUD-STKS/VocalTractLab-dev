@@ -93,6 +93,7 @@ private:
   wxComboBox* lstMouthBcond;
   wxComboBox* lstFreqRes;
   wxComboBox* lstFieldPhysicalQuantity;
+  wxComboBox* lstAmpPhase;
     
   Acoustic3dSimulation* m_simu3d;
   VocalTract* m_tract;
@@ -102,6 +103,7 @@ private:
   vector<string> m_listMouthBcond;
   vector<string> m_listScalingMethods;
   vector<string> m_listFieldPhysicalQuantity;
+  vector<string> m_listAmplitudePhase;
   int m_expSpectrumLgthStart;
   int m_expSpectrumLgthEnd;
   vector<string> m_listFreqRes;
@@ -158,6 +160,7 @@ private:
   void OnMouthBcond(wxCommandEvent& event);
   void OnFreqRes(wxCommandEvent& event);
   void OnFieldPhysicalQuantity(wxCommandEvent& event);
+  void OnAmplitudePhase(wxCommandEvent& event);
 
   void OnSetDefaultParamsFast(wxCommandEvent& event);
   void OnSetDefaultParamsAccurate(wxCommandEvent& event);

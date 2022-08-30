@@ -45,7 +45,6 @@ public:
   void setShowField(bool showField) { m_showField = showField; }
   void setShowTfPts(bool showTfPts) {m_showTfPts = showTfPts;}
   void setIdxTfPoint(int idx) { m_idxPtTf = idx; }
-  void requestFieldInterpolation() { m_interpolateField = true; }
 
   // acessors
   int activeSegment() const { return m_activeSegment; }
@@ -71,8 +70,6 @@ private:
   bool m_showField;
   bool m_showTfPts;
   bool m_showSndSourceSeg;
-  bool m_fieldInLogScale;
-  bool m_interpolateField;
   int m_idxPtTf;
 
   int m_width;

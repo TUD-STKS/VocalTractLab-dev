@@ -820,6 +820,10 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
   // Compute the transfer fucntion for each frequency
   //*********************************************************
 
+  // save the frequency of the acoustic firled computation in order to 
+  // restore it after the TF computation
+  double freqField(simu3d->freqAcousticField());
+
   int numFreqComputed(simu3d->numFreqComputed());
   double freqSteps(simu3d->freqSteps());
   bool computeNoiseSrcTf(simu3d->idxSecNoiseSource() < numSeg - 1);
@@ -887,6 +891,9 @@ void Acoustic3dPage::OnComputeTf(wxCommandEvent& event)
     progressDialog->Destroy();
     progressDialog = NULL;
   }
+
+  // restore the frequency of the acoustic field
+  simu3d->setAcousticFieldFreq(freqField);
 
   // print the times of the different parts of the process
   log << "\nTime propagation: " << timePropa.count() << endl;

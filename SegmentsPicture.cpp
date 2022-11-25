@@ -148,7 +148,7 @@ void SegmentsPicture::draw(wxDC& dc)
       {
         if (m_simu3d->computeFieldImage())
         {
-          ColorMap colorMap = ColorScale::getColorMap();
+          ColorMap colorMap;
 
           Matrix field;
           int normAmp;
@@ -180,8 +180,14 @@ void SegmentsPicture::draw(wxDC& dc)
           if (m_simu3d->fieldIndB()) { field = 20. * field.array().log10() - m_minAmp + dbShift; }
 
           // if the phase is displayed, ad pi so that only positive values are displayed
-          if (!m_simu3d->showFieldAmplitude())
+
+          if (m_simu3d->showFieldAmplitude())
           {
+            colorMap = ColorScale::getColorMap(VIRIDIS);
+          }
+          else
+          {
+            colorMap = ColorScale::getColorMap(TWILIGHT);
             m_maxAmp += M_PI;
             m_minAmp += M_PI;
             field.array() += M_PI;
@@ -229,7 +235,15 @@ void SegmentsPicture::draw(wxDC& dc)
         wxColor colorBarColor;
         yBig = m_height - 14;
         int normAmp;
-        ColorMap colorMap = ColorScale::getColorMap();
+        ColorMap colorMap;
+        if (m_simu3d->showFieldAmplitude())
+        {
+          colorMap = ColorScale::getColorMap(VIRIDIS);
+        }
+        else
+        {
+          colorMap = ColorScale::getColorMap(TWILIGHT);
+        }
 
         for (int i(15); i < m_height - 14; ++i)
         {

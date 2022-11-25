@@ -256,7 +256,7 @@ void PropModesPicture::draw(wxDC& dc)
 			// of modes
 			m_modeIdx = max(0, min(seg->numberOfModes()-1, m_modeIdx));
 
-			ColorMap colorMap = ColorScale::getColorMap();
+			ColorMap colorMap = ColorScale::getColorMap(DIVERGING_COLORBLIND);
 
 			// initialise white bitmap
 			wxBitmap bmp(width, height, 24);
@@ -370,7 +370,7 @@ void PropModesPicture::draw(wxDC& dc)
 			int topMargin((int)(((double)height - maxNumF*widthFn*1.05) / 2.));
 			int widthSquare, numCols, numRows, normAmp;
 			double maxF, minF, normF;
-			ColorMap colorMap = ColorScale::getColorMap();
+			ColorMap colorMap = ColorScale::getColorMap(VIRIDIS);
 			wxColor color;
 
 
@@ -428,7 +428,7 @@ void PropModesPicture::draw(wxDC& dc)
 
       if (seg->Pout().rows() > 0)
       {
-        ColorMap colorMap = ColorScale::getColorMap();
+        ColorMap colorMap;
         double maxAmp;
         double minAmp;
         // to avoid singular values when the field is displayed in dB
@@ -486,10 +486,12 @@ void PropModesPicture::draw(wxDC& dc)
         if (m_simu3d->showFieldAmplitude())
         {
           amplitudes = (modes * modesAmpl).cwiseAbs();
+          colorMap = ColorScale::getColorMap(VIRIDIS);
         }
         else
         {
           amplitudes = (modes * modesAmpl).array().arg() + M_PI;
+          colorMap = ColorScale::getColorMap(TWILIGHT);
         }
 
         maxAmp = m_simu3d->maxAmpField();

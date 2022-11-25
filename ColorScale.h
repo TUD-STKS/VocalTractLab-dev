@@ -24,6 +24,12 @@
 
 #include <wx/wx.h>
 
+enum ColorMapType {
+  DIVERGING_COLORBLIND,
+  VIRIDIS,
+  TWILIGHT
+};
+
 // ****************************************************************************
 /// This class contains functions to create perceptually-based color scales.
 // ****************************************************************************
@@ -39,7 +45,7 @@ public:
   static void rgbToHsv(const double r, const double g, const double b, double &h, double &s, double &v);
   static void hsvToRgb(const double h, const double s, const double v, double &r, double &g, double &b);
   static void getYellowBlueScale(int numColors, wxColor scale[]);
-  static ColorMap getColorMap();							
+  static ColorMap getColorMap(enum ColorMapType mapType);
 
   static void test();
 

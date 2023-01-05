@@ -86,6 +86,7 @@ private:
   void OnExportGlottalTf(wxCommandEvent& event);
   void OnEXportNoiseSrcTf(wxCommandEvent& event);
   void OnExportInputImpedance(wxCommandEvent& event);
+  void OnExportRadImpedRealPart(wxCommandEvent& event);
 
 // ****************************************************************************
 // Declare the event table right at the end

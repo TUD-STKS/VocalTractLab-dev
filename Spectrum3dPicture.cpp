@@ -32,6 +32,7 @@ static const int IDM_EXPORT_GLOTTAL_TF = 1000;
 static const int IDM_EXPORT_NOISE_SRC_TF = 1001;
 static const int IDM_EXPORT_INPUT_IMPEDANCE = 1002;
 static const int IDM_EXPORT_RAD_IMPED_REAL_PART = 1003;
+static const int IDM_EXPORT_RAD_IMPED_IMAG_PART = 1004;
 
 // ****************************************************************************
 // The event table.
@@ -43,6 +44,7 @@ BEGIN_EVENT_TABLE(Spectrum3dPicture, BasicPicture)
   EVT_MENU(IDM_EXPORT_NOISE_SRC_TF, Spectrum3dPicture::OnEXportNoiseSrcTf)
   EVT_MENU(IDM_EXPORT_INPUT_IMPEDANCE, Spectrum3dPicture::OnExportInputImpedance)
   EVT_MENU(IDM_EXPORT_RAD_IMPED_REAL_PART, Spectrum3dPicture::OnExportRadImpedRealPart)
+  EVT_MENU(IDM_EXPORT_RAD_IMPED_IMAG_PART, Spectrum3dPicture::OnExportRadImpedImagPart)
 END_EVENT_TABLE()
 
 // ****************************************************************************
@@ -91,6 +93,7 @@ Spectrum3dPicture::Spectrum3dPicture(wxWindow *parent,
   m_contextMenu->Append(IDM_EXPORT_NOISE_SRC_TF, "Save the noise transfer function as txt file");
   m_contextMenu->Append(IDM_EXPORT_INPUT_IMPEDANCE, "Save input impedance as txt file");
   m_contextMenu->Append(IDM_EXPORT_RAD_IMPED_REAL_PART, "Save the radiation impedance real part as txt file");
+  m_contextMenu->Append(IDM_EXPORT_RAD_IMPED_IMAG_PART, "Save the radiation impedance imaginary part as txt file");
 }
 
 // ****************************************************************************
@@ -358,5 +361,13 @@ void Spectrum3dPicture::OnExportInputImpedance(wxCommandEvent& event)
 
 void Spectrum3dPicture::OnExportRadImpedRealPart(wxCommandEvent& event)
 {
+  exportResult(RAD_IMPED_REAL_PART);
+}
 
+// ****************************************************************************
+// ****************************************************************************
+
+void Spectrum3dPicture::OnExportRadImpedImagPart(wxCommandEvent& event)
+{
+  exportResult(RAD_IMPED_IMAG_PART);
 }

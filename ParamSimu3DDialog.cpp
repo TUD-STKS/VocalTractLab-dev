@@ -58,16 +58,17 @@ static const int IDE_WALL_ADMIT_IMAG    = 4020;
 
 static const int IDB_CHK_FDEP_LOSSES	= 5001;
 static const int IDB_CHK_WALL_LOSSES    = 5002;
-static const int IDB_CHK_WALL_ADMITTANCE = 5003;
+static const int IDB_SURF_SPEC_WALL_LOSSES = 5003;
+static const int IDB_CHK_WALL_ADMITTANCE = 5004;
 
-static const int IDB_CHK_STRAIGHT       = 5004;
-static const int IDB_CHK_MAGNUS			= 5005;
-static const int IDB_CHK_CURV			= 5006;
-static const int IDB_CHK_VAR_AREA		= 5007;
+static const int IDB_CHK_STRAIGHT       = 5005;
+static const int IDB_CHK_MAGNUS			= 5006;
+static const int IDB_CHK_CURV			= 5007;
+static const int IDB_CHK_VAR_AREA		= 5008;
 
-static const int IDB_CHK_MULTI_TF_PTS = 5008;
+static const int IDB_CHK_MULTI_TF_PTS = 5009;
 
-static const int IDB_COMPUTE_RAD_FIELD = 5009;
+static const int IDB_COMPUTE_RAD_FIELD = 5010;
 
 static const int IDL_SCALING_FAC_METHOD = 6000;
 static const int IDL_MOUTH_BCOND = 6001;
@@ -109,6 +110,7 @@ EVT_TEXT_ENTER(IDE_WALL_ADMIT_IMAG, ParamSimu3DDialog::OnWallAdmitEnter)
 
 EVT_CHECKBOX(IDB_CHK_FDEP_LOSSES, ParamSimu3DDialog::OnChkFdepLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_LOSSES, ParamSimu3DDialog::OnChkWallLosses)
+EVT_CHECKBOX(IDB_SURF_SPEC_WALL_LOSSES, ParamSimu3DDialog::OnChkSurfSpecWallLosses)
 EVT_CHECKBOX(IDB_CHK_WALL_ADMITTANCE, ParamSimu3DDialog::OnChkWallAdmittance)
 EVT_CHECKBOX(IDB_CHK_STRAIGHT, ParamSimu3DDialog::OnChkStraight)
 EVT_CHECKBOX(IDB_CHK_MAGNUS, ParamSimu3DDialog::OnChkMagnus)
@@ -728,11 +730,15 @@ void ParamSimu3DDialog::initWidgets()
 
     chkViscoThermLoss = new wxCheckBox(this, IDB_CHK_FDEP_LOSSES,
       "Visco-thermal losses");
-    lineSizer->Add(chkViscoThermLoss, 1, wxALL, 2);
+    lineSizer->Add(chkViscoThermLoss, 2, wxALL, 2);
 
     chkWallLosses = new wxCheckBox(this, IDB_CHK_WALL_LOSSES,
       "Soft walls");
     lineSizer->Add(chkWallLosses, 1, wxALL, 2);
+
+    chkSurfSpecWallLosses = new wxCheckBox(this, IDB_SURF_SPEC_WALL_LOSSES,
+        "Surface specific");
+    lineSizer->Add(chkSurfSpecWallLosses, 1, wxALL, 2);
 
     sz->Add(lineSizer, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
 
@@ -1349,6 +1355,20 @@ void ParamSimu3DDialog::OnChkWallLosses(wxCommandEvent& event)
   m_simuParamsFreqDepLosses.wallLosses = !m_simuParamsFreqDepLosses.wallLosses;
     
   updateWidgets();
+}
+
+// ****************************************************************************
+// ****************************************************************************
+
+void ParamSimu3DDialog::OnChkSurfSpecWallLosses(wxCommandEvent& event)
+{
+    m_simuParams.surfaceSpecificWallLosses = !m_simuParams.surfaceSpecificWallLosses;
+    ofstream log;
+    log.open("log.txt", ofstream::app);
+    log << "Surface specific wall losses: " <<
+        m_simuParams.surfaceSpecificWallLosses << endl;
+    log.close();
+    updateWidgets();
 }
 
 // ****************************************************************************

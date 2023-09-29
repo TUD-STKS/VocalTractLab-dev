@@ -677,6 +677,7 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
   int s, xBig, yBig, xEnd, yEnd;
   double scaling(getScaling());
   int penWidth(5);
+  surfaceType surfType;
 
   // colors are from https://davidmathlogic.com/colorblind
   for (s = 0, vit = contour.edges_begin(); vit != contour.edges_end(); ++vit, ++s)
@@ -690,27 +691,28 @@ void PropModesPicture::drawContour(int sectionIdx, vector<int> &surf, wxDC& dc)
 
     if (m_objectToDisplay == CONTOUR)
     {
-      switch (surf[s])
+      surfType = seg->getSurfaceType(surf[s]);
+      switch (surfType)
       {
-      case 2: case 3: case 23: case 24:		// covers
+      case COVERS: 
         dc.SetPen(wxPen(wxColour(68, 170, 153, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 16:						// tongue
+      case TONGUE:
         dc.SetPen(wxPen(wxColour(170, 68, 153, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 0: case 1:					// teeth
+      case TEETH:
         dc.SetPen(wxPen(wxColour(221, 204, 119, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 29:						// epiglotis
+      case EPIGLOTIS:
         dc.SetPen(wxPen(wxColour(51, 34, 136, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 26:						// uvula
+      case UVULA:
         dc.SetPen(wxPen(wxColour(204, 102, 119, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 4: case 5:					// lips
+      case LIPS:
         dc.SetPen(wxPen(wxColour(136, 34, 85, 255), penWidth, wxPENSTYLE_SOLID));
         break;
-      case 31:						// radiation
+      case RADIATING_SURF:
         dc.SetPen(wxPen(wxColour(136, 204, 238, 255), penWidth, wxPENSTYLE_SOLID));
         break;
       default:

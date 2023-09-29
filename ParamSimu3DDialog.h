@@ -80,6 +80,7 @@ private:
   // check boxes
 	wxCheckBox* chkViscoThermLoss;
   wxCheckBox* chkWallLosses;
+  wxCheckBox* chkSurfSpecWallLosses;
   wxCheckBox* chkWallAdmittance;
   wxCheckBox* chkStraight;
   wxCheckBox* chkMagnus;
@@ -148,6 +149,7 @@ private:
 
 	void OnChkFdepLosses(wxCommandEvent& event);
   void OnChkWallLosses(wxCommandEvent& event);
+  void OnChkSurfSpecWallLosses(wxCommandEvent& event);
   void OnChkWallAdmittance(wxCommandEvent& event);
   void OnChkStraight(wxCommandEvent& event);
   void OnChkMagnus(wxCommandEvent& event);

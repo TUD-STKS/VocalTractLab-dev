@@ -28,7 +28,7 @@ project ("VocalTractLabGui")
 
 # Request the required wxWidgets libs
 if (MSVC)
-set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.5)
+set(wxWidgets_ROOT_DIR C:/wxwidgets-3.1.3)
 endif()
 find_package(wxWidgets 3.1 COMPONENTS core base gl adv REQUIRED)
 
@@ -38,6 +38,7 @@ include(${wxWidgets_USE_FILE})
 # Request the required CGAL lib
 if (MSVC)
 set(BOOST_ROOT C:/boost_1_71_0)
+set(CGAL_DIR C:/CGAL-5.0.4)
 endif()
 find_package(CGAL)
 

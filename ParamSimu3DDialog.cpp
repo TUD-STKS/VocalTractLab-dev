@@ -315,7 +315,7 @@ void ParamSimu3DDialog::updateWidgets()
     lstMouthBcond->SetValue(m_listMouthBcond[0]);
     break;
   case HARD_WALL:
-    lstMouthBcond->SetValue(m_listMouthBcond[0]);
+    lstMouthBcond->SetValue(m_listMouthBcond[2]);
     break;
   case ADMITTANCE_1:
     lstMouthBcond->SetValue(m_listMouthBcond[0]);
@@ -473,6 +473,7 @@ ParamSimu3DDialog::ParamSimu3DDialog(wxWindow* parent) :
   m_listMouthBcond.clear();
   m_listMouthBcond.push_back("Radiation");
   m_listMouthBcond.push_back("Zero pressure");
+  m_listMouthBcond.push_back("Hard wall");
 
   lstMouthBcond->Clear();
   for (int i(0); i < m_listMouthBcond.size(); i++)
@@ -1514,11 +1515,11 @@ void ParamSimu3DDialog::OnMouthBcond(wxCommandEvent& event)
   case 0:
     m_mouthBoundaryCond = RADIATION;
     break;
-  //case 1:
-  //  m_mouthBoundaryCond = ADMITTANCE_1;
-  //  break;
   case 1:
     m_mouthBoundaryCond = ZERO_PRESSURE;
+    break;
+  case 2:
+    m_mouthBoundaryCond = HARD_WALL;
     break;
   default:
     m_mouthBoundaryCond = RADIATION;
